@@ -15,25 +15,28 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
+          cache-dependency-path: ./backend/requirements.txt
+
       - name: install dependencies
         run: |
           pip install -r requirements.txt
           pip install ruff mypy bandit
-      - name: Lint
+
+      - name: Lint with Ruff
         run: |
           ruff check .
           ruff format --check .
 
-      - name: Security Check
-        continue-on-error: true
+      - name: Security Check with Bandit
         run: bandit -r . -c pyproject.toml || true
 
-      - name: Type Check
+      - name: Type Check with MyPy
         continue-on-error: true
         run: mypy .
 
@@ -60,14 +63,16 @@ jobs:
         run: npx prettier --check .
 
       - name: ESLint check
-        run: npm run lint --if-present
+        run: npm run lint
 
   docker-checks:
     runs-on: ubuntu-latest
-    if: always()
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.1.0
 
       - name: Lint Backend Dockerfile
         uses: hadolint/hadolint-action@v3.1.0
