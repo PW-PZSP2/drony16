@@ -1,6 +1,6 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import React from "react";
+import ReactDOM from "react-dom/client";
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <h1>Frontend is working!</h1>
-)
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <h1>Frontend is working!</h1>,
+);
