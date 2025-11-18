@@ -1,0 +1,44 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.11
+    hooks:
+      - id: ruff
+        args: [--fix]
+        files: ^backend/
+
+      - id: ruff-format
+        files: ^backend/
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: Mypy
+        entry: bash -c "cd backend && python3 -m mypy ."
+        language: system
+        types: [python]
+        files: ^backend/
+        pass_filenames: false
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.1.0
+    hooks:
+      - id: prettier
+        files: ^frontend/
+        types_or: [javascript, jsx, css, json, html]
+
+  - repo: local
+    hooks:
+      - id: eslint-local
+        name: ESLint
+        entry: bash -c 'cd frontend && npm run lint'
+        language: system
+        files: \.(js|jsx)$
+        exclude: ^frontend/node_modules/
