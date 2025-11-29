@@ -1,7 +1,5 @@
 ## Drony zespol 16
-<<<<<<< Updated upstream
-```
-=======
+
 
 ## Setup 
 - duplicate the folder ".secrets_example"
@@ -13,4 +11,3 @@
 ### Front Libraries
 - axios <- sending http request, interceptors 
 - zustand <- state managment
->>>>>>> Stashed changes
