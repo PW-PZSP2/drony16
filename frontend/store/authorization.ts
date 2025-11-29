@@ -1,24 +1,20 @@
-import {create} from "zustand";
+import { create } from "zustand";
 import { User } from "../types/auth/user";
 
-
 interface AuthorizationState {
-    user: User | undefined;
-    actions: {
-        setUser: (user: User | undefined) => void;
-    }
+  user: User | undefined;
+  actions: {
+    setUser: (user: User | undefined) => void;
+  };
 }
 
-const useAuthorizationStore = create<AuthorizationState>((set)=> ({
-    user: undefined,
-    actions: {
-        setUser: (user: User | undefined) => set({user})
-    }   
+const useAuthorizationStore = create<AuthorizationState>((set) => ({
+  user: undefined,
+  actions: {
+    setUser: (user: User | undefined) => set({ user }),
+  },
 }));
 
 export const useGetUser = () => {
-    return useAuthorizationStore((state) => state.user);
-}
-
-    
-
+  return useAuthorizationStore((state) => state.user);
+};
