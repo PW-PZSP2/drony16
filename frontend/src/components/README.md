@@ -1,8 +1,14 @@
 Module: components
 
-Purpose
+Purpose:
 
-- Global, presentational UI components ("dumb" components) used across the app.
+Houses all compoenents
+
+Folders 
+- base - all dump, not specyfic compoents
+- feature - feature based compoents
+- ui - compoenents imported from external library(shad cn)
+
 
 Contents
 
