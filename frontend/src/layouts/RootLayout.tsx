@@ -1,12 +1,14 @@
 import { Outlet } from "react-router-dom"
-import { JSX } from "react/jsx-runtime";
+import type { JSX } from "react";
+import Header from "../components/feature/header/BaseHeader";
+import Footer from "../components/feature/footer/BaseFooter";
 
 export default function RootLayout (): JSX.Element {
     return (
         <>
-            <h1>Topbar</h1>
+            <Header />
             <Outlet />
-            <footer>Footer</footer>
+            <Footer />
         </>
 
     );
