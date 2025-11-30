@@ -1,4 +1,4 @@
-import { User } from "../types/auth/user";
+import type { User } from "../types/auth/user";
 import { Roles } from "../types/auth/user_role";
 
 interface LoginPasswordCredentials {
