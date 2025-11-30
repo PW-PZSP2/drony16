@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import {AuthService} from "./services/authorization_service";
 import { Roles } from "./types/auth/user_role";
+import LogoutPage from "./pages/LogoutPage";
 
 export function buildRouter() {
     
@@ -55,6 +56,10 @@ export function buildRouter() {
         {
             path: "/login",
             element: <LoginPage />
+        },
+        {
+            path: "/logout",
+            element: <LogoutPage />
         }
 
     ]);
@@ -62,7 +67,7 @@ export function buildRouter() {
 
 async function clientProtectedLoader() {    
     const current_user = await AuthService.getCurrentUser();
-    if (!current_user || !current_user.role.includes(Roles.CLIENT)) {
+    if (!current_user || !current_user.roles.includes(Roles.CLIENT)) {
         throw new Response("Unauthorized", { status: 401 });
     }
 
@@ -70,14 +75,14 @@ async function clientProtectedLoader() {
 
 async function operatorProtectedLoader() {
     const current_user = await AuthService.getCurrentUser();
-    if (!current_user || !current_user.role.includes(Roles.OPERATOR)) {
+    if (!current_user || !current_user.roles.includes(Roles.OPERATOR)) {
         throw new Response("Unauthorized", { status: 401 });
     }
 }
 
 async function adminProtectedLoader() {
     const current_user = await AuthService.getCurrentUser();
-    if (!current_user || !current_user.role.includes(Roles.ADMIN)) {
+    if (!current_user || !current_user.roles.includes(Roles.ADMIN)) {
         throw new Response("Unauthorized", { status: 401 });
     }
 }

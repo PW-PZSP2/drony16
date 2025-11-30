@@ -45,19 +45,19 @@ export default function Header(): JSX.Element {
 
   const handleProfileClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    window.REACT_APP_NAVIGATE('/profile');
+    window.location.href='/profile';
     setShowUserMenu(false);
   };
 
   const handleSettingsClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    window.REACT_APP_NAVIGATE('/settings');
+    window.location.href='/settings';
     setShowUserMenu(false);
   };
 
   const handleChangePasswordClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    window.REACT_APP_NAVIGATE('/change-password');
+    window.location.href='/change-password';
     setShowUserMenu(false);
   };
 
@@ -124,7 +124,7 @@ export default function Header(): JSX.Element {
                     </button>
                     <hr className="my-2" />
                     <button
-                      onClick={handleLogout}
+                      onClick={() => { window.location.href = '/logout'; }}
                       className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                     >
                       <i className="ri-logout-box-line mr-2"></i>

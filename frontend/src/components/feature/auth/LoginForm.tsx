@@ -15,6 +15,7 @@ import * as z from "zod"
 import { AuthService } from "@/services/authorization_service"
 import {useState} from "react";
 import { CircleCheck } from "lucide-react"
+import OperationStatus from "@/components/base/OperationStatus/OperationStatus"
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email jest wymagany.").email("Wprowadź prawidłowy adres email."),
@@ -49,6 +50,7 @@ export function LoginForm({
   const[formState, setFormState] = useState<'inProgress' | 'success' | 'error' | 'loading'>('inProgress');
 
   async function onSubmit(data: z.infer<typeof loginSchema>) {
+    setFormState('loading');
     console.log("Login:", data)
     
     const credentials = {
@@ -75,10 +77,10 @@ export function LoginForm({
   return (
 
     <>
-          {formState === 'success' && <LoginSuccess />}
-        {formState === 'error' && <p>Błąd logowania</p>}
-        {formState === 'loading' && <p>Ładowanie...</p>}
-        {formState === 'inProgress' && <form 
+      {formState === 'loading'  && <OperationStatus id="login-operation-status" status={formState} textPrimary="Trwa logowanie" textSecondary="Daj nam jeszcze tylko sekundeczke.."/>}
+      {formState === 'success'  && <OperationStatus id="login-operation-status" status={formState} textPrimary="Zalogowano pomyślnie" textSecondary="Zaraz zostaniesz przekierowany na stronę główną"/>}
+      {formState === 'error'  && <OperationStatus id="login-operation-status" status={formState} textPrimary="Błąd podczas logowania" textSecondary="Sprawdź swoje dane i spróbuj ponownie"/>}
+      {formState === 'inProgress' && <form 
       {...props}
       className={cn("flex flex-col gap-6", className)} 
       onSubmit={form.handleSubmit(onSubmit)}
