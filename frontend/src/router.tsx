@@ -3,6 +3,8 @@ import ErrorPage from "./pages/ErrorPage";
 import RootLayout from "./layouts/RootLayout";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
+import {AuthService} from "./services/authorization_service";
+import { Roles } from "./types/auth/user_role";
 
 export function buildRouter() {
     
@@ -59,13 +61,23 @@ export function buildRouter() {
 }
 
 async function clientProtectedLoader() {    
-    return
+    const current_user = await AuthService.getCurrentUser();
+    if (!current_user || !current_user.role.includes(Roles.CLIENT)) {
+        throw new Response("Unauthorized", { status: 401 });
+    }
+
 }
 
 async function operatorProtectedLoader() {
-    return
+    const current_user = await AuthService.getCurrentUser();
+    if (!current_user || !current_user.role.includes(Roles.OPERATOR)) {
+        throw new Response("Unauthorized", { status: 401 });
+    }
 }
 
 async function adminProtectedLoader() {
-    return
+    const current_user = await AuthService.getCurrentUser();
+    if (!current_user || !current_user.role.includes(Roles.ADMIN)) {
+        throw new Response("Unauthorized", { status: 401 });
+    }
 }
