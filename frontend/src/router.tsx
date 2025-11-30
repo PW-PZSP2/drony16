@@ -6,6 +6,9 @@ import HomePage from "./pages/HomePage";
 import {AuthService} from "./services/authorization_service";
 import { Roles } from "./types/auth/user_role";
 import LogoutPage from "./pages/LogoutPage";
+import ClientDashboard from "./pages/ClientDashboard";
+import OperatorDashboard from "./pages/OperatorDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 
 export function buildRouter() {
     
@@ -25,7 +28,7 @@ export function buildRouter() {
                     children: [
                         {
                             path: "dashboard",
-                            element: <div>Client Dashboard</div>
+                            element: <ClientDashboard />
                         }
                     ] 
                 },
@@ -35,7 +38,7 @@ export function buildRouter() {
                     children: [
                         {
                             path: "dashboard",
-                            element: <div>Operator Dashboard</div>
+                            element: <OperatorDashboard />
                         }
                     ] 
                 },
@@ -45,7 +48,7 @@ export function buildRouter() {
                     children: [
                         {
                             path: "dashboard",
-                            element: <div>Admin Dashboard</div>
+                            element: <AdminDashboard />
                         }
                     ] 
                 }
