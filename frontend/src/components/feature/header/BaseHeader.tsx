@@ -1,60 +1,46 @@
 
 import { useState, useEffect } from 'react';
+import type { JSX } from 'react';
+// import type {User} from '../../../types/auth/user';
+import { useGetUser } from '../../../store/authorization';
+import { Roles } from '../../../types/auth/user_role';
+import { Link } from 'react-router-dom';
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'client' | 'operator' | 'admin';
-}
+export default function Header(): JSX.Element {
 
-export default function Header() {
-  const [user, setUser] = useState<User | null>(null);
+  const user = useGetUser();
+
   const [showUserMenu, setShowUserMenu] = useState(false);
 
-  useEffect(() => {
-    // Sprawdź czy użytkownik jest zalogowany
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    setUser(null);
-    setShowUserMenu(false);
-    window.location.href = '/';
-  };
 
   const getDashboardLink = () => {
     if (!user) return '/';
     
-    switch (user.role) {
-      case 'client':
-        return '/client-dashboard';
-      case 'operator':
-        return '/operator-dashboard';
-      case 'admin':
-        return '/admin-dashboard';
-      default:
-        return '/';
+    if (user.roles.includes(Roles.ADMIN)) {
+      return '/admin-dashboard';
     }
+    if (user.roles.includes(Roles.OPERATOR)) {
+      return '/operator-dashboard';
+    }
+    if (user.roles.includes(Roles.CLIENT)) {
+      return '/client-dashboard';
+    }
+    return '/';
   };
 
   const getDashboardLabel = () => {
     if (!user) return '';
     
-    switch (user.role) {
-      case 'client':
-        return 'Panel Zleceniodawcy';
-      case 'operator':
-        return 'Panel Operatora';
-      case 'admin':
-        return 'Panel Admina';
-      default:
-        return '';
+    if (user.roles.includes(Roles.ADMIN)) {
+      return 'Panel Admina';
     }
+    if (user.roles.includes(Roles.OPERATOR)) {
+      return 'Panel Operatora';
+    }
+    if (user.roles.includes(Roles.CLIENT)) {
+      return 'Panel Zleceniodawcy';
+    }
+    return '';
   };
 
   const handleProfileClick = (e: React.MouseEvent) => {
@@ -109,7 +95,7 @@ export default function Header() {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors cursor-pointer"
                 >
-                  <span>Witaj, {user.name}</span>
+                  <span>Witaj, {user.username}</span>
                   <i className="ri-arrow-down-s-line"></i>
                 </button>
                 
@@ -149,12 +135,12 @@ export default function Header() {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                <button className="text-gray-700 hover:text-blue-600 font-medium transition-colors whitespace-nowrap cursor-pointer">
+                <Link to="/login" className="text-gray-700 hover:text-blue-600 font-medium transition-colors whitespace-nowrap cursor-pointer">
                   Zaloguj się
-                </button>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap cursor-pointer">
+                </Link>
+                <Link to="/login" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap cursor-pointer">
                   Zarejestruj się
-                </button>
+                </Link>
               </div>
             )}
           </div>

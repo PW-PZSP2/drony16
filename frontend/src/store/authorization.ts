@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { User } from "../types/auth/user";
+import type { User } from "../types/auth/user";
 
 interface AuthorizationState {
   user: User | undefined;
