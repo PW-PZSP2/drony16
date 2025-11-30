@@ -11,15 +11,14 @@ import { Input } from "@/components/ui/input"
 import { useSearchParams } from "react-router-dom"
 
 export function LoginForm({
-  className,
-  ...props
+    ...props
 }: React.ComponentProps<"form">) {
 
     const [searchParams] = useSearchParams();
 
     const isLogin = searchParams.get("action") === "login";
 
-    return isLogin ? <LoginFields /> : <RegisterFields />;
+    return isLogin ? <LoginFields {...props} /> : <RegisterFields {...props}     />;
 }
 
 function LoginFields({
