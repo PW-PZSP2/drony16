@@ -1,17 +1,10 @@
 
 import { Drone } from "lucide-react"
 
-import { LoginForm } from "@/components/ui/login-form"
+import { LoginForm } from "@/components/feature/auth/login-form"
 
 export default function LoginPage() {
-  
 
-    function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        // Handle form submission logic here
-        console.log(event);
-        
-    }
     
     return (
     <div className="grid min-h-svh lg:grid-cols-2">
@@ -26,7 +19,7 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm onSubmit={handleFormSubmit} />
+            <LoginForm />
           </div>
         </div>
       </div>

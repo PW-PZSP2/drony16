@@ -13,6 +13,10 @@ import { useSearchParams } from "react-router-dom"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useForm } from "react-hook-form"
 import * as z from "zod"
+import { AuthService } from "@/services/authorization_service"
+import HorizontalRadio from "../../base/HorizontalRadio/HorizontalRadio"
+import {useState} from "react";
+import { CircleCheck } from "lucide-react"
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email jest wymagany.").email("Wprowadź prawidłowy adres email."),
@@ -41,10 +45,22 @@ export function LoginForm({
 
     const isLogin = searchParams.get("action") === "login";
 
-    return isLogin ? <LoginFields {...props} /> : <RegisterFields {...props} />;
+    return isLogin ? <InnerLoginForm {...props} /> : <InnerRegisterForm {...props} />;
 }
 
-function LoginFields({
+function LoginSuccess() {
+    return (
+        <div className="flex flex-col items-center gap-4">
+            <CircleCheck className="size-12 text-green-500" />
+            <h2 className="text-2xl font-bold">Zalogowano pomyślnie!</h2>
+            <p className="text-muted-foreground text-center">
+                Zostaniesz przekierowany na stronę główną za chwilę.
+            </p>
+        </div>
+    );
+}
+
+function InnerLoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
@@ -56,16 +72,43 @@ function LoginFields({
     },
   })
 
-  function onSubmit(data: z.infer<typeof loginSchema>) {
+  const[formState, setFormState] = useState<'inProgress' | 'success' | 'error' | 'loading'>('inProgress');
+
+  async function onSubmit(data: z.infer<typeof loginSchema>) {
     console.log("Login:", data)
-    // TODO: Call AuthService.login
+    
+    const credentials = {
+        username: data.email,
+        password: data.password,
+    }
+
+    const result = await AuthService.login(credentials);
+    if (result) {
+        setFormState('success');
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 1000);
+        console.log("Zalogowano użytkownika:", result);
+    } else {
+        setFormState('error');
+        setTimeout(() => {
+            setFormState('inProgress');
+        }, 2000);
+        console.log("Błąd logowania");
+    }
   }
 
   return (
-    <form 
+
+    <>
+          {formState === 'success' && <LoginSuccess />}
+        {formState === 'error' && <p>Błąd logowania</p>}
+        {formState === 'loading' && <p>Ładowanie...</p>}
+        {formState === 'inProgress' && <form 
       {...props}
       className={cn("flex flex-col gap-6", className)} 
       onSubmit={form.handleSubmit(onSubmit)}
+      noValidate
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
@@ -74,6 +117,9 @@ function LoginFields({
             Wprowadź swój email, aby zalogować się do konta
           </p>
         </div>
+
+        {formState === 'inProgress' && <>
+        
         <Controller
           name="email"
           control={form.control}
@@ -142,12 +188,17 @@ function LoginFields({
             </a>
           </FieldDescription>
         </Field>
+        </>}
       </FieldGroup>
+        
     </form>
+        }
+    </>
+    
   );
 }
 
-function RegisterFields({
+function InnerRegisterForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
@@ -173,6 +224,8 @@ function RegisterFields({
       onSubmit={form.handleSubmit(onSubmit)}
       noValidate
     >
+
+      <HorizontalRadio options={[{label: "Operator", value: "operator"}, {label: "Klient", value: "client"}]}></HorizontalRadio>  
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="text-2xl font-bold">Utwórz konto</h1>

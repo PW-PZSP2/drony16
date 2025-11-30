@@ -7,10 +7,9 @@ interface LoginPasswordCredentials {
 }
 
 const mockUser: User = {
-  id: 1,
   username: "john_doe",
   email: "john@example.com",
-  role: [Roles.ADMIN, Roles.OPERATOR],
+  roles: [Roles.ADMIN, Roles.OPERATOR],
 };
 
 async function login(credentials: LoginPasswordCredentials): Promise<User> {
@@ -24,7 +23,7 @@ async function logout(): Promise<void> {
 async function register(
   userData: Partial<User> & { password: string },
 ): Promise<User> {
-  return mockUser;
+  return Promise.resolve(mockUser);
 }
 
 async function getCurrentUser(): Promise<User | null> {

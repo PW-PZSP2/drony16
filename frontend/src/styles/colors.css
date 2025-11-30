@@ -1,0 +1,42 @@
+:root {
+  /* Status Colors */
+  --success: #22c55e;
+  --warning: #eab308;
+  --error: #ef4444;
+  --info: #3b82f6;
+
+  /* Text Colors */
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+
+  /* Background Colors */
+  --background-primary: #ffffff;
+  --background-secondary: #f9fafb;
+  --background-triary: #f3f4f6  ;
+  --background-quaternary: rgba(255, 255, 255, 0.5);
+
+  /* Other colors */
+
+  /* Accent Color */
+  --accent-color: #2563eb;
+}
+
+.dark {
+  /* Status Colors */
+  --success: #4ade80;
+  --warning: #facc15;
+  --error: #f87171;
+  --info: #60a5fa;
+
+  /* Text Colors */
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+
+  /* Background Colors */
+  --background-primary: #111827;
+  --background-secondary: #1f2937;
+
+  /* Accent Color */
+  --accent-color: #3b82f6;
+}
+
