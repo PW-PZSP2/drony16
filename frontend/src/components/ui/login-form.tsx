@@ -171,6 +171,7 @@ function RegisterFields({
       {...props}
       className={cn("flex flex-col gap-6", className)} 
       onSubmit={form.handleSubmit(onSubmit)}
+      noValidate
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
