@@ -1,11 +1,17 @@
 
 import { Drone } from "lucide-react"
 
-import { LoginForm } from "@/components/feature/auth/login-form"
+import { LoginForm } from "../components/feature/auth/LoginForm"
+import { useSearchParams } from "react-router-dom"
+import { RegisterForm } from "../components/feature/auth/RegisterForm"
 
 export default function LoginPage() {
 
-    
+    const [searchParams] = useSearchParams();
+
+    const isLogin = searchParams.get("action") === "login";
+
+
     return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -19,7 +25,7 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm />
+            {isLogin ? <LoginForm  /> : <RegisterForm  />}
           </div>
         </div>
       </div>
