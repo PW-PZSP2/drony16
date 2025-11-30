@@ -1,18 +1,15 @@
+import { Drone } from "lucide-react";
 
-import { Drone } from "lucide-react"
-
-import { LoginForm } from "../components/feature/auth/LoginForm"
-import { useSearchParams } from "react-router-dom"
-import { RegisterForm } from "../components/feature/auth/RegisterForm"
+import { LoginForm } from "../components/feature/auth/LoginForm";
+import { useSearchParams } from "react-router-dom";
+import { RegisterForm } from "../components/feature/auth/RegisterForm";
 
 export default function LoginPage() {
+  const [searchParams] = useSearchParams();
 
-    const [searchParams] = useSearchParams();
+  const isLogin = searchParams.get("action") === "login";
 
-    const isLogin = searchParams.get("action") === "login";
-
-
-    return (
+  return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
@@ -25,7 +22,7 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            {isLogin ? <LoginForm  /> : <RegisterForm  />}
+            {isLogin ? <LoginForm /> : <RegisterForm />}
           </div>
         </div>
       </div>
@@ -37,5 +34,5 @@ export default function LoginPage() {
         />
       </div>
     </div>
-  )
+  );
 }

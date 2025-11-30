@@ -12,7 +12,7 @@
   /* Background Colors */
   --background-primary: #ffffff;
   --background-secondary: #f9fafb;
-  --background-triary: #f3f4f6  ;
+  --background-triary: #f3f4f6;
   --background-quaternary: rgba(255, 255, 255, 0.5);
 
   /* Other colors */
@@ -39,4 +39,3 @@
   /* Accent Color */
   --accent-color: #3b82f6;
 }
-

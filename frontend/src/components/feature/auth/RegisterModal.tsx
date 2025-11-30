@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import Button from '../../base/Button/Button';
-import Input from '../../base/Input/Input';
+import { useState } from "react";
+import Button from "../../base/Button/Button";
+import Input from "../../base/Input/Input";
 
 interface RegisterModalProps {
   show: boolean;
@@ -8,40 +8,48 @@ interface RegisterModalProps {
   onSwitchToLogin: () => void;
 }
 
-export default function RegisterModal({ show, onClose, onSwitchToLogin }: RegisterModalProps) {
-  const [step, setStep] = useState<'role' | 'form'>('role');
-  const [selectedRole, setSelectedRole] = useState<'client' | 'operator'>('client');
+export default function RegisterModal({
+  show,
+  onClose,
+  onSwitchToLogin,
+}: RegisterModalProps) {
+  const [step, setStep] = useState<"role" | "form">("role");
+  const [selectedRole, setSelectedRole] = useState<"client" | "operator">(
+    "client",
+  );
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    phone: '',
-    location: '',
-    operatingRadius: '',
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
+    location: "",
+    operatingRadius: "",
     services: [] as string[],
-    description: ''
+    description: "",
   });
   const [loading, setLoading] = useState(false);
 
   if (!show) return null;
 
   const services = [
-    'Ortofotomapa',
-    'Numeryczne modele terenu',
-    'Chmura punktów',
-    'Modele 3D',
-    'Scanning laserowy'
+    "Ortofotomapa",
+    "Numeryczne modele terenu",
+    "Chmura punktów",
+    "Modele 3D",
+    "Scanning laserowy",
   ];
 
-  const handleRoleSelect = (role: 'client' | 'operator') => {
+  const handleRoleSelect = (role: "client" | "operator") => {
     setSelectedRole(role);
-    setStep('form');
+    setStep("form");
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -49,49 +57,49 @@ export default function RegisterModal({ show, onClose, onSwitchToLogin }: Regist
     setFormData({
       ...formData,
       services: formData.services.includes(service)
-        ? formData.services.filter(s => s !== service)
-        : [...formData.services, service]
+        ? formData.services.filter((s) => s !== service)
+        : [...formData.services, service],
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     // Symulacja rejestracji
     setTimeout(() => {
       const userData = {
         id: Date.now().toString(),
         name: formData.name,
         email: formData.email,
-        role: selectedRole
+        role: selectedRole,
       };
 
       // Zapisz dane użytkownika
-      localStorage.setItem('user', JSON.stringify(userData));
-      
+      localStorage.setItem("user", JSON.stringify(userData));
+
       setLoading(false);
       onClose();
-      
+
       // Przekieruj do odpowiedniego panelu
       setTimeout(() => {
         switch (selectedRole) {
-          case 'operator':
-            window.location.href = '/operator-dashboard';
+          case "operator":
+            window.location.href = "/operator-dashboard";
             break;
-          case 'client':
-            window.location.href = '/client-dashboard';
+          case "client":
+            window.location.href = "/client-dashboard";
             break;
           default:
-            window.location.href = '/';
+            window.location.href = "/";
         }
       }, 100);
     }, 1500);
   };
 
   const handleBack = () => {
-    if (step === 'form') {
-      setStep('role');
+    if (step === "form") {
+      setStep("role");
     } else {
       onClose();
     }
@@ -102,7 +110,7 @@ export default function RegisterModal({ show, onClose, onSwitchToLogin }: Regist
       <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center space-x-2">
-            {step === 'form' && (
+            {step === "form" && (
               <button
                 onClick={handleBack}
                 className="text-gray-400 hover:text-gray-600 w-6 h-6 flex items-center justify-center"
@@ -111,7 +119,7 @@ export default function RegisterModal({ show, onClose, onSwitchToLogin }: Regist
               </button>
             )}
             <h2 className="text-xl font-semibold text-gray-800">
-              {step === 'role' ? 'Wybierz typ konta' : 'Rejestracja'}
+              {step === "role" ? "Wybierz typ konta" : "Rejestracja"}
             </h2>
           </div>
           <button
@@ -122,10 +130,10 @@ export default function RegisterModal({ show, onClose, onSwitchToLogin }: Regist
           </button>
         </div>
 
-        {step === 'role' && (
+        {step === "role" && (
           <div className="space-y-4">
             <button
-              onClick={() => handleRoleSelect('client')}
+              onClick={() => handleRoleSelect("client")}
               className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors text-left"
             >
               <div className="flex items-center space-x-3">
@@ -134,13 +142,15 @@ export default function RegisterModal({ show, onClose, onSwitchToLogin }: Regist
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800">Zleceniodawca</h3>
-                  <p className="text-sm text-gray-600">Zlecam prace z wykorzystaniem dronów</p>
+                  <p className="text-sm text-gray-600">
+                    Zlecam prace z wykorzystaniem dronów
+                  </p>
                 </div>
               </div>
             </button>
 
             <button
-              onClick={() => handleRoleSelect('operator')}
+              onClick={() => handleRoleSelect("operator")}
               className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors text-left"
             >
               <div className="flex items-center space-x-3">
@@ -149,14 +159,16 @@ export default function RegisterModal({ show, onClose, onSwitchToLogin }: Regist
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800">Operator</h3>
-                  <p className="text-sm text-gray-600">Wykonuję usługi z wykorzystaniem dronów</p>
+                  <p className="text-sm text-gray-600">
+                    Wykonuję usługi z wykorzystaniem dronów
+                  </p>
                 </div>
               </div>
             </button>
           </div>
         )}
 
-        {step === 'form' && (
+        {step === "form" && (
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               label="Nazwa"
@@ -197,7 +209,7 @@ export default function RegisterModal({ show, onClose, onSwitchToLogin }: Regist
               required
             />
 
-            {selectedRole === 'operator' && (
+            {selectedRole === "operator" && (
               <>
                 <Input
                   label="Lokalizacja / Miejsce działalności"
@@ -225,7 +237,10 @@ export default function RegisterModal({ show, onClose, onSwitchToLogin }: Regist
                   </label>
                   <div className="space-y-2">
                     {services.map((service) => (
-                      <label key={service} className="flex items-center space-x-2 cursor-pointer">
+                      <label
+                        key={service}
+                        className="flex items-center space-x-2 cursor-pointer"
+                      >
                         <input
                           type="checkbox"
                           checked={formData.services.includes(service)}
@@ -254,11 +269,7 @@ export default function RegisterModal({ show, onClose, onSwitchToLogin }: Regist
               </>
             )}
 
-            <Button
-              type="submit"
-              className="w-full"
-              loading={loading}
-            >
+            <Button type="submit" className="w-full" loading={loading}>
               Utwórz konto
             </Button>
           </form>

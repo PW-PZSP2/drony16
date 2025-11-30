@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
@@ -7,30 +7,37 @@ import {
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Controller, useForm } from "react-hook-form"
-import * as z from "zod"
-import { AuthService } from "@/services/authorization_service"
-import HorizontalRadio from "../../base/HorizontalRadio/HorizontalRadio"
-import {useState} from "react";
-import { CircleCheck } from "lucide-react"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import * as z from "zod";
+import { AuthService } from "@/services/authorization_service";
+import HorizontalRadio from "../../base/HorizontalRadio/HorizontalRadio";
+import { useState } from "react";
+import { CircleCheck } from "lucide-react";
 
-const registerSchema = z.object({
-  username: z
-    .string()
-    .min(1, "Nazwa użytkownika jest wymagana.")
-    .min(3, "Nazwa użytkownika musi mieć co najmniej 3 znaki.")
-    .max(20, "Nazwa użytkownika może mieć maksymalnie 20 znaków."),
-  email: z.string().min(1, "Email jest wymagany.").email("Wprowadź prawidłowy adres email."),
-  password: z.string().min(1, "Hasło jest wymagane.").min(6, "Hasło musi mieć co najmniej 6 znaków."),
-  confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane."),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Hasła nie są identyczne.",
-  path: ["confirmPassword"],
-})
-
+const registerSchema = z
+  .object({
+    username: z
+      .string()
+      .min(1, "Nazwa użytkownika jest wymagana.")
+      .min(3, "Nazwa użytkownika musi mieć co najmniej 3 znaki.")
+      .max(20, "Nazwa użytkownika może mieć maksymalnie 20 znaków."),
+    email: z
+      .string()
+      .min(1, "Email jest wymagany.")
+      .email("Wprowadź prawidłowy adres email."),
+    password: z
+      .string()
+      .min(1, "Hasło jest wymagane.")
+      .min(6, "Hasło musi mieć co najmniej 6 znaków."),
+    confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane."),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Hasła nie są identyczne.",
+    path: ["confirmPassword"],
+  });
 
 export function RegisterForm({
   className,
@@ -44,21 +51,20 @@ export function RegisterForm({
       password: "",
       confirmPassword: "",
     },
-  })
+  });
 
   function onSubmit(data: z.infer<typeof registerSchema>) {
-    console.log("Register:", data)
+    console.log("Register:", data);
     // TODO: Call AuthService.register
   }
 
   return (
-    <form 
+    <form
       {...props}
-      className={cn("flex flex-col gap-6", className)} 
+      className={cn("flex flex-col gap-6", className)}
       onSubmit={form.handleSubmit(onSubmit)}
       noValidate
     >
-
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="text-2xl font-bold">Utwórz konto</h1>
@@ -66,24 +72,29 @@ export function RegisterForm({
             Wypełnij poniższe pola, aby utworzyć nowe konto
           </p>
         </div>
-        <HorizontalRadio options={[{label: "Operator", value: "operator"}, {label: "Klient", value: "client"}]}></HorizontalRadio>  
+        <HorizontalRadio
+          options={[
+            { label: "Operator", value: "operator" },
+            { label: "Klient", value: "client" },
+          ]}
+        ></HorizontalRadio>
         <Controller
           name="username"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="register-username">Nazwa użytkownika</FieldLabel>
-              <Input 
+              <FieldLabel htmlFor="register-username">
+                Nazwa użytkownika
+              </FieldLabel>
+              <Input
                 {...field}
-                id="register-username" 
-                type="text" 
+                id="register-username"
+                type="text"
                 placeholder="jan_kowalski"
                 aria-invalid={fieldState.invalid}
                 autoComplete="username"
               />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -93,17 +104,15 @@ export function RegisterForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="register-email">Email</FieldLabel>
-              <Input 
+              <Input
                 {...field}
-                id="register-email" 
-                type="email" 
+                id="register-email"
+                type="email"
                 placeholder="jan@example.com"
                 aria-invalid={fieldState.invalid}
                 autoComplete="email"
               />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -113,16 +122,14 @@ export function RegisterForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="register-password">Hasło</FieldLabel>
-              <Input 
+              <Input
                 {...field}
-                id="register-password" 
+                id="register-password"
                 type="password"
                 aria-invalid={fieldState.invalid}
                 autoComplete="new-password"
               />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -131,17 +138,17 @@ export function RegisterForm({
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="register-confirmPassword">Potwierdź hasło</FieldLabel>
-              <Input 
+              <FieldLabel htmlFor="register-confirmPassword">
+                Potwierdź hasło
+              </FieldLabel>
+              <Input
                 {...field}
-                id="register-confirmPassword" 
+                id="register-confirmPassword"
                 type="password"
                 aria-invalid={fieldState.invalid}
                 autoComplete="new-password"
               />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

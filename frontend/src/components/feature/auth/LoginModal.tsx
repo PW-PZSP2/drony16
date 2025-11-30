@@ -1,7 +1,6 @@
-
-import { useState } from 'react';
-import Button from '../../base/Button/Button';
-import Input from '../../base/Input/Input';
+import { useState } from "react";
+import Button from "../../base/Button/Button";
+import Input from "../../base/Input/Input";
 
 interface LoginModalProps {
   show: boolean;
@@ -10,10 +9,15 @@ interface LoginModalProps {
   onSwitchToRegister: () => void;
 }
 
-export default function LoginModal({ show, onClose, onLogin, onSwitchToRegister }: LoginModalProps) {
+export default function LoginModal({
+  show,
+  onClose,
+  onLogin,
+  onSwitchToRegister,
+}: LoginModalProps) {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -22,61 +26,61 @@ export default function LoginModal({ show, onClose, onLogin, onSwitchToRegister 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     // Symulacja logowania - w rzeczywistej aplikacji tutaj byłoby API
     setTimeout(() => {
       // Symulacja różnych typów użytkowników
       let userData;
-      if (formData.email.includes('admin')) {
+      if (formData.email.includes("admin")) {
         userData = {
-          id: '1',
-          name: 'Admin',
+          id: "1",
+          name: "Admin",
           email: formData.email,
-          role: 'admin'
+          role: "admin",
         };
-      } else if (formData.email.includes('operator')) {
+      } else if (formData.email.includes("operator")) {
         userData = {
-          id: '2',
-          name: 'Jan Kowalski',
+          id: "2",
+          name: "Jan Kowalski",
           email: formData.email,
-          role: 'operator'
+          role: "operator",
         };
       } else {
         userData = {
-          id: '3',
-          name: 'Anna Nowak',
+          id: "3",
+          name: "Anna Nowak",
           email: formData.email,
-          role: 'client'
+          role: "client",
         };
       }
 
       // Zapisz dane użytkownika
-      localStorage.setItem('user', JSON.stringify(userData));
-      
+      localStorage.setItem("user", JSON.stringify(userData));
+
       setLoading(false);
       onLogin(userData);
-      
+
       // Przekieruj do odpowiedniego panelu
       setTimeout(() => {
         switch (userData.role) {
-          case 'admin':
-            window.location.href = '/admin-dashboard';
+          case "admin":
+            window.location.href = "/admin-dashboard";
             break;
-          case 'operator':
-            window.location.href = '/operator-dashboard';
+          case "operator":
+            window.location.href = "/operator-dashboard";
             break;
-          case 'client':
-            window.location.href = '/client-dashboard';
+          case "client":
+            window.location.href = "/client-dashboard";
             break;
           default:
-            window.location.href = '/';
+            window.location.href = "/";
         }
       }, 100);
     }, 1500);
@@ -118,11 +122,7 @@ export default function LoginModal({ show, onClose, onLogin, onSwitchToRegister 
             required
           />
 
-          <Button
-            type="submit"
-            className="w-full"
-            loading={loading}
-          >
+          <Button type="submit" className="w-full" loading={loading}>
             Zaloguj się
           </Button>
         </form>
@@ -138,7 +138,9 @@ export default function LoginModal({ show, onClose, onLogin, onSwitchToRegister 
         </div>
 
         <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-700 font-medium mb-2">Demo - użyj tych emaili:</p>
+          <p className="text-sm text-blue-700 font-medium mb-2">
+            Demo - użyj tych emaili:
+          </p>
           <ul className="text-xs text-blue-600 space-y-1">
             <li>• admin@test.pl - Panel Admina</li>
             <li>• operator@test.pl - Panel Operatora</li>

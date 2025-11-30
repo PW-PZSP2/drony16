@@ -1,14 +1,14 @@
-
-import { useState } from 'react';
-import Button from '../components/base/Button/Button';
+import { useState } from "react";
+import Button from "../components/base/Button/Button";
 
 export default function OperatorDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
-      
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Panel Operatora</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            Panel Operatora
+          </h1>
           <p className="text-gray-600">Zarządzaj zleceniami i swoim profilem</p>
         </div>
 
@@ -29,40 +29,42 @@ export default function OperatorDashboard() {
 }
 
 function OrdersSection() {
-  const [activeTab, setActiveTab] = useState<'new' | 'confirmed' | 'history'>('new');
+  const [activeTab, setActiveTab] = useState<"new" | "confirmed" | "history">(
+    "new",
+  );
 
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <div className="border-b border-gray-200">
         <nav className="flex space-x-8 px-6">
           <button
-            onClick={() => setActiveTab('new')}
+            onClick={() => setActiveTab("new")}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'new'
-                ? 'border-green-500 text-green-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+              activeTab === "new"
+                ? "border-green-500 text-green-600"
+                : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
             <i className="ri-notification-line mr-2"></i>
             Nowe zlecenia
           </button>
           <button
-            onClick={() => setActiveTab('confirmed')}
+            onClick={() => setActiveTab("confirmed")}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'confirmed'
-                ? 'border-green-500 text-green-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+              activeTab === "confirmed"
+                ? "border-green-500 text-green-600"
+                : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
             <i className="ri-check-line mr-2"></i>
             Potwierdzone
           </button>
           <button
-            onClick={() => setActiveTab('history')}
+            onClick={() => setActiveTab("history")}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === 'history'
-                ? 'border-green-500 text-green-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+              activeTab === "history"
+                ? "border-green-500 text-green-600"
+                : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
             <i className="ri-history-line mr-2"></i>
@@ -72,9 +74,9 @@ function OrdersSection() {
       </div>
 
       <div className="p-6">
-        {activeTab === 'new' && <NewOrdersTab />}
-        {activeTab === 'confirmed' && <ConfirmedOrdersTab />}
-        {activeTab === 'history' && <HistoryOrdersTab />}
+        {activeTab === "new" && <NewOrdersTab />}
+        {activeTab === "confirmed" && <ConfirmedOrdersTab />}
+        {activeTab === "history" && <HistoryOrdersTab />}
       </div>
     </div>
   );
@@ -86,47 +88,67 @@ function NewOrdersTab() {
   const newOrders = [
     {
       id: 1,
-      title: 'Ortofotomapa działki budowlanej',
-      service: 'Ortofotomapa',
-      location: 'Warszawa, ul. Przykładowa 123',
-      distance: '15 km',
-      deadline: '2024-02-15',
-      client: 'Jan Kowalski',
-      description: 'Potrzebuję ortofotomapy działki o powierzchni 2 ha z dokładnością 2 cm/px...'
+      title: "Ortofotomapa działki budowlanej",
+      service: "Ortofotomapa",
+      location: "Warszawa, ul. Przykładowa 123",
+      distance: "15 km",
+      deadline: "2024-02-15",
+      client: "Jan Kowalski",
+      description:
+        "Potrzebuję ortofotomapy działki o powierzchni 2 ha z dokładnością 2 cm/px...",
     },
     {
       id: 2,
-      title: 'Inspekcja linii energetycznej',
-      service: 'Inspekcje',
-      location: 'Warszawa, ul. Energetyczna 45',
-      distance: '8 km',
-      deadline: '2024-02-18',
-      client: 'Energopol Sp. z o.o.',
-      description: 'Inspekcja 5 km linii wysokiego napięcia, dokumentacja fotograficzna...'
-    }
+      title: "Inspekcja linii energetycznej",
+      service: "Inspekcje",
+      location: "Warszawa, ul. Energetyczna 45",
+      distance: "8 km",
+      deadline: "2024-02-18",
+      client: "Energopol Sp. z o.o.",
+      description:
+        "Inspekcja 5 km linii wysokiego napięcia, dokumentacja fotograficzna...",
+    },
   ];
 
   if (selectedOrder) {
-    return <OrderDetailsModal orderId={selectedOrder} onBack={() => setSelectedOrder(null)} />;
+    return (
+      <OrderDetailsModal
+        orderId={selectedOrder}
+        onBack={() => setSelectedOrder(null)}
+      />
+    );
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Zlecenia w Twojej okolicy</h3>
-        <span className="text-sm text-gray-500">{newOrders.length} dostępnych zleceń</span>
+        <h3 className="text-lg font-semibold text-gray-800">
+          Zlecenia w Twojej okolicy
+        </h3>
+        <span className="text-sm text-gray-500">
+          {newOrders.length} dostępnych zleceń
+        </span>
       </div>
 
       {newOrders.map((order) => (
-        <div key={order.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+        <div
+          key={order.id}
+          className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+        >
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h4 className="text-lg font-semibold text-gray-800">{order.title}</h4>
+              <h4 className="text-lg font-semibold text-gray-800">
+                {order.title}
+              </h4>
               <p className="text-sm text-gray-600">{order.service}</p>
-              <p className="text-sm text-gray-500">Zleceniodawca: {order.client}</p>
+              <p className="text-sm text-gray-500">
+                Zleceniodawca: {order.client}
+              </p>
             </div>
             <div className="text-right">
-              <div className="text-sm text-gray-500">{order.distance} od Ciebie</div>
+              <div className="text-sm text-gray-500">
+                {order.distance} od Ciebie
+              </div>
             </div>
           </div>
 
@@ -141,11 +163,13 @@ function NewOrdersTab() {
             </div>
           </div>
 
-          <p className="text-sm text-gray-700 mb-4 line-clamp-2">{order.description}</p>
+          <p className="text-sm text-gray-700 mb-4 line-clamp-2">
+            {order.description}
+          </p>
 
           <div className="flex justify-between items-center">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={() => setSelectedOrder(order.id)}
             >
@@ -162,20 +186,27 @@ function NewOrdersTab() {
   );
 }
 
-function OrderDetailsModal({ orderId, onBack }: { orderId: number; onBack: () => void }) {
+function OrderDetailsModal({
+  orderId,
+  onBack,
+}: {
+  orderId: number;
+  onBack: () => void;
+}) {
   const [showProposalSent, setShowProposalSent] = useState(false);
 
   const order = {
     id: orderId,
-    title: 'Ortofotomapa działki budowlanej',
-    service: 'Ortofotomapa',
-    description: 'Potrzebuję wykonania ortofotomapy działki budowlanej o powierzchni około 2 hektarów. Zlecenie obejmuje nalot dronem oraz opracowanie ortofotomapy w rozdzielczości 2 cm/px. Wymagana dokładność pozycjonowania to 5 cm. Teren jest płaski, bez przeszkód.',
-    location: 'Warszawa, ul. Przykładowa 123, 00-001 Warszawa',
-    deadline: '2024-02-15',
-    deadlineType: 'flight',
-    client: 'Jan Kowalski',
-    createdDate: '2024-01-20',
-    distance: '15 km'
+    title: "Ortofotomapa działki budowlanej",
+    service: "Ortofotomapa",
+    description:
+      "Potrzebuję wykonania ortofotomapy działki budowlanej o powierzchni około 2 hektarów. Zlecenie obejmuje nalot dronem oraz opracowanie ortofotomapy w rozdzielczości 2 cm/px. Wymagana dokładność pozycjonowania to 5 cm. Teren jest płaski, bez przeszkód.",
+    location: "Warszawa, ul. Przykładowa 123, 00-001 Warszawa",
+    deadline: "2024-02-15",
+    deadlineType: "flight",
+    client: "Jan Kowalski",
+    createdDate: "2024-01-20",
+    distance: "15 km",
   };
 
   const handleAccept = () => {
@@ -202,7 +233,9 @@ function OrderDetailsModal({ orderId, onBack }: { orderId: number; onBack: () =>
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
           <div className="flex items-center">
             <i className="ri-check-circle-line text-green-600 mr-2"></i>
-            <span className="text-green-800 font-medium">Propozycja została wysłana!</span>
+            <span className="text-green-800 font-medium">
+              Propozycja została wysłana!
+            </span>
           </div>
         </div>
       )}
@@ -212,7 +245,9 @@ function OrderDetailsModal({ orderId, onBack }: { orderId: number; onBack: () =>
           <div>
             <h2 className="text-2xl font-bold text-gray-800">{order.title}</h2>
             <p className="text-gray-600">{order.service}</p>
-            <p className="text-sm text-gray-500">Zleceniodawca: {order.client}</p>
+            <p className="text-sm text-gray-500">
+              Zleceniodawca: {order.client}
+            </p>
           </div>
           <span className="px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
             Dostępne
@@ -221,7 +256,9 @@ function OrderDetailsModal({ orderId, onBack }: { orderId: number; onBack: () =>
 
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           <div>
-            <h4 className="font-medium text-gray-800 mb-2">Szczegóły zlecenia</h4>
+            <h4 className="font-medium text-gray-800 mb-2">
+              Szczegóły zlecenia
+            </h4>
             <div className="space-y-2 text-sm">
               <div className="flex items-center text-gray-600">
                 <i className="ri-map-pin-line mr-2"></i>
@@ -233,7 +270,10 @@ function OrderDetailsModal({ orderId, onBack }: { orderId: number; onBack: () =>
               </div>
               <div className="flex items-center text-gray-600">
                 <i className="ri-calendar-line mr-2"></i>
-                {order.deadlineType === 'flight' ? 'Nalot do: ' : 'Zakończenie do: '}{order.deadline}
+                {order.deadlineType === "flight"
+                  ? "Nalot do: "
+                  : "Zakończenie do: "}
+                {order.deadline}
               </div>
               <div className="flex items-center text-gray-600">
                 <i className="ri-calendar-check-line mr-2"></i>
@@ -251,7 +291,10 @@ function OrderDetailsModal({ orderId, onBack }: { orderId: number; onBack: () =>
           <Button variant="outline" onClick={onBack}>
             Anuluj
           </Button>
-          <Button onClick={handleAccept} className="bg-green-600 hover:bg-green-700">
+          <Button
+            onClick={handleAccept}
+            className="bg-green-600 hover:bg-green-700"
+          >
             <i className="ri-hand-heart-line mr-2"></i>
             Zgłoś się do zlecenia
           </Button>
@@ -268,27 +311,36 @@ function ConfirmedOrdersTab() {
   const confirmedOrders = [
     {
       id: 3,
-      title: 'Model 3D budynku',
-      service: 'Modele 3D',
-      location: 'Kraków, ul. Testowa 45, 30-001 Kraków',
-      deadline: '2024-02-20',
-      client: 'Anna Nowak',
-      clientEmail: 'anna.nowak@email.com',
-      clientPhone: '+48 600 123 456',
-      status: 'in_progress',
-      confirmedDate: '2024-02-10'
-    }
+      title: "Model 3D budynku",
+      service: "Modele 3D",
+      location: "Kraków, ul. Testowa 45, 30-001 Kraków",
+      deadline: "2024-02-20",
+      client: "Anna Nowak",
+      clientEmail: "anna.nowak@email.com",
+      clientPhone: "+48 600 123 456",
+      status: "in_progress",
+      confirmedDate: "2024-02-10",
+    },
   ];
 
   if (selectedOrder) {
-    return <ConfirmedOrderDetails orderId={selectedOrder} onBack={() => setSelectedOrder(null)} />;
+    return (
+      <ConfirmedOrderDetails
+        orderId={selectedOrder}
+        onBack={() => setSelectedOrder(null)}
+      />
+    );
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Potwierdzone zlecenia (ostatnie 7 dni)</h3>
-        <span className="text-sm text-gray-500">{confirmedOrders.length} aktywnych</span>
+        <h3 className="text-lg font-semibold text-gray-800">
+          Potwierdzone zlecenia (ostatnie 7 dni)
+        </h3>
+        <span className="text-sm text-gray-500">
+          {confirmedOrders.length} aktywnych
+        </span>
       </div>
 
       {confirmedOrders.length === 0 ? (
@@ -298,12 +350,19 @@ function ConfirmedOrdersTab() {
         </div>
       ) : (
         confirmedOrders.map((order) => (
-          <div key={order.id} className="border border-green-200 bg-green-50 rounded-lg p-6">
+          <div
+            key={order.id}
+            className="border border-green-200 bg-green-50 rounded-lg p-6"
+          >
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h4 className="text-lg font-semibold text-gray-800">{order.title}</h4>
+                <h4 className="text-lg font-semibold text-gray-800">
+                  {order.title}
+                </h4>
                 <p className="text-sm text-gray-600">{order.service}</p>
-                <p className="text-sm text-gray-500">Zleceniodawca: {order.client}</p>
+                <p className="text-sm text-gray-500">
+                  Zleceniodawca: {order.client}
+                </p>
               </div>
               <div className="text-right">
                 <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
@@ -329,17 +388,25 @@ function ConfirmedOrdersTab() {
 
             {showContact === order.id && (
               <div className="bg-white p-4 rounded-lg mb-4 border border-gray-200">
-                <h5 className="font-medium text-gray-800 mb-2">Dane kontaktowe klienta:</h5>
+                <h5 className="font-medium text-gray-800 mb-2">
+                  Dane kontaktowe klienta:
+                </h5>
                 <div className="space-y-1 text-sm">
                   <div className="flex items-center text-gray-600">
                     <i className="ri-mail-line mr-2"></i>
-                    <a href={`mailto:${order.clientEmail}`} className="text-blue-600 hover:text-blue-700">
+                    <a
+                      href={`mailto:${order.clientEmail}`}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
                       {order.clientEmail}
                     </a>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <i className="ri-phone-line mr-2"></i>
-                    <a href={`tel:${order.clientPhone}`} className="text-blue-600 hover:text-blue-700">
+                    <a
+                      href={`tel:${order.clientPhone}`}
+                      className="text-blue-600 hover:text-blue-700"
+                    >
                       {order.clientPhone}
                     </a>
                   </div>
@@ -348,16 +415,20 @@ function ConfirmedOrdersTab() {
             )}
 
             <div className="flex justify-between items-center">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
-                onClick={() => setShowContact(showContact === order.id ? null : order.id)}
+                onClick={() =>
+                  setShowContact(showContact === order.id ? null : order.id)
+                }
               >
-                {showContact === order.id ? 'Ukryj kontakt' : 'Kontakt z klientem'}
+                {showContact === order.id
+                  ? "Ukryj kontakt"
+                  : "Kontakt z klientem"}
               </Button>
               <div className="space-x-2">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
                   onClick={() => setSelectedOrder(order.id)}
                 >
@@ -372,18 +443,25 @@ function ConfirmedOrdersTab() {
   );
 }
 
-function ConfirmedOrderDetails({ orderId, onBack }: { orderId: number; onBack: () => void }) {
+function ConfirmedOrderDetails({
+  orderId,
+  onBack,
+}: {
+  orderId: number;
+  onBack: () => void;
+}) {
   const order = {
     id: orderId,
-    title: 'Model 3D budynku',
-    service: 'Modele 3D',
-    description: 'Potrzebuję wykonania modelu 3D zabytkowego budynku. Model ma służyć do celów dokumentacyjnych i prezentacyjnych. Wymagana wysoka jakość tekstur i dokładność odwzorowania detali architektonicznych.',
-    location: 'Kraków, ul. Testowa 45, 30-001 Kraków',
-    deadline: '2024-02-20',
-    deadlineType: 'completion',
-    client: 'Anna Nowak',
-    confirmedDate: '2024-02-10',
-    createdDate: '2024-02-05'
+    title: "Model 3D budynku",
+    service: "Modele 3D",
+    description:
+      "Potrzebuję wykonania modelu 3D zabytkowego budynku. Model ma służyć do celów dokumentacyjnych i prezentacyjnych. Wymagana wysoka jakość tekstur i dokładność odwzorowania detali architektonicznych.",
+    location: "Kraków, ul. Testowa 45, 30-001 Kraków",
+    deadline: "2024-02-20",
+    deadlineType: "completion",
+    client: "Anna Nowak",
+    confirmedDate: "2024-02-10",
+    createdDate: "2024-02-05",
   };
 
   return (
@@ -403,7 +481,9 @@ function ConfirmedOrderDetails({ orderId, onBack }: { orderId: number; onBack: (
           <div>
             <h2 className="text-2xl font-bold text-gray-800">{order.title}</h2>
             <p className="text-gray-600">{order.service}</p>
-            <p className="text-sm text-gray-500">Zleceniodawca: {order.client}</p>
+            <p className="text-sm text-gray-500">
+              Zleceniodawca: {order.client}
+            </p>
           </div>
           <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
             Potwierdzone
@@ -412,7 +492,9 @@ function ConfirmedOrderDetails({ orderId, onBack }: { orderId: number; onBack: (
 
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           <div>
-            <h4 className="font-medium text-gray-800 mb-2">Szczegóły zlecenia</h4>
+            <h4 className="font-medium text-gray-800 mb-2">
+              Szczegóły zlecenia
+            </h4>
             <div className="space-y-2 text-sm">
               <div className="flex items-center text-gray-600">
                 <i className="ri-map-pin-line mr-2"></i>
@@ -420,7 +502,10 @@ function ConfirmedOrderDetails({ orderId, onBack }: { orderId: number; onBack: (
               </div>
               <div className="flex items-center text-gray-600">
                 <i className="ri-calendar-line mr-2"></i>
-                {order.deadlineType === 'flight' ? 'Nalot do: ' : 'Zakończenie do: '}{order.deadline}
+                {order.deadlineType === "flight"
+                  ? "Nalot do: "
+                  : "Zakończenie do: "}
+                {order.deadline}
               </div>
               <div className="flex items-center text-gray-600">
                 <i className="ri-check-line mr-2"></i>
@@ -448,44 +533,55 @@ function HistoryOrdersTab() {
   const historyOrders = [
     {
       id: 4,
-      title: 'Chmura punktów terenu',
-      service: 'Chmura punktów',
-      location: 'Wrocław, ul. Polna 89, 50-001 Wrocław',
-      completedDate: '2024-01-10',
-      client: 'GeoSurvey Sp. z o.o.',
+      title: "Chmura punktów terenu",
+      service: "Chmura punktów",
+      location: "Wrocław, ul. Polna 89, 50-001 Wrocław",
+      completedDate: "2024-01-10",
+      client: "GeoSurvey Sp. z o.o.",
       rating: 5,
-      review: 'Doskonała jakość pracy, terminowość i profesjonalizm.'
+      review: "Doskonała jakość pracy, terminowość i profesjonalizm.",
     },
     {
       id: 5,
-      title: 'Ortofotomapa lasu',
-      service: 'Ortofotomapa',
-      location: 'Zakopane, Las Państwowy, 34-500 Zakopane',
-      completedDate: '2024-01-05',
-      client: 'Lasy Państwowe',
+      title: "Ortofotomapa lasu",
+      service: "Ortofotomapa",
+      location: "Zakopane, Las Państwowy, 34-500 Zakopane",
+      completedDate: "2024-01-05",
+      client: "Lasy Państwowe",
       rating: 4,
-      review: 'Bardzo dobra jakość, drobne uwagi do dokumentacji.'
-    }
+      review: "Bardzo dobra jakość, drobne uwagi do dokumentacji.",
+    },
   ];
 
   if (selectedOrder) {
-    return <HistoryOrderDetails orderId={selectedOrder} onBack={() => setSelectedOrder(null)} />;
+    return (
+      <HistoryOrderDetails
+        orderId={selectedOrder}
+        onBack={() => setSelectedOrder(null)}
+      />
+    );
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-800">Historia zleceń</h3>
-        <span className="text-sm text-gray-500">{historyOrders.length} zakończonych</span>
+        <span className="text-sm text-gray-500">
+          {historyOrders.length} zakończonych
+        </span>
       </div>
 
       {historyOrders.map((order) => (
         <div key={order.id} className="border border-gray-200 rounded-lg p-6">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h4 className="text-lg font-semibold text-gray-800">{order.title}</h4>
+              <h4 className="text-lg font-semibold text-gray-800">
+                {order.title}
+              </h4>
               <p className="text-sm text-gray-600">{order.service}</p>
-              <p className="text-sm text-gray-500">Zleceniodawca: {order.client}</p>
+              <p className="text-sm text-gray-500">
+                Zleceniodawca: {order.client}
+              </p>
             </div>
             <div className="text-right">
               <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">
@@ -507,23 +603,27 @@ function HistoryOrdersTab() {
 
           <div className="bg-gray-50 p-3 rounded-lg mb-4">
             <div className="flex items-center mb-2">
-              <span className="text-sm font-medium text-gray-700 mr-2">Ocena klienta:</span>
+              <span className="text-sm font-medium text-gray-700 mr-2">
+                Ocena klienta:
+              </span>
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <i
                     key={star}
-                    className={`ri-star-${star <= order.rating ? 'fill' : 'line'} text-yellow-400`}
+                    className={`ri-star-${star <= order.rating ? "fill" : "line"} text-yellow-400`}
                   ></i>
                 ))}
               </div>
-              <span className="text-sm text-gray-600 ml-2">({order.rating}/5)</span>
+              <span className="text-sm text-gray-600 ml-2">
+                ({order.rating}/5)
+              </span>
             </div>
             <p className="text-sm text-gray-700 italic">"{order.review}"</p>
           </div>
 
           <div className="flex justify-end">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={() => setSelectedOrder(order.id)}
             >
@@ -536,19 +636,26 @@ function HistoryOrdersTab() {
   );
 }
 
-function HistoryOrderDetails({ orderId, onBack }: { orderId: number; onBack: () => void }) {
+function HistoryOrderDetails({
+  orderId,
+  onBack,
+}: {
+  orderId: number;
+  onBack: () => void;
+}) {
   const order = {
     id: orderId,
-    title: 'Chmura punktów terenu',
-    service: 'Chmura punktów',
-    description: 'Wykonanie chmury punktów terenu o powierzchni 5 hektarów dla celów projektowych. Wymagana gęstość punktów minimum 500 pkt/m². Teren częściowo zadrzewiony, wymagana klasyfikacja punktów.',
-    location: 'Wrocław, ul. Polna 89, 50-001 Wrocław',
-    completedDate: '2024-01-10',
-    client: 'GeoSurvey Sp. z o.o.',
+    title: "Chmura punktów terenu",
+    service: "Chmura punktów",
+    description:
+      "Wykonanie chmury punktów terenu o powierzchni 5 hektarów dla celów projektowych. Wymagana gęstość punktów minimum 500 pkt/m². Teren częściowo zadrzewiony, wymagana klasyfikacja punktów.",
+    location: "Wrocław, ul. Polna 89, 50-001 Wrocław",
+    completedDate: "2024-01-10",
+    client: "GeoSurvey Sp. z o.o.",
     rating: 5,
-    review: 'Doskonała jakość pracy, terminowość i profesjonalizm.',
-    createdDate: '2023-12-20',
-    deadline: '2024-01-08'
+    review: "Doskonała jakość pracy, terminowość i profesjonalizm.",
+    createdDate: "2023-12-20",
+    deadline: "2024-01-08",
   };
 
   return (
@@ -568,7 +675,9 @@ function HistoryOrderDetails({ orderId, onBack }: { orderId: number; onBack: () 
           <div>
             <h2 className="text-2xl font-bold text-gray-800">{order.title}</h2>
             <p className="text-gray-600">{order.service}</p>
-            <p className="text-sm text-gray-500">Zleceniodawca: {order.client}</p>
+            <p className="text-sm text-gray-500">
+              Zleceniodawca: {order.client}
+            </p>
           </div>
           <span className="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
             Zakończone
@@ -577,7 +686,9 @@ function HistoryOrderDetails({ orderId, onBack }: { orderId: number; onBack: () 
 
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           <div>
-            <h4 className="font-medium text-gray-800 mb-2">Szczegóły zlecenia</h4>
+            <h4 className="font-medium text-gray-800 mb-2">
+              Szczegóły zlecenia
+            </h4>
             <div className="space-y-2 text-sm">
               <div className="flex items-center text-gray-600">
                 <i className="ri-map-pin-line mr-2"></i>
@@ -610,11 +721,13 @@ function HistoryOrderDetails({ orderId, onBack }: { orderId: number; onBack: () 
               {[1, 2, 3, 4, 5].map((star) => (
                 <i
                   key={star}
-                  className={`ri-star-${star <= order.rating ? 'fill' : 'line'} text-yellow-400 text-lg`}
+                  className={`ri-star-${star <= order.rating ? "fill" : "line"} text-yellow-400 text-lg`}
                 ></i>
               ))}
             </div>
-            <span className="text-sm text-gray-600 ml-2">({order.rating}/5)</span>
+            <span className="text-sm text-gray-600 ml-2">
+              ({order.rating}/5)
+            </span>
           </div>
           <p className="text-sm text-gray-700 italic">"{order.review}"</p>
         </div>
@@ -626,31 +739,32 @@ function HistoryOrderDetails({ orderId, onBack }: { orderId: number; onBack: () 
 function OperatorProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
-    name: 'SkyTech Drones',
+    name: "SkyTech Drones",
     rating: 4.8,
     completedJobs: 47,
-    location: 'Warszawa, ul. Nowogrodzka 15/23, 00-511 Warszawa',
+    location: "Warszawa, ul. Nowogrodzka 15/23, 00-511 Warszawa",
     operatingRadius: 100,
-    description: 'Profesjonalne usługi dronowe z 5-letnim doświadczeniem. Specjalizujemy się w ortofotomapach i modelach 3D.',
-    services: ['Ortofotomapa', 'Modele 3D', 'Inspekcje'],
+    description:
+      "Profesjonalne usługi dronowe z 5-letnim doświadczeniem. Specjalizujemy się w ortofotomapach i modelach 3D.",
+    services: ["Ortofotomapa", "Modele 3D", "Inspekcje"],
     portfolio: [
-      { title: 'Ortofotomapa centrum miasta', file: 'ortofoto_centrum.pdf' },
-      { title: 'Model 3D zabytkowego kościoła', file: 'model_3d_kosciol.zip' }
-    ]
+      { title: "Ortofotomapa centrum miasta", file: "ortofoto_centrum.pdf" },
+      { title: "Model 3D zabytkowego kościoła", file: "model_3d_kosciol.zip" },
+    ],
   });
 
   const [editingServices, setEditingServices] = useState(false);
-  const [newService, setNewService] = useState('');
+  const [newService, setNewService] = useState("");
 
   const availableServices = [
-    'Ortofotomapa',
-    'Numeryczne modele terenu',
-    'Chmura punktów',
-    'Modele 3D',
-    'Scanning laserowy',
-    'Inspekcje',
-    'Monitoring',
-    'Fotografia lotnicza'
+    "Ortofotomapa",
+    "Numeryczne modele terenu",
+    "Chmura punktów",
+    "Modele 3D",
+    "Scanning laserowy",
+    "Inspekcje",
+    "Monitoring",
+    "Fotografia lotnicza",
   ];
 
   const handleSaveProfile = () => {
@@ -662,7 +776,7 @@ function OperatorProfile() {
     if (!profile.services.includes(service)) {
       setProfile({
         ...profile,
-        services: [...profile.services, service]
+        services: [...profile.services, service],
       });
     }
   };
@@ -670,7 +784,9 @@ function OperatorProfile() {
   const removeService = (serviceToRemove: string) => {
     setProfile({
       ...profile,
-      services: profile.services.filter(service => service !== serviceToRemove)
+      services: profile.services.filter(
+        (service) => service !== serviceToRemove,
+      ),
     });
   };
 
@@ -681,10 +797,10 @@ function OperatorProfile() {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => isEditing ? handleSaveProfile() : setIsEditing(true)}
+          onClick={() => (isEditing ? handleSaveProfile() : setIsEditing(true))}
         >
           <i className="ri-edit-line mr-2"></i>
-          {isEditing ? 'Zapisz' : 'Edytuj'}
+          {isEditing ? "Zapisz" : "Edytuj"}
         </Button>
       </div>
 
@@ -699,24 +815,30 @@ function OperatorProfile() {
             {[1, 2, 3, 4, 5].map((star) => (
               <i
                 key={star}
-                className={`ri-star-${star <= Math.floor(profile.rating) ? 'fill' : 'line'} text-yellow-400`}
+                className={`ri-star-${star <= Math.floor(profile.rating) ? "fill" : "line"} text-yellow-400`}
               ></i>
             ))}
           </div>
           <span className="text-sm text-gray-600 ml-2">({profile.rating})</span>
         </div>
-        <p className="text-sm text-gray-500 mt-1">{profile.completedJobs} zakończonych zleceń</p>
+        <p className="text-sm text-gray-500 mt-1">
+          {profile.completedJobs} zakończonych zleceń
+        </p>
       </div>
 
       {/* Profile Details */}
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Lokalizacja</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Lokalizacja
+          </label>
           {isEditing ? (
             <input
               type="text"
               value={profile.location}
-              onChange={(e) => setProfile({...profile, location: e.target.value})}
+              onChange={(e) =>
+                setProfile({ ...profile, location: e.target.value })
+              }
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
             />
           ) : (
@@ -728,13 +850,20 @@ function OperatorProfile() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Obszar działania</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Obszar działania
+          </label>
           {isEditing ? (
             <div className="flex items-center space-x-2">
               <input
                 type="number"
                 value={profile.operatingRadius}
-                onChange={(e) => setProfile({...profile, operatingRadius: parseInt(e.target.value)})}
+                onChange={(e) =>
+                  setProfile({
+                    ...profile,
+                    operatingRadius: parseInt(e.target.value),
+                  })
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
               />
               <span className="text-sm text-gray-500">km</span>
@@ -748,11 +877,15 @@ function OperatorProfile() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Opis</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Opis
+          </label>
           {isEditing ? (
             <textarea
               value={profile.description}
-              onChange={(e) => setProfile({...profile, description: e.target.value})}
+              onChange={(e) =>
+                setProfile({ ...profile, description: e.target.value })
+              }
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
             />
@@ -763,17 +896,19 @@ function OperatorProfile() {
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="block text-sm font-medium text-gray-700">Świadczone usługi</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Świadczone usługi
+            </label>
             {isEditing && (
               <button
                 onClick={() => setEditingServices(!editingServices)}
                 className="text-sm text-blue-600 hover:text-blue-700"
               >
-                {editingServices ? 'Zakończ edycję' : 'Edytuj usługi'}
+                {editingServices ? "Zakończ edycję" : "Edytuj usługi"}
               </button>
             )}
           </div>
-          
+
           <div className="flex flex-wrap gap-2 mb-2">
             {profile.services.map((service, index) => (
               <span
@@ -795,10 +930,12 @@ function OperatorProfile() {
 
           {editingServices && (
             <div className="space-y-2">
-              <p className="text-xs text-gray-500">Dostępne usługi do dodania:</p>
+              <p className="text-xs text-gray-500">
+                Dostępne usługi do dodania:
+              </p>
               <div className="flex flex-wrap gap-2">
                 {availableServices
-                  .filter(service => !profile.services.includes(service))
+                  .filter((service) => !profile.services.includes(service))
                   .map((service, index) => (
                     <button
                       key={index}
@@ -814,10 +951,15 @@ function OperatorProfile() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Portfolio</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Portfolio
+          </label>
           <div className="space-y-2">
             {profile.portfolio.map((item, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+              >
                 <div className="flex items-center">
                   <i className="ri-file-line text-gray-400 mr-2"></i>
                   <span className="text-sm text-gray-700">{item.title}</span>
@@ -837,30 +979,42 @@ function OperatorProfile() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Opinie klientów</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Opinie klientów
+          </label>
           <div className="space-y-3">
             <div className="p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center mb-2">
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <i key={star} className="ri-star-fill text-yellow-400 text-xs"></i>
+                    <i
+                      key={star}
+                      className="ri-star-fill text-yellow-400 text-xs"
+                    ></i>
                   ))}
                 </div>
                 <span className="text-xs text-gray-500 ml-2">Jan Kowalski</span>
               </div>
-              <p className="text-xs text-gray-600">"Doskonała jakość pracy, terminowość i profesjonalizm."</p>
+              <p className="text-xs text-gray-600">
+                "Doskonała jakość pracy, terminowość i profesjonalizm."
+              </p>
             </div>
             <div className="p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center mb-2">
                 <div className="flex">
                   {[1, 2, 3, 4].map((star) => (
-                    <i key={star} className="ri-star-fill text-yellow-400 text-xs"></i>
+                    <i
+                      key={star}
+                      className="ri-star-fill text-yellow-400 text-xs"
+                    ></i>
                   ))}
                   <i className="ri-star-line text-yellow-400 text-xs"></i>
                 </div>
                 <span className="text-xs text-gray-500 ml-2">Anna Nowak</span>
               </div>
-              <p className="text-xs text-gray-600">"Bardzo dobra jakość, drobne uwagi do dokumentacji."</p>
+              <p className="text-xs text-gray-600">
+                "Bardzo dobra jakość, drobne uwagi do dokumentacji."
+              </p>
             </div>
           </div>
         </div>

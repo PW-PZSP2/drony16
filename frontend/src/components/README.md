@@ -4,11 +4,11 @@ Purpose:
 
 Houses all compoenents
 
-Folders 
+Folders
+
 - base - all dump, not specyfic compoents
 - feature - feature based compoents
 - ui - compoenents imported from external library(shad cn)
-
 
 Contents
 

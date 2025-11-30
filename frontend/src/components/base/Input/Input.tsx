@@ -1,3 +1,3 @@
 export default function Input(props: any) {
-    return <input {...props} />;
+  return <input {...props} />;
 }
