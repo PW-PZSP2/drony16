@@ -1,4 +1,4 @@
-import { User } from "../types/auth/user";
+import type { User } from "../types/auth/user";
 import { Roles } from "../types/auth/user_role";
 
 interface LoginPasswordCredentials {
@@ -7,27 +7,32 @@ interface LoginPasswordCredentials {
 }
 
 const mockUser: User = {
-  id: 1,
   username: "john_doe",
   email: "john@example.com",
-  role: [Roles.ADMIN, Roles.OPERATOR],
+  roles: [Roles.ADMIN, Roles.OPERATOR],
 };
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function login(credentials: LoginPasswordCredentials): Promise<User> {
+  await delay(2000);
   return Promise.resolve(mockUser);
 }
 
 async function logout(): Promise<void> {
+  await delay(2000);
   return Promise.resolve();
 }
 
 async function register(
   userData: Partial<User> & { password: string },
 ): Promise<User> {
-  return mockUser;
+  await delay(2000);
+  return Promise.resolve(mockUser);
 }
 
 async function getCurrentUser(): Promise<User | null> {
+  await delay(2000);
   return Promise.resolve(mockUser);
 }
 
