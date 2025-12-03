@@ -53,9 +53,23 @@ export function RegisterForm({
     },
   });
 
-  function onSubmit(data: z.infer<typeof registerSchema>) {
-    console.log("Register:", data);
-    // TODO: Call AuthService.register
+  async function onSubmit(data: z.infer<typeof registerSchema>) {
+    try {
+      const user = await AuthService.register({
+        username: data.username,
+        email: data.email,
+        password: data.password,
+        roles: ["client"], // Default role
+      });
+
+      if (user) {
+        window.location.href = "?action=login";
+      } else {
+        console.error("Registration failed");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+    }
   }
 
   return (

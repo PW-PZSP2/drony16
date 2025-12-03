@@ -7,12 +7,15 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
+    username: str
     password: str
 
 
 class UserResponse(UserBase):
     id: int
+    username: str
     is_active: bool
+    roles: list[str] = []
 
     class Config:
         from_attributes = True

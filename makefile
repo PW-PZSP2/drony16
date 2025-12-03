@@ -1,6 +1,6 @@
-
+# we use compose v2
 start:
-	docker-compose up
+	docker compose up -d
 
 stop:
-	docker-compose down -v
+	docker compose down -v

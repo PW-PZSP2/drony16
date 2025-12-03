@@ -1,44 +1,87 @@
 import type { User } from "../types/auth/user";
-import { Roles } from "../types/auth/user_role";
+
 
 interface LoginPasswordCredentials {
   username: string;
   password: string;
 }
 
-const mockUser: User = {
-  username: "john_doe",
-  email: "john@example.com",
-  roles: [Roles.ADMIN, Roles.OPERATOR],
-};
+const API_URL = "http://localhost:8080";
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+async function login(credentials: LoginPasswordCredentials): Promise<User | null> {
+  const formData = new FormData();
+  formData.append("username", credentials.username);
+  formData.append("password", credentials.password);
 
-async function login(credentials: LoginPasswordCredentials): Promise<User> {
-  await delay(2000);
-  return Promise.resolve(mockUser);
+  try {
+    const response = await fetch(`${API_URL}/token`, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return getCurrentUser();
+  } catch (error) {
+    console.error("Login error:", error);
+    return null;
+  }
 }
 
 async function logout(): Promise<void> {
-  await delay(2000);
-  return Promise.resolve();
+  try {
+    await fetch(`${API_URL}/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
 }
 
 async function register(
   userData: Partial<User> & { password: string },
-): Promise<User> {
-  await delay(2000);
-  return Promise.resolve(mockUser);
+): Promise<User | null> {
+  try {
+    const response = await fetch(`${API_URL}/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Register error:", error);
+    return null;
+  }
 }
 
 async function getCurrentUser(): Promise<User | null> {
-  await delay(2000);
-  return Promise.resolve(mockUser);
+  try {
+    const response = await fetch(`${API_URL}/users/me`, {
+      credentials: "include",
+    });
+    if (!response.ok) {
+      return null;
+    }
+    return response.json();
+  } catch (error) {
+    return null;
+  }
 }
 
 export const AuthService = {
-  login: login,
-  logout: logout,
-  register: register,
-  getCurrentUser: getCurrentUser,
+  login,
+  logout,
+  register,
+  getCurrentUser,
 };
