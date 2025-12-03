@@ -1,6 +1,5 @@
 import type { User } from "../types/auth/user";
 
-
 interface LoginPasswordCredentials {
   username: string;
   password: string;
@@ -8,7 +7,9 @@ interface LoginPasswordCredentials {
 
 const API_URL = "http://localhost:8080";
 
-async function login(credentials: LoginPasswordCredentials): Promise<User | null> {
+async function login(
+  credentials: LoginPasswordCredentials,
+): Promise<User | null> {
   const formData = new FormData();
   formData.append("username", credentials.username);
   formData.append("password", credentials.password);

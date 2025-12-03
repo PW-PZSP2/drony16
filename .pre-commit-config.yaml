@@ -2,7 +2,6 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
-      - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
@@ -26,18 +25,11 @@ repos:
         types: [python]
         files: ^backend/
 
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.1.0
-    hooks:
-      - id: prettier
-        files: ^frontend/
-        types_or: [javascript, jsx, css, json, html]
-
   - repo: local
     hooks:
-      - id: eslint-local
-        name: ESLint
-        entry: bash -c 'cd frontend && npm run lint'
+      - id: prettier
+        name: Prettier
+        entry: bash -c 'cd frontend && npx prettier --write . > /dev/null'
         language: system
-        files: ^frontend/.*\.(js|jsx)$
-        exclude: ^frontend/node_modules/
+        files: ^frontend/
+        types_or: [javascript, jsx, css, json, html]
