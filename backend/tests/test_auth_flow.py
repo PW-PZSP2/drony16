@@ -28,9 +28,9 @@ async def test_auth_flow():
         print("Accessing protected route...")
         headers = {"Authorization": f"Bearer {access_token}"}
         response = await client.get("/users/me", headers=headers)
-        assert (
-            response.status_code == 200
-        ), f"Access to protected route failed: {response.text}"
+        assert response.status_code == 200, (
+            f"Access to protected route failed: {response.text}"
+        )
         user_data = response.json()
         assert user_data["email"] == "test@example.com"
         print(f"Protected route accessed successfully. User: {user_data['email']}")

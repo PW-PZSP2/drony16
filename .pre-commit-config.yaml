@@ -6,14 +6,19 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.11
+  - repo: local
     hooks:
       - id: ruff
-        args: [--fix]
+        name: Ruff
+        entry: ruff check --fix
+        language: system
+        types: [python]
         files: ^backend/
-
       - id: ruff-format
+        name: Ruff Format
+        entry: ruff format
+        language: system
+        types: [python]
         files: ^backend/
 
   - repo: local
