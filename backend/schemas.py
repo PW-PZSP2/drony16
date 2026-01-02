@@ -15,9 +15,7 @@ class UserCreate(UserBase):
 
 
 class UserResponse(UserBase):
-    id: int = Field(...,
-    serialization_alias="user_id",
-    validation_alias="user_id")
+    id: int = Field(..., serialization_alias="user_id", validation_alias="user_id")
     username: str
     is_blocked: str
     role: str
