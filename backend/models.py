@@ -1,13 +1,124 @@
-from sqlalchemy import Column, Integer, String, Boolean, JSON
+from sqlalchemy import Column, Integer, String, Text, Date, ForeignKey, CHAR
+from sqlalchemy.orm import relationship, declarative_base
 from database import Base
-
+from datetime import datetime
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = 'user'
+    
+    user_id = Column(Integer, primary_key=True)
+    username = Column(Text, nullable=False)
+    email = Column(Text, nullable=False, unique=True)
+    password = Column(Text, nullable=False)
+    role = Column(CHAR(3), nullable=False)
+    phone_number = Column(Text, nullable=False)
+    is_blocked = Column(CHAR(1), nullable=False, default="N")
+    creation_date = Column(Date, nullable=False)
+    
+    localisation = Column(Text)
+    area = Column(Integer)
+    description = Column(Text)
 
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    username = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
-    roles = Column(JSON, default=[])
+    attachments = relationship("Attachment", back_populates="operator")
+    services_provided = relationship("OperatorService", back_populates="operator")
+    orders_as_client = relationship("Order", foreign_keys="[Order.client_id]", back_populates="client")
+    orders_as_operator = relationship("Order", foreign_keys="[Order.operator_id]", back_populates="operator")
+    reports = relationship("ReportedOperator", back_populates="operator")
+
+
+class Attachment(Base):
+    __tablename__ = 'attachment'
+    
+    attachment_id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
+    description = Column(Text)
+    file_path = Column(Text, nullable=False)
+    operator_id = Column(Integer, ForeignKey('user.user_id'))
+    
+    operator = relationship("User", back_populates="attachments")
+
+
+class Service(Base):
+    __tablename__ = 'service'
+    
+    service_id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
+    
+    operator_services = relationship("OperatorService", back_populates="service")
+    parameters = relationship("ServiceParameter", back_populates="service")
+    orders = relationship("Order", back_populates="service")
+
+
+class OperatorService(Base):
+    __tablename__ = 'operator_service'
+    
+    entry_id = Column(Integer, primary_key=True)
+    service_id = Column(Integer, ForeignKey('service.service_id'))
+    operator_id = Column(Integer, ForeignKey('user.user_id'))
+    
+    service = relationship("Service", back_populates="operator_services")
+    operator = relationship("User", back_populates="services_provided")
+
+
+class ServiceParameter(Base):
+    __tablename__ = 'service_parameter'
+    
+    parameter_id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
+    unit = Column(Text, nullable=False)
+    service_id = Column(Integer, ForeignKey('service.service_id'))
+    
+    service = relationship("Service", back_populates="parameters")
+    order_parameters = relationship("OrderParameter", back_populates="parameter")
+
+
+class Order(Base):
+    __tablename__ = 'order'
+    
+    order_id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
+    creation_date = Column(Date, nullable=False)
+    description = Column(Text)
+    raid_date = Column(CHAR(1), nullable=False)
+    completion_date = Column(CHAR(1), nullable=False)
+    deadline = Column(Date, nullable=False)
+    location = Column(Text, nullable=False)
+    operator_selection_date = Column(Date)
+    
+    service_id = Column(Integer, ForeignKey('service.service_id'))
+    client_id = Column(Integer, ForeignKey('user.user_id'))
+    operator_id = Column(Integer, ForeignKey('user.user_id'))
+    
+    score = Column(Integer)
+    opinion = Column(Text)
+    state = Column(Text, nullable=False)
+
+    service = relationship("Service", back_populates="orders")
+    client = relationship("User", foreign_keys=[client_id], back_populates="orders_as_client")
+    operator = relationship("User", foreign_keys=[operator_id], back_populates="orders_as_operator")
+    order_parameters = relationship("OrderParameter", back_populates="order")
+    reported_entries = relationship("ReportedOperator", back_populates="order")
+
+
+class OrderParameter(Base):
+    __tablename__ = 'order_parameter'
+    
+    entry_id = Column(Integer, primary_key=True)
+    value = Column(Text, nullable=False)
+    order_id = Column(Integer, ForeignKey('order.order_id'))
+    parameter_id = Column(Integer, ForeignKey('service_parameter.parameter_id'))
+    
+    order = relationship("Order", back_populates="order_parameters")
+    parameter = relationship("ServiceParameter", back_populates="order_parameters")
+
+
+class ReportedOperator(Base):
+    __tablename__ = 'reported_operator'
+    
+    report_id = Column(Integer, primary_key=True)
+    date = Column(Date, nullable=False)
+    order_id = Column(Integer, ForeignKey('order.order_id'))
+    operator_id = Column(Integer, ForeignKey('user.user_id'))
+    
+    order = relationship("Order", back_populates="reported_entries")
+    operator = relationship("User", back_populates="reports")
