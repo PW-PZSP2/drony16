@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from fastapi import FastAPI, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
@@ -57,12 +57,14 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Username already registered")
 
     hashed_password = get_password_hash(user.password)
-    # Default role is client
+
     new_user = User(
         email=user.email,
         username=user.username,
-        hashed_password=hashed_password,
-        roles=["client"],
+        password=hashed_password,
+        role=user.role,
+        phone_number=user.phone_number,
+        creation_date=datetime.now(),
     )
     db.add(new_user)
     await db.commit()
@@ -78,7 +80,7 @@ async def login_for_access_token(
 ):
     result = await db.execute(select(User).filter(User.email == form_data.username))
     user = result.scalars().first()
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
