@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import Button from "@/components/base/Button/Button";
+import {Button} from "@/components/ui/button";
 import OrderDetails from "@/components/feature/client_dashboard/elements/OrderDetails";
 
 export default function SelectOperatorTab() {

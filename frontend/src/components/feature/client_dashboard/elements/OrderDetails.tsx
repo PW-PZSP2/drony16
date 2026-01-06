@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import Button from "@/components/base/Button/Button";
+import {Button} from "@/components/ui/button";
 
 export default function OrderDetails({
   orderId,
