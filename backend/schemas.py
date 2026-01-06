@@ -8,15 +8,15 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    username: str
+    user_name: str
     password: str
     phone_number: str
-    role: str
+    role: str = Field(..., max_length=3)
 
 
 class UserResponse(UserBase):
     id: int = Field(..., serialization_alias="user_id", validation_alias="user_id")
-    username: str
+    user_name: str
     is_blocked: str
     role: str
     phone_number: str

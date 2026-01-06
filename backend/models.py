@@ -7,7 +7,7 @@ class User(Base):
     __tablename__ = "user"
 
     user_id = Column(Integer, primary_key=True)
-    username = Column(Text, nullable=False)
+    user_name = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
     password = Column(Text, nullable=False)
     role = Column(CHAR(3), nullable=False)

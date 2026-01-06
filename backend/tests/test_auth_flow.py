@@ -8,7 +8,14 @@ async def test_auth_flow():
     async with httpx.AsyncClient(base_url=BASE_URL) as client:
         print("Registering user...")
         response = await client.post(
-            "/register", json={"email": "test@example.com", "password": "password123"}
+            "/register",
+            json={
+                "email": "test@example.com",
+                "password": "password123",
+                "user_name": "test_user",
+                "phone_number": "123456789",
+                "role": "CLI",
+            },
         )
         if response.status_code == 400 and "Email already registered" in response.text:
             print("User already registered, proceeding to login.")
@@ -18,7 +25,7 @@ async def test_auth_flow():
 
         print("Logging in...")
         response = await client.post(
-            "/token", data={"username": "test@example.com", "password": "password123"}
+            "/token", data={"user_name": "test@example.com", "password": "password123"}
         )
         assert response.status_code == 200, f"Login failed: {response.text}"
         token_data = response.json()

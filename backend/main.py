@@ -51,16 +51,16 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    result = await db.execute(select(User).filter(User.username == user.username))
-    db_user_username = result.scalars().first()
-    if db_user_username:
-        raise HTTPException(status_code=400, detail="Username already registered")
+    result = await db.execute(select(User).filter(User.user_name == user.user_name))
+    db_user_user_name = result.scalars().first()
+    if db_user_user_name:
+        raise HTTPException(status_code=400, detail="user_name already registered")
 
     hashed_password = get_password_hash(user.password)
 
     new_user = User(
         email=user.email,
-        username=user.username,
+        user_name=user.user_name,
         password=hashed_password,
         role=user.role,
         phone_number=user.phone_number,
@@ -83,7 +83,7 @@ async def login_for_access_token(
     if not user or not verify_password(form_data.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect user_name or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=30)
