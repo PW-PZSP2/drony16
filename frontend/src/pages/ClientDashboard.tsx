@@ -3,6 +3,7 @@ import { useState } from "react";
 import CreateOrderTab from "@/components/feature/client_dashboard/tabs/CreateOrderTab";
 import SelectOperatorTab from "@/components/feature/client_dashboard/tabs/SelectedOperatorTab";
 import CompletedOrdersTab from "@/components/feature/client_dashboard/tabs/CompletedOrdersTab";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function ClientDashboard() {
   const [activeTab, setActiveTab] = useState<"create" | "select" | "completed">(
@@ -21,52 +22,22 @@ export default function ClientDashboard() {
           </p>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="bg-white rounded-lg shadow-sm mb-8">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6">
-              <button
-                onClick={() => setActiveTab("create")}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === "create"
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                <i className="ri-add-circle-line mr-2"></i>
-                Utwórz Zlecenie
-              </button>
-              <button
-                onClick={() => setActiveTab("select")}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === "select"
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                <i className="ri-user-search-line mr-2"></i>
-                Wybierz Operatora
-              </button>
-              <button
-                onClick={() => setActiveTab("completed")}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === "completed"
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                <i className="ri-check-double-line mr-2"></i>
-                Pozostałe Zlecenia
-              </button>
-            </nav>
-          </div>
-
-          <div className="p-6">
-            {activeTab === "create" && <CreateOrderTab />}
-            {activeTab === "select" && <SelectOperatorTab />}
-            {activeTab === "completed" && <CompletedOrdersTab />}
-          </div>
-        </div>
+        <Tabs defaultValue="create">
+          <TabsList>
+            <TabsTrigger value="create">Utwórz Zlecenie</TabsTrigger>
+            <TabsTrigger value="select">Wybierz Operatora</TabsTrigger>
+            <TabsTrigger value="completed">Pozostałe Zlecenia</TabsTrigger>
+          </TabsList>
+          <TabsContent value="create">
+            <CreateOrderTab />
+          </TabsContent>
+          <TabsContent value="select">
+            <SelectOperatorTab />
+          </TabsContent>
+          <TabsContent value="completed">
+            <CompletedOrdersTab />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
