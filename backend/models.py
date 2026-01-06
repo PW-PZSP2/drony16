@@ -56,7 +56,6 @@ class Service(Base):
 
     operator_services = relationship("OperatorService", back_populates="service")
     parameters = relationship("ServiceParameter", back_populates="service")
-    orders = relationship("Order", back_populates="service")
 
 
 class OperatorService(Base):
@@ -95,7 +94,6 @@ class Order(Base):
     location = Column(Text, nullable=False)
     operator_selection_date = Column(Date)
 
-    service_id = Column(Integer, ForeignKey("service.service_id"))
     client_id = Column(Integer, ForeignKey("user.user_id"))
     operator_id = Column(Integer, ForeignKey("user.user_id"))
 
@@ -103,7 +101,7 @@ class Order(Base):
     opinion = Column(Text)
     state = Column(Text, nullable=False)
 
-    service = relationship("Service", back_populates="orders")
+    order_services = relationship("OrderService", back_populates="order")
     client = relationship(
         "User", foreign_keys=[client_id], back_populates="orders_as_client"
     )
@@ -112,6 +110,15 @@ class Order(Base):
     )
     order_parameters = relationship("OrderParameter", back_populates="order")
     reported_entries = relationship("ReportedOperator", back_populates="order")
+
+
+class OrderService(Base):
+    __tablename__ = "order_service"
+    order_id = Column(Integer, ForeignKey("order.order_id"), primary_key=True)
+    service_id = Column(Integer, ForeignKey("service.service_id"), primary_key=True)
+
+    order = relationship("Order", back_populates="order_services")
+    service = relationship("Service")
 
 
 class OrderParameter(Base):
