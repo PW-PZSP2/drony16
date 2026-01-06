@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Button from "../../base/Button/Button";
-import Input from "../../base/Input/Input";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 
 interface LoginModalProps {
   show: boolean;
@@ -101,28 +101,24 @@ export default function LoginModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Email"
             type="email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            icon="ri-mail-line"
             placeholder="Wpisz swój email"
             required
           />
 
           <Input
-            label="Hasło"
             type="password"
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            icon="ri-lock-line"
             placeholder="Wpisz swoje hasło"
             required
           />
 
-          <Button type="submit" className="w-full" loading={loading}>
+          <Button type="submit" className="w-full">
             Zaloguj się
           </Button>
         </form>

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Button from "../../base/Button/Button";
-import Input from "../../base/Input/Input";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 
 interface RegisterModalProps {
   show: boolean;
@@ -171,62 +171,50 @@ export default function RegisterModal({
         {step === "form" && (
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              label="Nazwa"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              icon="ri-user-line"
               required
             />
 
             <Input
-              label="Email"
               type="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              icon="ri-mail-line"
               required
             />
 
             <Input
-              label="Hasło"
               type="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              icon="ri-lock-line"
               required
             />
 
             <Input
-              label="Telefon"
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
-              icon="ri-phone-line"
               required
             />
 
             {selectedRole === "operator" && (
               <>
                 <Input
-                  label="Lokalizacja / Miejsce działalności"
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
-                  icon="ri-map-pin-line"
                   required
                 />
 
                 <Input
-                  label="Obszar działania (km)"
                   type="number"
                   name="operatingRadius"
                   value={formData.operatingRadius}
                   onChange={handleInputChange}
-                  icon="ri-compass-line"
                   placeholder="np. 100"
                   required
                 />
