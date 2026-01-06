@@ -1,33 +1,16 @@
-import { useState } from "react";
-import LoginModal from "../components/feature/auth/LoginModal";
-import RegisterModal from "../components/feature/auth/RegisterModal";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
+  const navigate = useNavigate();
 
   const handleFindOperator = () => {
-    setShowLogin(true);
+    navigate("/login?action=register");
   };
 
   const handleBecomeOperator = () => {
-    setShowRegister(true);
+    navigate("/login?action=register");
   };
 
-  const openRegister = () => {
-    setShowLogin(false);
-    setShowRegister(true);
-  };
-
-  const openLogin = () => {
-    setShowRegister(false);
-    setShowLogin(true);
-  };
-
-  const handleLogin = (userData: any) => {
-    setShowLogin(false);
-    // Przekierowanie jest już obsługiwane w LoginModal
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -252,19 +235,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <LoginModal
-        show={showLogin}
-        onClose={() => setShowLogin(false)}
-        onLogin={handleLogin}
-        onSwitchToRegister={openRegister}
-      />
-
-      <RegisterModal
-        show={showRegister}
-        onClose={() => setShowRegister(false)}
-        onSwitchToLogin={openLogin}
-      />
     </div>
   );
 }
