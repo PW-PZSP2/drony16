@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import ServiceParameters from "@/components/feature/client_dashboard/elements/ServiceParameters";
 import Button from "@/components/base/Button/Button";
 
 export default function CreateOrderTab() {

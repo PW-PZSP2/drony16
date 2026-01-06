@@ -220,7 +220,7 @@ function LaserParameters() {
 
 }
 
-export function ServiceParameters({ service }: { service: string }) {
+export default function ServiceParameters({ service }: { service: string }) {
     if (service === "ortofoto") {
         return <OrtofotoParameters/>;
     }
