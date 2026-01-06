@@ -11,7 +11,6 @@ export default function Home() {
     navigate("/login?action=register");
   };
 
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}

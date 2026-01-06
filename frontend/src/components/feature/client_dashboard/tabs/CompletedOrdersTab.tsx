@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import RatingModal from "@/components/feature/client_dashboard/elements/RatingModal";
 
 export default function CompletedOrdersTab() {

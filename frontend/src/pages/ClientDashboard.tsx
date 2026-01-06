@@ -21,8 +21,6 @@ export default function ClientDashboard() {
           </p>
         </div>
 
-
-
         {/* Navigation Tabs */}
         <div className="bg-white rounded-lg shadow-sm mb-8">
           <div className="border-b border-gray-200">
@@ -73,9 +71,3 @@ export default function ClientDashboard() {
     </div>
   );
 }
-
-
-
-
-
-
