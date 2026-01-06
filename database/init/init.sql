@@ -1,5 +1,5 @@
 CREATE TABLE "user" (
-    user_id       INTEGER NOT NULL,
+    user_id       SERIAL NOT NULL,
     user_name     TEXT NOT NULL,
     email         TEXT NOT NULL UNIQUE,
     password      TEXT NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE "user" (
 );
 
 CREATE TABLE attachment (
-    attachment_id    INTEGER NOT NULL,
+    attachment_id    SERIAL NOT NULL,
     name             TEXT NOT NULL,
     description      TEXT,
     file_path        TEXT NOT NULL,
@@ -23,20 +23,20 @@ CREATE TABLE attachment (
 );
 
 CREATE TABLE operator_service (
-    entry_id           INTEGER NOT NULL,
+    entry_id           SERIAL NOT NULL,
     service_id 		   INTEGER,
 	operator_id		   INTEGER,
     PRIMARY KEY (entry_id)
 );
 
 CREATE TABLE service (
-    service_id INTEGER NOT NULL,
+    service_id SERIAL NOT NULL,
     name       TEXT NOT NULL,
     PRIMARY KEY (service_id)
 );
 
 CREATE TABLE service_parameter (
-    parameter_id       INTEGER NOT NULL,
+    parameter_id       SERIAL NOT NULL,
     name               TEXT NOT NULL,
     unit               TEXT NOT NULL,
     service_id 		   INTEGER,
@@ -44,7 +44,7 @@ CREATE TABLE service_parameter (
 );
 
 CREATE TABLE "order" (
-    order_id                INTEGER NOT NULL,
+    order_id                SERIAL NOT NULL,
     name                    TEXT NOT NULL,
     creation_date           DATE NOT NULL,
     description             TEXT,
@@ -63,7 +63,7 @@ CREATE TABLE "order" (
 );
 
 CREATE TABLE order_parameter (
-    entry_id                       INTEGER NOT NULL,
+    entry_id                       SERIAL NOT NULL,
     value                          TEXT NOT NULL,
     order_id                 	   INTEGER,
     parameter_id 				   INTEGER,
@@ -71,7 +71,7 @@ CREATE TABLE order_parameter (
 );
 
 CREATE TABLE reported_operator (
-    report_id      INTEGER NOT NULL,
+    report_id      SERIAL NOT NULL,
     "date"         DATE NOT NULL,
     order_id 	   INTEGER,
 	operator_id	   INTEGER,
