@@ -24,9 +24,9 @@ export default function ClientDashboard() {
 
         <Tabs>
           <TabsList>
-            <TabsTrigger value="create">Utwórz Zlecenie</TabsTrigger>           
+            <TabsTrigger value="create">Utwórz Zlecenie</TabsTrigger>
             <TabsTrigger value="select">Wybierz Operatora</TabsTrigger>
-            <TabsTrigger value="completed">Pozostałe Zlecenia</TabsTrigger> 
+            <TabsTrigger value="completed">Pozostałe Zlecenia</TabsTrigger>
           </TabsList>
           <TabsContent value="create">
             <CreateOrderTab />
