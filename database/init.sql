@@ -1,3 +1,0 @@
-CREATE TABLE bajojajo (
-    id SERIAL PRIMARY KEY
-);

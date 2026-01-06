@@ -4,7 +4,7 @@ CREATE TABLE "user" (
     email         TEXT NOT NULL UNIQUE,
     password      TEXT NOT NULL,
     role          CHAR(3) NOT NULL,  -- aoc (admin, operator, client -> 1/0)
-    phone_number  INTEGER NOT NULL,
+    phone_number  TEXT NOT NULL,
     is_blocked    CHAR(1) NOT NULL,
     creation_date DATE NOT NULL,
 	localisation  TEXT,
