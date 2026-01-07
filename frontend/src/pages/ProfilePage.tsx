@@ -68,109 +68,112 @@ export default function ProfilePage() {
   return (
     <div className="flex flex-col flex-grow bg-gray-50 p-4 md:p-8 h-full min-h-[calc(100vh-64px)]">
       <Card className="flex-1 w-full">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle className="text-2xl">Mój Profil</CardTitle>
-                <CardDescription>
-                  Zarządzaj swoimi danymi i ustawieniami konta
-                </CardDescription>
-              </div>
-              <Button
-                variant={isEditing ? "default" : "outline"}
-                onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
-              >
-                {isEditing ? (
-                  <>
-                    <Save className="mr-2 h-4 w-4" />
-                    Zapisz
-                  </>
-                ) : (
-                  <>
-                    <Edit2 className="mr-2 h-4 w-4" />
-                    Edytuj
-                  </>
-                )}
-              </Button>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle className="text-2xl">Mój Profil</CardTitle>
+              <CardDescription>
+                Zarządzaj swoimi danymi i ustawieniami konta
+              </CardDescription>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            <Button
+              variant={isEditing ? "default" : "outline"}
+              onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
+            >
+              {isEditing ? (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Zapisz
+                </>
+              ) : (
+                <>
+                  <Edit2 className="mr-2 h-4 w-4" />
+                  Edytuj
+                </>
+              )}
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Nazwa użytkownika</Label>
+            <Input
+              id="name"
+              value={profile.name}
+              disabled={true}
+              className="bg-gray-100"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nazwa użytkownika</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="name"
-                value={profile.name}
+                id="email"
+                type="email"
+                value={profile.email}
                 disabled={true}
                 className="bg-gray-100"
               />
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={profile.email}
-                  disabled={true}
-                  className="bg-gray-100"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Telefon</Label>
-                <Input
-                  id="phone"
-                  value={profile.phone}
-                  disabled={!isEditing}
-                  onChange={(e) =>
-                    setProfile({ ...profile, phone: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
             <div className="space-y-2">
-              <Label htmlFor="location">Lokalizacja</Label>
+              <Label htmlFor="phone">Telefon</Label>
               <Input
-                id="location"
-                value={profile.location}
+                id="phone"
+                value={profile.phone}
                 disabled={!isEditing}
                 onChange={(e) =>
-                  setProfile({ ...profile, location: e.target.value })
+                  setProfile({ ...profile, phone: e.target.value })
                 }
               />
             </div>
+          </div>
 
-            {isOperator && (
-              <div className="space-y-2">
-                  <Label htmlFor="operatingRadius">Zasięg działania (km)</Label>
-                   <Input
-                  id="operatingRadius"
-                  type="number"
-                  value={profile.operatingRadius}
-                  disabled={!isEditing}
-                  onChange={(e) =>
-                    setProfile({ ...profile, operatingRadius: Number(e.target.value) })
-                  }
-                />
-              </div>
-            )}
+          <div className="space-y-2">
+            <Label htmlFor="location">Lokalizacja</Label>
+            <Input
+              id="location"
+              value={profile.location}
+              disabled={!isEditing}
+              onChange={(e) =>
+                setProfile({ ...profile, location: e.target.value })
+              }
+            />
+          </div>
 
+          {isOperator && (
             <div className="space-y-2">
-              <Label htmlFor="description">O mnie</Label>
-              <Textarea
-                id="description"
-                value={profile.description}
+              <Label htmlFor="operatingRadius">Zasięg działania (km)</Label>
+              <Input
+                id="operatingRadius"
+                type="number"
+                value={profile.operatingRadius}
                 disabled={!isEditing}
                 onChange={(e) =>
-                  setProfile({ ...profile, description: e.target.value })
+                  setProfile({
+                    ...profile,
+                    operatingRadius: Number(e.target.value),
+                  })
                 }
-                className="min-h-[100px]"
-                placeholder="Napisz coś o sobie..."
               />
             </div>
-          </CardContent>
-        </Card>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="description">O mnie</Label>
+            <Textarea
+              id="description"
+              value={profile.description}
+              disabled={!isEditing}
+              onChange={(e) =>
+                setProfile({ ...profile, description: e.target.value })
+              }
+              className="min-h-[100px]"
+              placeholder="Napisz coś o sobie..."
+            />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

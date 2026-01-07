@@ -53,9 +53,7 @@ interface RegisterPayload {
   area?: number;
 }
 
-async function register(
-  userData: RegisterPayload,
-): Promise<User | null> {
+async function register(userData: RegisterPayload): Promise<User | null> {
   try {
     const response = await fetch(`${API_URL}/register`, {
       method: "POST",

@@ -11,9 +11,12 @@ export default function LoginPage() {
   const roleParam = searchParams.get("role");
 
   // Normalize role param to match what RegisterForm expects
-  const defaultRole = roleParam === "operator" ? Roles.OPERATOR :
-                      roleParam === "client" ? Roles.CLIENT :
-                      Roles.CLIENT;
+  const defaultRole =
+    roleParam === "operator"
+      ? Roles.OPERATOR
+      : roleParam === "client"
+        ? Roles.CLIENT
+        : Roles.CLIENT;
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
@@ -26,7 +29,11 @@ export default function LoginPage() {
         </a>
         <div className={isLogin ? "" : ""}>
           <div className="bg-background rounded-lg border p-6 shadow-sm">
-            {isLogin ? <LoginForm /> : <RegisterForm defaultRole={defaultRole} />}
+            {isLogin ? (
+              <LoginForm />
+            ) : (
+              <RegisterForm defaultRole={defaultRole} />
+            )}
           </div>
         </div>
       </div>

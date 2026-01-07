@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { Drone } from "lucide-react";
 import type { JSX } from "react";
 // import type {User} from '../../../types/auth/user';
-import { useAuthorizationStore, useGetUser } from "../../../store/authorization";
+import {
+  useAuthorizationStore,
+  useGetUser,
+} from "../../../store/authorization";
 import { Roles } from "../../../types/auth/user_role";
 import { Link } from "react-router-dom";
 import { AuthService } from "../../../services/authorization_service";

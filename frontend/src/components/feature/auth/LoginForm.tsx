@@ -27,7 +27,6 @@ const loginSchema = z.object({
     .min(6, "Hasło musi mieć co najmniej 6 znaków."),
 });
 
-
 export function LoginForm({
   className,
   ...props

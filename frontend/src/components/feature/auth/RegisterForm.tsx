@@ -236,26 +236,28 @@ export function RegisterForm({
                 </Field>
               )}
             />
-              <Controller
-                name="phone_number"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-phone">Numer telefonu</FieldLabel>
-                    <Input
-                      {...field}
-                      id="register-phone"
-                      type="tel"
-                      placeholder="123456789"
-                      aria-invalid={fieldState.invalid}
-                      autoComplete="tel"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+            <Controller
+              name="phone_number"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="register-phone">
+                    Numer telefonu
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="register-phone"
+                    type="tel"
+                    placeholder="123456789"
+                    aria-invalid={fieldState.invalid}
+                    autoComplete="tel"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
             {watchedRole === Roles.OPERATOR && (
               <>
                 <Controller
@@ -349,10 +351,7 @@ export function RegisterForm({
             </Field>
             <FieldDescription className="text-center">
               Masz już konto?{" "}
-              <a
-                href="?action=login"
-                className="underline underline-offset-4"
-              >
+              <a href="?action=login" className="underline underline-offset-4">
                 Zaloguj się
               </a>
             </FieldDescription>
