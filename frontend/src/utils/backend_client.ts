@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "http://localhost:8080";
 
 export const backendClient = axios.create({
   baseURL: BASE_URL,
@@ -13,9 +13,9 @@ export const backendClient = axios.create({
 backendClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("authToken");
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
-    }
+    // if (token) {
+    //   config.headers["Authorization"] = `Bearer ${token}`;
+    // }
     return config;
   },
   (error) => {

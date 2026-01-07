@@ -20,15 +20,16 @@ export default function CreateOrderTab() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const services = [
-    { id: "ortofoto", name: "Ortofotomapa", icon: "ri-map-2-line" },
+    { id: "Ortofotomapa", name: "Ortofotomapa", icon: "ri-map-2-line" },
     {
-      id: "terrain",
+      id: "Numeryczne modele terenu",
       name: "Numeryczne modele terenu",
       icon: "ri-landscape-line",
     },
-    { id: "pointcloud", name: "Chmura punktów", icon: "ri-bubble-chart-line" },
-    { id: "3d", name: "Modele 3D", icon: "ri-3d-view-line" },
-    { id: "laser", name: "Scanning laserowy", icon: "ri-scanner-line" },
+    { id: "Chmura Punktów", name: "Chmura punktów", icon: "ri-bubble-chart-line" },
+    { id: "Modele 3D", name: "Modele 3D", icon: "ri-3d-view-line" },
+    { id: "Scanning laserowy", name: "Scanning laserowy", icon: "ri-scanner-line" },
+    { id: "Film", name: "Film", icon: "ri-search-eye-line" },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {

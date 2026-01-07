@@ -1,3 +1,4 @@
+import {backendClient} from "@/utils/backend_client";
 
 // Types for the service
 interface OrderData {
@@ -42,26 +43,42 @@ interface RatingData {
 }
 
 const API_DELAY = 1000; 
+const API_URL = "http://localhost:8080";
 
 const mockDelay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function create_order(orderData: OrderData): Promise<{ success: boolean; orderId?: number; message?: string }> {
-  await mockDelay(API_DELAY);
   
-  if (!orderData.title || !orderData.service || !orderData.location) {
-    return {
-      success: false,
-      message: "Missing required fields"
-    };
+  const mapped_request = {
+    name: orderData.title,
+    deadline: orderData.deadline,
+    location: orderData.location,
+    description: orderData.description,
+    completion_date: orderData.deadlineType == "completion", 
+    raid_date: orderData.deadlineType == "flight",
+    services: [
+      {
+        service_name: orderData.service,
+        parameters: {}
+      }
+    ]
   }
 
-  const orderId = Math.floor(Math.random() * 1000) + 100;
+
+  const response = await fetch(`${API_URL}/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        credentials: "include",
+
+      },
+      credentials: "include",
+      body: JSON.stringify(mapped_request),
+    });
+
   
-  return {
-    success: true,
-    orderId,
-    message: "Order created successfully"
-  };
+  
+  return await response.json();
 }
 
 async function fetch_current_orders(): Promise<Order[]> {
