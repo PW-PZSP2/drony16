@@ -2,9 +2,12 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import OrderDetails from "@/components/feature/client_dashboard/elements/OrderDetails";
+import { useLoadData } from "@/hooks/useLoadData";
 
 export default function SelectOperatorTab() {
   const [selectedOrder, setSelectedOrder] = useState<number | null>(null);
+
+  const { data: currentOrders, isLoading, error, refetch } = useLoadData(fetch_current_orders);
 
   const pendingOrders = [
     {
