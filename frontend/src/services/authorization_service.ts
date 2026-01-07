@@ -43,8 +43,16 @@ async function logout(): Promise<void> {
   }
 }
 
+interface RegisterPayload {
+  user_name: string;
+  email: string;
+  password?: string;
+  role: string;
+  phone_number: string;
+}
+
 async function register(
-  userData: Partial<User> & { password: string },
+  userData: RegisterPayload,
 ): Promise<User | null> {
   try {
     const response = await fetch(`${API_URL}/register`, {

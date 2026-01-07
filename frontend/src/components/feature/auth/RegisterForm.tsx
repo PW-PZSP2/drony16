@@ -14,8 +14,6 @@ import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { AuthService } from "@/services/authorization_service";
 import HorizontalRadio from "../../base/HorizontalRadio/HorizontalRadio";
-import { useState } from "react";
-import { CircleCheck } from "lucide-react";
 
 const registerSchema = z
   .object({
@@ -32,6 +30,10 @@ const registerSchema = z
       .string()
       .min(1, "Hasło jest wymagane.")
       .min(6, "Hasło musi mieć co najmniej 6 znaków."),
+    phone_number: z
+      .string()
+      .min(1, "Numer telefonu jest wymagany.")
+      .min(9, "Numer telefonu musi mieć co najmniej 9 znaków."),
     confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane."),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -49,6 +51,7 @@ export function RegisterForm({
       username: "",
       email: "",
       password: "",
+      phone_number: "",
       confirmPassword: "",
     },
   });
@@ -56,10 +59,11 @@ export function RegisterForm({
   async function onSubmit(data: z.infer<typeof registerSchema>) {
     try {
       const user = await AuthService.register({
-        username: data.username,
+        user_name: data.username,
         email: data.email,
         password: data.password,
-        roles: ["client"], // Default role
+        phone_number: data.phone_number,
+        role: "cli", // Default role
       });
 
       if (user) {
@@ -125,6 +129,24 @@ export function RegisterForm({
                 placeholder="jan@example.com"
                 aria-invalid={fieldState.invalid}
                 autoComplete="email"
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="phone_number"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor="register-phone">Numer telefonu</FieldLabel>
+              <Input
+                {...field}
+                id="register-phone"
+                type="tel"
+                placeholder="123456789"
+                aria-invalid={fieldState.invalid}
+                autoComplete="tel"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>

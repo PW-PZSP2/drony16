@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { JSX } from "react";
 // import type {User} from '../../../types/auth/user';
 import { useGetUser } from "../../../store/authorization";
@@ -102,7 +102,7 @@ export default function Header(): JSX.Element {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors cursor-pointer"
                 >
-                  <span>Witaj, {user.username}</span>
+                  <span>Witaj, {user.user_name}</span>
                   <i className="ri-arrow-down-s-line"></i>
                 </button>
 
