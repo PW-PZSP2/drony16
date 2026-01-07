@@ -148,6 +148,4 @@ class ReportedOperator(Base):
     operator_id = Column(Integer, ForeignKey("user.user_id"))
 
     order = relationship("Order", back_populates="reported_entries")
-    target_type = Column(Text, nullable=False)
-    target_id = Column(Integer, nullable=False)
     operator = relationship("User", back_populates="reports")
