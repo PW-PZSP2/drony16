@@ -81,3 +81,17 @@ class OrderResponse(OrderBase):
     class Config:
         from_attributes = True
         populate_by_name = True
+
+
+class OpinionCreate(BaseModel):
+    score: int
+    opinion: str
+
+
+class OpinionResponse(BaseModel):
+    order_id: int
+    score: int
+    opinion: str
+
+    class Config:
+        from_attributes = True
