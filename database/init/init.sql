@@ -121,3 +121,13 @@ ALTER TABLE reported_operator
 ALTER TABLE service_parameter
     ADD CONSTRAINT service_parameter_service_fk FOREIGN KEY (service_id)
         REFERENCES service(service_id);
+
+ALTER TABLE "user"   
+    ADD COLUMN latitude FLOAT;
+ALTER TABLE "user" 
+    ADD COLUMN longitude FLOAT;
+
+ALTER TABLE "order" 
+    ADD COLUMN latitude FLOAT;
+ALTER TABLE "order" 
+    ADD COLUMN longitude FLOAT;

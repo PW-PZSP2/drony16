@@ -12,6 +12,8 @@ class UserCreate(UserBase):
     password: str
     phone_number: str
     role: Literal["adm", "ope", "cli"]
+    localisation: str
+    area: Optional[int]
 
 
 class UserResponse(UserBase):
@@ -21,6 +23,10 @@ class UserResponse(UserBase):
     roles: list[str]
     phone_number: str
     creation_date: datetime
+    localisation: str
+    latitude: Optional[float]
+    longitude: Optional[float]
+    area: Optional[int]
 
     class Config:
         from_attributes = True
@@ -60,3 +66,9 @@ class OrderResponse(OrderBase):
     client_id: int
     operator_id: Optional[int] = None
     creation_date: datetime
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+    class Config:
+        from_attributes = True
+        populate_by_name = True
