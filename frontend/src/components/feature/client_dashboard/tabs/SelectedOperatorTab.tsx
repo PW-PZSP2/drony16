@@ -3,41 +3,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import OrderDetails from "@/components/feature/client_dashboard/elements/OrderDetails";
 import { useLoadData } from "@/hooks/useLoadData";
+import {fetch_current_orders} from "@/services/client_service";
+
 
 export default function SelectOperatorTab() {
   const [selectedOrder, setSelectedOrder] = useState<number | null>(null);
 
-  const { data: currentOrders, isLoading, error, refetch } = useLoadData(fetch_current_orders);
+  const {data, isLoading, error} = useLoadData({ fetchFn: fetch_current_orders });
 
-  const pendingOrders = [
-    {
-      id: 1,
-      title: "Ortofotomapa działki budowlanej",
-      service: "Ortofotomapa",
-      location: "Warszawa, ul. Przykładowa 123",
-      deadline: "2024-02-15",
-      deadlineType: "flight",
-      applicants: 3,
-    },
-    {
-      id: 2,
-      title: "Model 3D budynku",
-      service: "Modele 3D",
-      location: "Kraków, ul. Testowa 45",
-      deadline: "2024-02-20",
-      deadlineType: "completion",
-      applicants: 1,
-    },
-    {
-      id: 3,
-      title: "Chmura punktów terenu przemysłowego",
-      service: "Chmura punktów",
-      location: "Gdańsk, ul. Portowa 67",
-      deadline: "2024-02-25",
-      deadlineType: "flight",
-      applicants: 5,
-    },
-  ];
 
   if (selectedOrder) {
     return (
@@ -49,7 +22,10 @@ export default function SelectOperatorTab() {
   }
 
   return (
-    <div className="space-y-4">
+  <>
+    {error && <div className="text-red-600">Błąd ładowania zleceń skontaktuj się z administratorem.</div>}
+    {isLoading && <div>Ładowanie zleceń...</div>}
+    { data && <div className="space-y-4">
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-2">
           Zlecenia oczekujące na wybór operatora
@@ -59,7 +35,7 @@ export default function SelectOperatorTab() {
         </p>
       </div>
 
-      {pendingOrders.map((order) => (
+      {data.map((order) => (
         <div
           key={order.id}
           className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
@@ -111,7 +87,7 @@ export default function SelectOperatorTab() {
         </div>
       ))}
 
-      {pendingOrders.length === 0 && (
+      {data.length === 0 && (
         <div className="text-center py-12">
           <i className="ri-search-line text-4xl text-gray-300 mb-4"></i>
           <h3 className="text-lg font-medium text-gray-600 mb-2">
@@ -123,6 +99,7 @@ export default function SelectOperatorTab() {
           </p>
         </div>
       )}
-    </div>
+    </div>}
+  </>
   );
 }
