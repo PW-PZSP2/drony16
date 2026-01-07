@@ -2,12 +2,14 @@ from datetime import timedelta, datetime
 from fastapi import FastAPI, Depends, HTTPException, status, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from database import engine, Base, get_db
 from models import User
 from routers import orders
 from schemas import UserCreate, UserResponse
+from utils import get_coordinates
 from auth import (
     get_password_hash,
     verify_password,
@@ -68,7 +70,15 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
         role=user.role,
         phone_number=user.phone_number,
         creation_date=datetime.now(),
+        localisation=user.localisation,
+        area=user.area,
     )
+    coordinates = await run_in_threadpool(get_coordinates, user.localisation)
+    if coordinates:
+        new_user.latitude = float(coordinates[0])
+        new_user.longitude = float(coordinates[1])
+    else:
+        raise HTTPException(status_code=400, detail="Invalid address")
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)

@@ -5,8 +5,13 @@ from datetime import datetime, date
 from typing import cast
 from database import get_db
 from models import Order, OrderService, OrderParameter, User, Service, ServiceParameter
-from schemas import OrderCreate, OrderResponse
+from schemas import OrderCreate, OrderResponse, ServiceRequest
 from auth import get_current_user
+from utils import get_coordinates
+from services.matching import (
+    get_matched_orders_for_operator,
+)
+
 
 router = APIRouter(
     prefix="/orders",
@@ -34,9 +39,17 @@ async def create_order(
         state="Złożone",
     )
 
+    location = get_coordinates(order_data.location)
+    if location:
+        new_order.latitude = location[0]
+        new_order.longitude = location[1]
+    else:
+        raise HTTPException(status_code=400, detail="Location not found")
+
     db.add(new_order)
     await db.flush()
 
+    order_service_ids = []
     for service_req in order_data.services:
         result = await db.execute(
             select(Service).filter(Service.name == service_req.service_name)
@@ -48,6 +61,8 @@ async def create_order(
                 status_code=400,
                 detail=f"Service '{service_req.service_name}' not found",
             )
+
+        order_service_ids.append(service_obj.service_id)
 
         new_order_service = OrderService(
             order_id=new_order.order_id, service_id=service_obj.service_id
@@ -81,12 +96,14 @@ async def create_order(
     response_services = order_data.services
 
     return OrderResponse(
-        id=int(new_order.order_id),
+        order_id=int(new_order.order_id),
         name=str(new_order.name),
         completion_date=str(new_order.completion_date) == "1",
         raid_date=str(new_order.raid_date) == "1",
         deadline=datetime.combine(cast(date, new_order.deadline), datetime.min.time()),
         location=str(new_order.location),
+        latitude=new_order.latitude,
+        longitude=new_order.longitude,
         description=str(new_order.description) if new_order.description else "",
         services=response_services,
         client_id=int(new_order.client_id),
@@ -95,3 +112,51 @@ async def create_order(
             cast(date, new_order.creation_date), datetime.min.time()
         ),
     )
+
+
+@router.get("/matched", response_model=list[OrderResponse])
+async def get_matched_orders(
+    from_date: datetime | None = None,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role != "ope":
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    matched_orders = await get_matched_orders_for_operator(
+        db, current_user.user_id, from_date
+    )
+
+    response = []
+    for order in matched_orders:
+        services_data = []
+        for os in order.order_services:
+            params = {}
+            for op in order.order_parameters:
+                if op.parameter.service_id == os.service_id:
+                    params[op.parameter.name] = op.value
+
+            services_data.append(
+                ServiceRequest(service_name=os.service.name, parameters=params)
+            )
+
+        response.append(
+            OrderResponse(
+                order_id=order.order_id,
+                name=order.name,
+                deadline=datetime.combine(order.deadline, datetime.min.time()),
+                location=order.location,
+                latitude=order.latitude,
+                longitude=order.longitude,
+                description=order.description or "",
+                completion_date=str(order.completion_date) == "1",
+                raid_date=str(order.raid_date) == "1",
+                client_id=order.client_id,
+                operator_id=order.operator_id,
+                creation_date=datetime.combine(
+                    order.creation_date, datetime.min.time()
+                ),
+                services=services_data,
+            )
+        )
+
+    return response
