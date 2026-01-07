@@ -1,14 +1,16 @@
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Map, Mountain, Cuboid, ScanLine, Camera, Box } from "lucide-react";
 
 export default function Home() {
   const navigate = useNavigate();
 
   const handleFindOperator = () => {
-    navigate("/login?action=register");
+    navigate("/login?action=register&role=client");
   };
 
   const handleBecomeOperator = () => {
-    navigate("/login?action=register");
+    navigate("/login?action=register&role=operator");
   };
 
   return (
@@ -18,7 +20,7 @@ export default function Home() {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
           style={{
-            backgroundImage: `url('https://readdy.ai/api/search-image?query=Professional%20aerial%20photography%20and%20surveying%20with%20modern%20drones%20flying%20over%20diverse%20landscapes%20including%20fields%2C%20construction%20sites%2C%20and%20urban%20areas%2C%20captured%20from%20drone%20perspective%20with%20clear%20blue%20sky%20background%2C%20high-tech%20equipment%2C%20commercial%20drone%20operations%2C%20photogrammetry%20and%20mapping%20services%2C%20professional%20aerial%20work%20documentation&width=1200&height=600&seq=hero-drones&orientation=landscape')`,
+            backgroundImage: `url('../public/images/home_page1.jpg')`,
           }}
         />
         <div className="relative max-w-7xl mx-auto">
@@ -35,23 +37,24 @@ export default function Home() {
                 i wiele więcej.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button
+                <Button
                   onClick={handleFindOperator}
-                  className="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer"
+                  className="bg-green-500 hover:bg-green-600 text-white px-8 py-6 text-lg rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer"
                 >
                   Znajdź Operatora
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleBecomeOperator}
-                  className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-700 px-8 py-3 rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer"
+                  variant="outline"
+                  className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-700 px-8 py-6 text-lg rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer"
                 >
                   Zostań Operatorem
-                </button>
+                </Button>
               </div>
             </div>
             <div className="hidden lg:block">
               <img
-                src="https://readdy.ai/api/search-image?query=Modern%20professional%20drone%20equipment%20setup%20with%20multiple%20quadcopter%20drones%2C%20camera%20gimbals%2C%20and%20surveying%20equipment%20arranged%20on%20clean%20white%20background%2C%20commercial%20grade%20UAV%20technology%2C%20aerial%20photography%20and%20mapping%20tools%2C%20professional%20drone%20operator%20workspace%2C%20high-tech%20aviation%20equipment%20display&width=600&height=500&seq=drone-equipment&orientation=portrait"
+                src="../public/images/home_page2.jpg"
                 alt="Profesjonalne drony"
                 className="w-full h-96 object-cover object-top rounded-lg shadow-2xl"
               />
@@ -76,7 +79,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <i className="ri-map-2-line text-blue-600 text-xl"></i>
+                <Map className="w-6 h-6 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Ortofotomapa
@@ -89,7 +92,7 @@ export default function Home() {
 
             <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                <i className="ri-landscape-line text-green-600 text-xl"></i>
+                <Mountain className="w-6 h-6 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Numeryczne Modele Terenu
@@ -102,7 +105,7 @@ export default function Home() {
 
             <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                <i className="ri-bubble-chart-line text-gray-600 text-xl"></i>
+                <Box className="w-6 h-6 text-gray-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Chmura Punktów
@@ -115,7 +118,7 @@ export default function Home() {
 
             <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <i className="ri-3d-view-line text-blue-600 text-xl"></i>
+                <Cuboid className="w-6 h-6 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Modele 3D
@@ -128,7 +131,7 @@ export default function Home() {
 
             <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                <i className="ri-scanner-line text-green-600 text-xl"></i>
+                <ScanLine className="w-6 h-6 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Scanning Laserowy
@@ -141,7 +144,7 @@ export default function Home() {
 
             <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                <i className="ri-camera-line text-gray-600 text-xl"></i>
+                <Camera className="w-6 h-6 text-gray-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Inspekcje
@@ -219,18 +222,19 @@ export default function Home() {
             usług dronowych
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
+            <Button
               onClick={handleFindOperator}
-              className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer"
+              className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-6 text-lg rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer"
             >
               Utwórz Zlecenie
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleBecomeOperator}
-              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer"
+              variant="outline"
+              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-6 text-lg rounded-lg font-semibold transition-colors whitespace-nowrap cursor-pointer"
             >
               Zostań Operatorem
-            </button>
+            </Button>
           </div>
         </div>
       </section>

@@ -6,19 +6,20 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AuthService } from "@/services/authorization_service";
 import HorizontalRadio from "../../base/HorizontalRadio/HorizontalRadio";
 import OperationStatus from "../../base/OperationStatus/OperationStatus";
+import { Roles } from "@/types/auth/user_role";
 
 const registerSchema = z
   .object({
+    role: z.string().min(1, "Rola jest wymagana"),
     username: z
       .string()
       .min(1, "Nazwa użytkownika jest wymagana.")
@@ -43,13 +44,19 @@ const registerSchema = z
     path: ["confirmPassword"],
   });
 
+interface RegisterFormProps extends React.ComponentProps<"form"> {
+  defaultRole?: string;
+}
+
 export function RegisterForm({
   className,
+  defaultRole = Roles.CLIENT,
   ...props
-}: React.ComponentProps<"form">) {
+}: RegisterFormProps) {
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
+      role: defaultRole,
       username: "",
       email: "",
       password: "",
@@ -58,6 +65,13 @@ export function RegisterForm({
     },
   });
 
+  // Update form default if prop changes
+  useEffect(() => {
+    if (defaultRole) {
+      form.setValue("role", defaultRole);
+    }
+  }, [defaultRole, form]);
+
   const [formState, setFormState] = useState<
     "inProgress" | "success" | "error" | "loading"
   >("inProgress");
@@ -65,7 +79,7 @@ export function RegisterForm({
 
   async function onSubmit(data: z.infer<typeof registerSchema>) {
     setFormState("loading");
-    setErrorMessage(""); // Reset previous errors
+    setErrorMessage("");
 
     try {
       const user = await AuthService.register({
@@ -73,7 +87,7 @@ export function RegisterForm({
         email: data.email,
         password: data.password,
         phone_number: data.phone_number,
-        role: "cli", // Default role
+        role: data.role,
       });
 
       if (user) {
@@ -132,12 +146,22 @@ export function RegisterForm({
                 Wypełnij poniższe pola, aby utworzyć nowe konto
               </p>
             </div>
-            <HorizontalRadio
-              options={[
-                { label: "Operator", value: "operator" },
-                { label: "Klient", value: "client" },
-              ]}
-            ></HorizontalRadio>
+
+            <Controller
+              name="role"
+              control={form.control}
+              render={({ field }) => (
+                <HorizontalRadio
+                  value={field.value}
+                  onChange={field.onChange}
+                  options={[
+                    { label: "Operator", value: Roles.OPERATOR },
+                    { label: "Klient", value: Roles.CLIENT },
+                  ]}
+                />
+              )}
+            />
+
             <Controller
               name="username"
               control={form.control}
@@ -243,27 +267,15 @@ export function RegisterForm({
             <Field>
               <Button type="submit">Zarejestruj się</Button>
             </Field>
-            <FieldSeparator>Lub kontynuuj z</FieldSeparator>
-            <Field>
-              <Button variant="outline" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                  <path
-                    d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
-                    fill="currentColor"
-                  />
-                </svg>
-                Zarejestruj przez GitHub
-              </Button>
-              <FieldDescription className="text-center">
-                Masz już konto?{" "}
-                <a
-                  href="?action=login"
-                  className="underline underline-offset-4"
-                >
-                  Zaloguj się
-                </a>
-              </FieldDescription>
-            </Field>
+            <FieldDescription className="text-center">
+              Masz już konto?{" "}
+              <a
+                href="?action=login"
+                className="underline underline-offset-4"
+              >
+                Zaloguj się
+              </a>
+            </FieldDescription>
           </FieldGroup>
         </form>
       )}

@@ -9,18 +9,24 @@ export interface HorizontalRadioProps {
 
   options: { label: string; value: string }[];
   defaultValue?: string;
+  value?: string;
   onChange?: (value: string) => void;
 }
 
 export default function HorizontalRadio(
   props: HorizontalRadioProps,
 ): JSX.Element {
-  const [selectedValue, setSelectedValue] = useState<string>(
+  const [internalValue, setInternalValue] = useState<string>(
     props.defaultValue || props.options[0].value,
   );
 
+  const isControlled = props.value !== undefined;
+  const selectedValue = isControlled ? props.value : internalValue;
+
   const handleOptionClick = (value: string) => {
-    setSelectedValue(value);
+    if (!isControlled) {
+      setInternalValue(value);
+    }
 
     if (props.onChange) {
       props.onChange(value);
