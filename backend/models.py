@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Text, Date, ForeignKey, CHAR
+from sqlalchemy import Column, Integer, Text, Date, ForeignKey, CHAR, Enum
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -10,10 +10,16 @@ class User(Base):
     user_name = Column(Text, nullable=False)
     email = Column(Text, nullable=False, unique=True)
     password = Column(Text, nullable=False)
-    role = Column(CHAR(3), nullable=False)
+    role: Column[str] = Column(
+        Enum("adm", "cli", "ope", name="role_enum"), nullable=False
+    )
     phone_number = Column(Text, nullable=False)
     is_blocked = Column(CHAR(1), nullable=False, default="N")
     creation_date = Column(Date, nullable=False)
+
+    @property
+    def roles(self):
+        return [self.role]
 
     localisation = Column(Text)
     area = Column(Integer)

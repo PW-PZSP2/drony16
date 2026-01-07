@@ -1,9 +1,11 @@
+import pytest
 import asyncio
 import httpx
 
 BASE_URL = "http://localhost:8080"
 
 
+@pytest.mark.asyncio
 async def test_auth_flow():
     async with httpx.AsyncClient(base_url=BASE_URL) as client:
         print("Registering user...")
@@ -14,7 +16,7 @@ async def test_auth_flow():
                 "password": "password123",
                 "user_name": "test_user",
                 "phone_number": "123456789",
-                "role": "CLI",
+                "role": "cli",
             },
         )
         if response.status_code == 400 and "Email already registered" in response.text:
@@ -28,19 +30,19 @@ async def test_auth_flow():
             "/token", data={"user_name": "test@example.com", "password": "password123"}
         )
         assert response.status_code == 200, f"Login failed: {response.text}"
-        token_data = response.json()
-        access_token = token_data["access_token"]
-        print("Login successful, token received.")
+        print("Login successful, cookie set.")
 
         print("Accessing protected route...")
-        headers = {"Authorization": f"Bearer {access_token}"}
-        response = await client.get("/users/me", headers=headers)
+        response = await client.get("/users/me")
         assert response.status_code == 200, (
             f"Access to protected route failed: {response.text}"
         )
-        user_data = response.json()
-        assert user_data["email"] == "test@example.com"
-        print(f"Protected route accessed successfully. User: {user_data['email']}")
+        data = response.json()
+        assert data["email"] == "test@example.com"
+        assert "cli" in data["roles"]
+        print(
+            f"Protected route accessed successfully. User: {data['email']}, Roles: {data['roles']}"
+        )
 
 
 if __name__ == "__main__":
