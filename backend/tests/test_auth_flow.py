@@ -17,6 +17,8 @@ async def test_auth_flow():
                 "user_name": "test_user",
                 "phone_number": "123456789",
                 "role": "cli",
+                "localisation": "Warsaw",
+                "area": 100,
             },
         )
         if response.status_code == 400 and "Email already registered" in response.text:

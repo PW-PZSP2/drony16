@@ -77,6 +77,7 @@ class OrderResponse(OrderBase):
     creation_date: datetime
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    interested_operators: list[int] = []
 
     class Config:
         from_attributes = True
