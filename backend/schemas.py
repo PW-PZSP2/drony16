@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, model_validator
 from typing import Optional, Literal, Dict, Any
 from datetime import datetime
 
@@ -12,8 +12,17 @@ class UserCreate(UserBase):
     password: str
     phone_number: str
     role: Literal["adm", "ope", "cli"]
-    localisation: str
-    area: Optional[int]
+    localisation: Optional[str] = None
+    area: Optional[int] = None
+
+    @model_validator(mode="after")
+    def check_operator_requirements(self):
+        if self.role == "ope":
+            if not self.localisation:
+                raise ValueError("Localisation is required for operators")
+            if self.area is None:
+                raise ValueError("Area is required for operators")
+        return self
 
 
 class UserResponse(UserBase):
@@ -73,3 +82,17 @@ class OrderResponse(OrderBase):
     class Config:
         from_attributes = True
         populate_by_name = True
+
+
+class OpinionCreate(BaseModel):
+    score: int
+    opinion: str
+
+
+class OpinionResponse(BaseModel):
+    order_id: int
+    score: int
+    opinion: str
+
+    class Config:
+        from_attributes = True

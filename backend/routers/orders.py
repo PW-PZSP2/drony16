@@ -15,6 +15,13 @@ from models import (
     ReportedOperator,
 )
 from schemas import OrderCreate, OrderResponse, ServiceRequest
+from schemas import (
+    OrderCreate,
+    OrderResponse,
+    ServiceRequest,
+    OpinionCreate,
+    OpinionResponse,
+)
 from auth import get_current_user
 from utils import get_coordinates
 from services.matching import (
@@ -351,4 +358,40 @@ async def get_order(
         creation_date=datetime.combine(order.creation_date, datetime.min.time()),
         services=services_data,
         interested_operators=interested_ops,
+@router.post("/{order_id}/opinion", response_model=OpinionResponse)
+async def post_opinion(
+    order_id: int,
+    opinion_data: OpinionCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    result = await db.execute(select(Order).filter(Order.order_id == order_id))
+    order_obj = result.scalars().first()
+    if not order_obj:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    if order_obj.client_id != current_user.user_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Only the client who created the order can post an opinion",
+        )
+
+    if opinion_data.score < 1 or opinion_data.score > 5:
+        raise HTTPException(status_code=400, detail="Score must be between 1 and 5")
+
+    if order_obj.score is not None:
+        raise HTTPException(
+            status_code=400, detail="Opinion already set for this order"
+        )
+
+    order_obj.score = opinion_data.score
+    order_obj.opinion = opinion_data.opinion
+
+    await db.commit()
+    await db.refresh(order_obj)
+
+    return OpinionResponse(
+        order_id=int(order_obj.order_id),
+        score=int(order_obj.score),
+        opinion=str(order_obj.opinion),
     )
