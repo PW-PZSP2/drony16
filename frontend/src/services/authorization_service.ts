@@ -64,13 +64,14 @@ async function register(
     });
 
     if (!response.ok) {
-      return null;
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Registration failed");
     }
 
     return response.json();
   } catch (error) {
     console.error("Register error:", error);
-    return null;
+    throw error;
   }
 }
 

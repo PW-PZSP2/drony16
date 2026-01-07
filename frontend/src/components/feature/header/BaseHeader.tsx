@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { JSX } from "react";
 // import type {User} from '../../../types/auth/user';
-import { useGetUser } from "../../../store/authorization";
+import { useAuthorizationStore, useGetUser } from "../../../store/authorization";
 import { Roles } from "../../../types/auth/user_role";
 import { Link } from "react-router-dom";
+import { AuthService } from "../../../services/authorization_service";
 
 export default function Header(): JSX.Element {
   const user = useGetUser();
 
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const { actions } = useAuthorizationStore();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const currentUser = await AuthService.getCurrentUser();
+      actions.setUser(currentUser || undefined);
+    };
+    checkAuth();
+  }, [actions]);
 
   const getDashboardLink = () => {
     if (!user) return "/";
@@ -40,23 +50,7 @@ export default function Header(): JSX.Element {
     return "";
   };
 
-  const handleProfileClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    window.location.href = "/profile";
-    setShowUserMenu(false);
-  };
 
-  const handleSettingsClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    window.location.href = "/settings";
-    setShowUserMenu(false);
-  };
-
-  const handleChangePasswordClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    window.location.href = "/change-password";
-    setShowUserMenu(false);
-  };
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -108,28 +102,6 @@ export default function Header(): JSX.Element {
 
                 {showUserMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                    <button
-                      onClick={handleProfileClick}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      <i className="ri-user-line mr-2"></i>
-                      Mój profil
-                    </button>
-                    <button
-                      onClick={handleSettingsClick}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      <i className="ri-settings-line mr-2"></i>
-                      Ustawienia
-                    </button>
-                    <button
-                      onClick={handleChangePasswordClick}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      <i className="ri-lock-password-line mr-2"></i>
-                      Zmiana hasła
-                    </button>
-                    <hr className="my-2" />
                     <button
                       onClick={() => {
                         window.location.href = "/logout";
