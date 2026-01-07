@@ -61,7 +61,7 @@ class OrderCreate(OrderBase):
 
 
 class OrderResponse(OrderBase):
-    id: int = Field(..., serialization_alias="order_id", validation_alias="order_id")
+    order_id: int = Field(...)
     services: list[ServiceRequest]
     client_id: int
     operator_id: Optional[int] = None

@@ -5,9 +5,14 @@ from datetime import datetime, date
 from typing import cast
 from database import get_db
 from models import Order, OrderService, OrderParameter, User, Service, ServiceParameter
-from schemas import OrderCreate, OrderResponse
+from schemas import OrderCreate, OrderResponse, ServiceRequest
 from auth import get_current_user
 from utils import get_coordinates
+from services.matching import (
+    find_matched_operators,
+    save_matched_order,
+    get_matched_orders_for_operator,
+)
 
 
 router = APIRouter(
@@ -46,6 +51,7 @@ async def create_order(
     db.add(new_order)
     await db.flush()
 
+    order_service_ids = []
     for service_req in order_data.services:
         result = await db.execute(
             select(Service).filter(Service.name == service_req.service_name)
@@ -57,6 +63,8 @@ async def create_order(
                 status_code=400,
                 detail=f"Service '{service_req.service_name}' not found",
             )
+
+        order_service_ids.append(service_obj.service_id)
 
         new_order_service = OrderService(
             order_id=new_order.order_id, service_id=service_obj.service_id
@@ -87,14 +95,14 @@ async def create_order(
     await db.commit()
     await db.refresh(new_order)
 
-    # matched_operators = await find_matched_operators(
-    #     db, new_order, [service.service_id for service in order_data.services]
-    # )
+    matched_operators = await find_matched_operators(db, new_order, order_service_ids)
+    for operator in matched_operators:
+        await save_matched_order(db, new_order, operator)
 
     response_services = order_data.services
 
     return OrderResponse(
-        id=int(new_order.order_id),
+        order_id=int(new_order.order_id),
         name=str(new_order.name),
         completion_date=str(new_order.completion_date) == "1",
         raid_date=str(new_order.raid_date) == "1",
@@ -110,3 +118,48 @@ async def create_order(
             cast(date, new_order.creation_date), datetime.min.time()
         ),
     )
+
+
+@router.get("/matched", response_model=list[OrderResponse])
+async def get_matched_orders(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role != "ope":
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    matched_orders = await get_matched_orders_for_operator(db, current_user.user_id)
+
+    response = []
+    for order in matched_orders:
+        services_data = []
+        for os in order.order_services:
+            params = {}
+            for op in order.order_parameters:
+                if op.parameter.service_id == os.service_id:
+                    params[op.parameter.name] = op.value
+
+            services_data.append(
+                ServiceRequest(service_name=os.service.name, parameters=params)
+            )
+
+        response.append(
+            OrderResponse(
+                order_id=order.order_id,
+                name=order.name,
+                deadline=datetime.combine(order.deadline, datetime.min.time()),
+                location=order.location,
+                latitude=order.latitude,
+                longitude=order.longitude,
+                description=order.description or "",
+                completion_date=str(order.completion_date) == "1",
+                raid_date=str(order.raid_date) == "1",
+                client_id=order.client_id,
+                operator_id=order.operator_id,
+                creation_date=datetime.combine(
+                    order.creation_date, datetime.min.time()
+                ),
+                services=services_data,
+            )
+        )
+
+    return response

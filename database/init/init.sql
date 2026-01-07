@@ -131,3 +131,10 @@ ALTER TABLE "order"
     ADD COLUMN latitude FLOAT;
 ALTER TABLE "order" 
     ADD COLUMN longitude FLOAT;
+
+CREATE TABLE "matched_order" (
+    match_id SERIAL PRIMARY KEY,
+    order_id INTEGER REFERENCES "order"(order_id),
+    operator_id INTEGER REFERENCES "user"(user_id),
+    status TEXT DEFAULT 'pending'
+);
