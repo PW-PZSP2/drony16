@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Drone } from "lucide-react";
 import type { JSX } from "react";
 // import type {User} from '../../../types/auth/user';
 import { useAuthorizationStore, useGetUser } from "../../../store/authorization";
@@ -24,13 +25,13 @@ export default function Header(): JSX.Element {
     if (!user) return "/";
 
     if (user.roles.includes(Roles.ADMIN)) {
-      return "/admin-dashboard";
+      return "/admin/dashboard";
     }
     if (user.roles.includes(Roles.OPERATOR)) {
-      return "/operator-dashboard";
+      return "/operator/dashboard";
     }
     if (user.roles.includes(Roles.CLIENT)) {
-      return "/client-dashboard";
+      return "/client/dashboard";
     }
     return "/";
   };
@@ -51,29 +52,36 @@ export default function Header(): JSX.Element {
   };
 
 
-
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <a
-              href="/"
-              className="text-2xl font-bold text-blue-600"
-              style={{ fontFamily: '"Pacifico", serif' }}
-            >
-              logo
-            </a>
+            <div className="flex items-center gap-2 self-center font-medium">
+              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-white">
+                <Drone className="size-4" />
+              </div>
+              <span className="text-xl">Droneo</span>
+            </div>
           </div>
 
           <nav className="hidden md:flex space-x-8">
-            <a
-              href="/"
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              Strona Główna
-            </a>
-            {user && (
+            {!user ? (
+              <>
+                <a
+                  href="/"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Strona Główna
+                </a>
+                <a
+                  href="#kontakt"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Kontakt
+                </a>
+              </>
+            ) : (
               <a
                 href={getDashboardLink()}
                 className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
@@ -81,12 +89,6 @@ export default function Header(): JSX.Element {
                 {getDashboardLabel()}
               </a>
             )}
-            <a
-              href="#kontakt"
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              Kontakt
-            </a>
           </nav>
 
           <div className="flex items-center space-x-4">
