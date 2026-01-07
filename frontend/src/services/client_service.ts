@@ -41,7 +41,7 @@ interface RatingData {
   comment?: string;
 }
 
-const API_DELAY = 500; 
+const API_DELAY = 1000; 
 
 const mockDelay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
