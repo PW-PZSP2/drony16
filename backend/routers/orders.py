@@ -14,7 +14,6 @@ from models import (
     ServiceParameter,
     ReportedOperator,
 )
-from schemas import OrderCreate, OrderResponse, ServiceRequest
 from schemas import (
     OrderCreate,
     OrderResponse,
@@ -358,6 +357,9 @@ async def get_order(
         creation_date=datetime.combine(order.creation_date, datetime.min.time()),
         services=services_data,
         interested_operators=interested_ops,
+    )
+
+
 @router.post("/{order_id}/opinion", response_model=OpinionResponse)
 async def post_opinion(
     order_id: int,
