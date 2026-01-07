@@ -1,5 +1,5 @@
-from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, Literal
+from pydantic import BaseModel, EmailStr, Field, model_validator
+from typing import Optional, Literal, Dict, Any
 from datetime import datetime
 
 
@@ -12,6 +12,17 @@ class UserCreate(UserBase):
     password: str
     phone_number: str
     role: Literal["adm", "ope", "cli"]
+    localisation: Optional[str] = None
+    area: Optional[int] = None
+
+    @model_validator(mode="after")
+    def check_operator_requirements(self):
+        if self.role == "ope":
+            if not self.localisation:
+                raise ValueError("Localisation is required for operators")
+            if self.area is None:
+                raise ValueError("Area is required for operators")
+        return self
 
 
 class UserResponse(UserBase):
@@ -21,6 +32,10 @@ class UserResponse(UserBase):
     roles: list[str]
     phone_number: str
     creation_date: datetime
+    localisation: str
+    latitude: Optional[float]
+    longitude: Optional[float]
+    area: Optional[int]
 
     class Config:
         from_attributes = True
@@ -34,3 +49,49 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
+
+
+class OrderBase(BaseModel):
+    name: str
+    deadline: datetime
+    location: str
+    description: str
+    completion_date: bool
+    raid_date: bool
+
+
+class ServiceRequest(BaseModel):
+    service_name: str
+    parameters: Dict[str, Any]
+
+
+class OrderCreate(OrderBase):
+    services: list[ServiceRequest]
+
+
+class OrderResponse(OrderBase):
+    order_id: int = Field(...)
+    services: list[ServiceRequest]
+    client_id: int
+    operator_id: Optional[int] = None
+    creation_date: datetime
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+    class Config:
+        from_attributes = True
+        populate_by_name = True
+
+
+class OpinionCreate(BaseModel):
+    score: int
+    opinion: str
+
+
+class OpinionResponse(BaseModel):
+    order_id: int
+    score: int
+    opinion: str
+
+    class Config:
+        from_attributes = True

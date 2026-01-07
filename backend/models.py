@@ -1,29 +1,32 @@
-from sqlalchemy import Column, Integer, Text, Date, ForeignKey, CHAR, Enum
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, Text, Date, ForeignKey, CHAR, Enum, Float
+from datetime import date
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from database import Base
 
 
 class User(Base):
     __tablename__ = "user"
 
-    user_id = Column(Integer, primary_key=True)
-    user_name = Column(Text, nullable=False)
-    email = Column(Text, nullable=False, unique=True)
-    password = Column(Text, nullable=False)
-    role: Column[str] = Column(
+    user_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_name: Mapped[str] = mapped_column(Text, nullable=False)
+    email: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+    password: Mapped[str] = mapped_column(Text, nullable=False)
+    role: Mapped[str] = mapped_column(
         Enum("adm", "cli", "ope", name="role_enum"), nullable=False
     )
-    phone_number = Column(Text, nullable=False)
-    is_blocked = Column(CHAR(1), nullable=False, default="N")
-    creation_date = Column(Date, nullable=False)
+    phone_number: Mapped[str] = mapped_column(Text, nullable=False)
+    is_blocked: Mapped[str] = mapped_column(CHAR(1), nullable=False, default="N")
+    creation_date: Mapped[date] = mapped_column(Date, nullable=False)
 
     @property
     def roles(self):
         return [self.role]
 
-    localisation = Column(Text)
-    area = Column(Integer)
-    description = Column(Text)
+    localisation: Mapped[str | None] = mapped_column(Text)
+    latitude: Mapped[float | None] = mapped_column(Float, nullable=True)
+    longitude: Mapped[float | None] = mapped_column(Float, nullable=True)
+    area: Mapped[int | None] = mapped_column(Integer)
+    description: Mapped[str | None] = mapped_column(Text)
 
     attachments = relationship("Attachment", back_populates="operator")
     services_provided = relationship("OperatorService", back_populates="operator")
@@ -33,6 +36,7 @@ class User(Base):
     orders_as_operator = relationship(
         "Order", foreign_keys="[Order.operator_id]", back_populates="operator"
     )
+    reports = relationship("ReportedOperator", back_populates="operator")
     reports = relationship("ReportedOperator", back_populates="operator")
 
 
@@ -51,12 +55,11 @@ class Attachment(Base):
 class Service(Base):
     __tablename__ = "service"
 
-    service_id = Column(Integer, primary_key=True)
-    name = Column(Text, nullable=False)
+    service_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(Text, nullable=False)
 
     operator_services = relationship("OperatorService", back_populates="service")
     parameters = relationship("ServiceParameter", back_populates="service")
-    orders = relationship("Order", back_populates="service")
 
 
 class OperatorService(Base):
@@ -85,25 +88,26 @@ class ServiceParameter(Base):
 class Order(Base):
     __tablename__ = "order"
 
-    order_id = Column(Integer, primary_key=True)
-    name = Column(Text, nullable=False)
-    creation_date = Column(Date, nullable=False)
-    description = Column(Text)
-    raid_date = Column(CHAR(1), nullable=False)
-    completion_date = Column(CHAR(1), nullable=False)
-    deadline = Column(Date, nullable=False)
-    location = Column(Text, nullable=False)
-    operator_selection_date = Column(Date)
+    order_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(Text, nullable=False)
+    creation_date: Mapped[date] = mapped_column(Date, nullable=False)
+    description: Mapped[str | None] = mapped_column(Text)
+    raid_date: Mapped[str] = mapped_column(CHAR(1), nullable=False)
+    completion_date: Mapped[str] = mapped_column(CHAR(1), nullable=False)
+    deadline: Mapped[date] = mapped_column(Date, nullable=False)
+    location: Mapped[str] = mapped_column(Text, nullable=False)
+    latitude: Mapped[float | None] = mapped_column(Float, nullable=True)
+    longitude: Mapped[float | None] = mapped_column(Float, nullable=True)
+    operator_selection_date: Mapped[date | None] = mapped_column(Date)
 
-    service_id = Column(Integer, ForeignKey("service.service_id"))
-    client_id = Column(Integer, ForeignKey("user.user_id"))
-    operator_id = Column(Integer, ForeignKey("user.user_id"))
+    client_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.user_id"))
+    operator_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("user.user_id"))
 
-    score = Column(Integer)
-    opinion = Column(Text)
-    state = Column(Text, nullable=False)
+    score: Mapped[int | None] = mapped_column(Integer)
+    opinion: Mapped[str | None] = mapped_column(Text)
+    state: Mapped[str] = mapped_column(Text, nullable=False)
 
-    service = relationship("Service", back_populates="orders")
+    order_services = relationship("OrderService", back_populates="order")
     client = relationship(
         "User", foreign_keys=[client_id], back_populates="orders_as_client"
     )
@@ -112,6 +116,15 @@ class Order(Base):
     )
     order_parameters = relationship("OrderParameter", back_populates="order")
     reported_entries = relationship("ReportedOperator", back_populates="order")
+
+
+class OrderService(Base):
+    __tablename__ = "order_service"
+    order_id = Column(Integer, ForeignKey("order.order_id"), primary_key=True)
+    service_id = Column(Integer, ForeignKey("service.service_id"), primary_key=True)
+
+    order = relationship("Order", back_populates="order_services")
+    service = relationship("Service")
 
 
 class OrderParameter(Base):
@@ -135,4 +148,6 @@ class ReportedOperator(Base):
     operator_id = Column(Integer, ForeignKey("user.user_id"))
 
     order = relationship("Order", back_populates="reported_entries")
+    target_type = Column(Text, nullable=False)
+    target_id = Column(Integer, nullable=False)
     operator = relationship("User", back_populates="reports")
