@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, Literal
+from typing import Optional, Literal, Dict, Any
 from datetime import datetime
 
 
@@ -34,3 +34,29 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
+
+
+class OrderBase(BaseModel):
+    name: str
+    deadline: datetime
+    location: str
+    description: str
+    completion_date: bool
+    raid_date: bool
+
+
+class ServiceRequest(BaseModel):
+    service_name: str
+    parameters: Dict[str, Any]
+
+
+class OrderCreate(OrderBase):
+    services: list[ServiceRequest]
+
+
+class OrderResponse(OrderBase):
+    id: int = Field(..., serialization_alias="order_id", validation_alias="order_id")
+    services: list[ServiceRequest]
+    client_id: int
+    operator_id: Optional[int] = None
+    creation_date: datetime
