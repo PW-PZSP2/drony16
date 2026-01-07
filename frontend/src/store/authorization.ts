@@ -8,7 +8,7 @@ interface AuthorizationState {
   };
 }
 
-const useAuthorizationStore = create<AuthorizationState>((set) => ({
+export const useAuthorizationStore = create<AuthorizationState>((set) => ({
   user: undefined,
   actions: {
     setUser: (user: User | undefined) => set({ user }),

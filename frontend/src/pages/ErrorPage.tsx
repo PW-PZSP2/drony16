@@ -1,4 +1,4 @@
-import { JSX } from "react/jsx-runtime";
+import type { JSX } from "react/jsx-runtime";
 import { useRouteError, isRouteErrorResponse } from "react-router-dom";
 
 export default function ErrorPage(): JSX.Element {

@@ -1,26 +1,40 @@
 import { useState, useEffect } from "react";
+import { Drone } from "lucide-react";
 import type { JSX } from "react";
 // import type {User} from '../../../types/auth/user';
-import { useGetUser } from "../../../store/authorization";
+import {
+  useAuthorizationStore,
+  useGetUser,
+} from "../../../store/authorization";
 import { Roles } from "../../../types/auth/user_role";
 import { Link } from "react-router-dom";
+import { AuthService } from "../../../services/authorization_service";
 
 export default function Header(): JSX.Element {
   const user = useGetUser();
 
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const { actions } = useAuthorizationStore();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const currentUser = await AuthService.getCurrentUser();
+      actions.setUser(currentUser || undefined);
+    };
+    checkAuth();
+  }, [actions]);
 
   const getDashboardLink = () => {
     if (!user) return "/";
 
     if (user.roles.includes(Roles.ADMIN)) {
-      return "/admin-dashboard";
+      return "/admin/dashboard";
     }
     if (user.roles.includes(Roles.OPERATOR)) {
-      return "/operator-dashboard";
+      return "/operator/dashboard";
     }
     if (user.roles.includes(Roles.CLIENT)) {
-      return "/client-dashboard";
+      return "/client/dashboard";
     }
     return "/";
   };
@@ -40,22 +54,12 @@ export default function Header(): JSX.Element {
     return "";
   };
 
-  const handleProfileClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    window.location.href = "/profile";
-    setShowUserMenu(false);
-  };
-
-  const handleSettingsClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    window.location.href = "/settings";
-    setShowUserMenu(false);
-  };
-
-  const handleChangePasswordClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    window.location.href = "/change-password";
-    setShowUserMenu(false);
+  const getProfileLink = () => {
+    if (!user) return "/";
+    if (user.roles.includes(Roles.OPERATOR)) return "/operator/profile";
+    if (user.roles.includes(Roles.CLIENT)) return "/client/profile";
+    if (user.roles.includes(Roles.ADMIN)) return "/admin/profile";
+    return "/";
   };
 
   return (
@@ -63,23 +67,31 @@ export default function Header(): JSX.Element {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <a
-              href="/"
-              className="text-2xl font-bold text-blue-600"
-              style={{ fontFamily: '"Pacifico", serif' }}
-            >
-              logo
-            </a>
+            <div className="flex items-center gap-2 self-center font-medium">
+              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-white">
+                <Drone className="size-4" />
+              </div>
+              <span className="text-xl">Droneo</span>
+            </div>
           </div>
 
           <nav className="hidden md:flex space-x-8">
-            <a
-              href="/"
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              Strona Główna
-            </a>
-            {user && (
+            {!user ? (
+              <>
+                <a
+                  href="/"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Strona Główna
+                </a>
+                <a
+                  href="#kontakt"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Kontakt
+                </a>
+              </>
+            ) : (
               <a
                 href={getDashboardLink()}
                 className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
@@ -87,12 +99,6 @@ export default function Header(): JSX.Element {
                 {getDashboardLabel()}
               </a>
             )}
-            <a
-              href="#kontakt"
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              Kontakt
-            </a>
           </nav>
 
           <div className="flex items-center space-x-4">
@@ -102,39 +108,25 @@ export default function Header(): JSX.Element {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors cursor-pointer"
                 >
-                  <span>Witaj, {user.username}</span>
+                  <span>Witaj, {user.user_name}</span>
                   <i className="ri-arrow-down-s-line"></i>
                 </button>
 
                 {showUserMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                    <button
-                      onClick={handleProfileClick}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    <Link
+                      to={getProfileLink()}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
+                      onClick={() => setShowUserMenu(false)}
                     >
                       <i className="ri-user-line mr-2"></i>
-                      Mój profil
-                    </button>
-                    <button
-                      onClick={handleSettingsClick}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      <i className="ri-settings-line mr-2"></i>
-                      Ustawienia
-                    </button>
-                    <button
-                      onClick={handleChangePasswordClick}
-                      className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      <i className="ri-lock-password-line mr-2"></i>
-                      Zmiana hasła
-                    </button>
-                    <hr className="my-2" />
+                      Mój Profil
+                    </Link>
                     <button
                       onClick={() => {
                         window.location.href = "/logout";
                       }}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center"
                     >
                       <i className="ri-logout-box-line mr-2"></i>
                       Wyloguj

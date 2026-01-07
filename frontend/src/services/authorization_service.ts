@@ -43,9 +43,17 @@ async function logout(): Promise<void> {
   }
 }
 
-async function register(
-  userData: Partial<User> & { password: string },
-): Promise<User | null> {
+interface RegisterPayload {
+  user_name: string;
+  email: string;
+  password?: string;
+  role: string;
+  phone_number: string;
+  localisation?: string;
+  area?: number;
+}
+
+async function register(userData: RegisterPayload): Promise<User | null> {
   try {
     const response = await fetch(`${API_URL}/register`, {
       method: "POST",
@@ -56,13 +64,14 @@ async function register(
     });
 
     if (!response.ok) {
-      return null;
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Registration failed");
     }
 
     return response.json();
   } catch (error) {
     console.error("Register error:", error);
-    return null;
+    throw error;
   }
 }
 

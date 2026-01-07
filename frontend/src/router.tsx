@@ -9,6 +9,7 @@ import LogoutPage from "./pages/LogoutPage";
 import ClientDashboard from "./pages/ClientDashboard";
 import OperatorDashboard from "./pages/OperatorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import ProfilePage from "./pages/ProfilePage";
 
 export function buildRouter() {
   return createBrowserRouter([
@@ -30,6 +31,10 @@ export function buildRouter() {
               path: "dashboard",
               element: <ClientDashboard />,
             },
+            {
+              path: "profile",
+              element: <ProfilePage />,
+            },
           ],
         },
         {
@@ -39,6 +44,10 @@ export function buildRouter() {
             {
               path: "dashboard",
               element: <OperatorDashboard />,
+            },
+            {
+              path: "profile",
+              element: <ProfilePage />,
             },
           ],
         },
