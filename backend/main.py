@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from database import engine, Base, get_db
 from models import User
-from routers import orders
+from routers import orders, operators
 from schemas import UserCreate, UserResponse
 from utils import get_coordinates
 from auth import (
@@ -29,6 +29,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(orders.router)
+app.include_router(operators.router)
 
 
 origins = [
