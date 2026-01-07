@@ -37,6 +37,8 @@ const registerSchema = z
       .string()
       .min(1, "Numer telefonu jest wymagany.")
       .min(9, "Numer telefonu musi mieć co najmniej 9 znaków."),
+    localisation: z.string().min(1, "Lokalizacja jest wymagana."),
+    area: z.string().min(1, "Zasięg działania jest wymagany."),
     confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane."),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -61,6 +63,8 @@ export function RegisterForm({
       email: "",
       password: "",
       phone_number: "",
+      localisation: "",
+      area: "",
       confirmPassword: "",
     },
   });
@@ -87,6 +91,8 @@ export function RegisterForm({
         email: data.email,
         password: data.password,
         phone_number: data.phone_number,
+        localisation: data.localisation,
+        area: parseInt(data.area),
         role: data.role,
       });
 
@@ -204,26 +210,68 @@ export function RegisterForm({
                 </Field>
               )}
             />
-            <Controller
-              name="phone_number"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="register-phone">Numer telefonu</FieldLabel>
-                  <Input
-                    {...field}
-                    id="register-phone"
-                    type="tel"
-                    placeholder="123456789"
-                    aria-invalid={fieldState.invalid}
-                    autoComplete="tel"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+              <Controller
+                name="phone_number"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="register-phone">Numer telefonu</FieldLabel>
+                    <Input
+                      {...field}
+                      id="register-phone"
+                      type="tel"
+                      placeholder="123456789"
+                      aria-invalid={fieldState.invalid}
+                      autoComplete="tel"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="localisation"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="register-localisation">Lokalizacja</FieldLabel>
+                    <Input
+                      {...field}
+                      id="register-localisation"
+                      type="text"
+                      placeholder="Warszawa, Polska"
+                      aria-invalid={fieldState.invalid}
+                      autoComplete="address-level2"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="area"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="register-area">
+                      Zasięg działania (km)
+                    </FieldLabel>
+                    <Input
+                      {...field}
+                      id="register-area"
+                      type="number"
+                      placeholder="50"
+                      min="0"
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
             <Controller
               name="password"
               control={form.control}

@@ -51,6 +51,13 @@ export default function Header(): JSX.Element {
     return "";
   };
 
+  const getProfileLink = () => {
+    if (!user) return "/";
+    if (user.roles.includes(Roles.OPERATOR)) return "/operator/profile";
+    if (user.roles.includes(Roles.CLIENT)) return "/client/profile";
+    if (user.roles.includes(Roles.ADMIN)) return "/admin/profile";
+    return "/";
+  };
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -104,11 +111,19 @@ export default function Header(): JSX.Element {
 
                 {showUserMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                    <Link
+                      to={getProfileLink()}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <i className="ri-user-line mr-2"></i>
+                      Mój Profil
+                    </Link>
                     <button
                       onClick={() => {
                         window.location.href = "/logout";
                       }}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center"
                     >
                       <i className="ri-logout-box-line mr-2"></i>
                       Wyloguj

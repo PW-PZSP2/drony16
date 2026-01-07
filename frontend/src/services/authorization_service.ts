@@ -49,6 +49,8 @@ interface RegisterPayload {
   password?: string;
   role: string;
   phone_number: string;
+  localisation: string;
+  area: number;
 }
 
 async function register(

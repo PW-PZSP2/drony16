@@ -6,4 +6,6 @@ export interface User {
   email: string;
   phone_number: string;
   roles: UserRoles;
+  localisation?: string;
+  area?: number;
 }
