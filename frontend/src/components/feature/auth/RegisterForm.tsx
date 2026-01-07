@@ -37,14 +37,38 @@ const registerSchema = z
       .string()
       .min(1, "Numer telefonu jest wymagany.")
       .min(9, "Numer telefonu musi mieć co najmniej 9 znaków."),
-    localisation: z.string().min(1, "Lokalizacja jest wymagana."),
-    area: z.string().min(1, "Zasięg działania jest wymagany."),
+    localisation: z.string().optional(),
+    area: z.string().optional(),
     confirmPassword: z.string().min(1, "Potwierdzenie hasła jest wymagane."),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Hasła nie są identyczne.",
     path: ["confirmPassword"],
-  });
+  })
+  .refine(
+    (data) => {
+      if (data.role === Roles.OPERATOR) {
+        return !!data.localisation && data.localisation.length > 0;
+      }
+      return true;
+    },
+    {
+      message: "Lokalizacja jest wymagana dla operatora.",
+      path: ["localisation"],
+    },
+  )
+  .refine(
+    (data) => {
+      if (data.role === Roles.OPERATOR) {
+        return !!data.area && data.area.length > 0;
+      }
+      return true;
+    },
+    {
+      message: "Zasięg działania jest wymagany dla operatora.",
+      path: ["area"],
+    },
+  );
 
 interface RegisterFormProps extends React.ComponentProps<"form"> {
   defaultRole?: string;
@@ -69,6 +93,8 @@ export function RegisterForm({
     },
   });
 
+  const watchedRole = form.watch("role");
+
   // Update form default if prop changes
   useEffect(() => {
     if (defaultRole) {
@@ -92,7 +118,7 @@ export function RegisterForm({
         password: data.password,
         phone_number: data.phone_number,
         localisation: data.localisation,
-        area: parseInt(data.area),
+        area: data.area ? parseInt(data.area) : undefined,
         role: data.role,
       });
 
@@ -230,48 +256,54 @@ export function RegisterForm({
                   </Field>
                 )}
               />
-              <Controller
-                name="localisation"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-localisation">Lokalizacja</FieldLabel>
-                    <Input
-                      {...field}
-                      id="register-localisation"
-                      type="text"
-                      placeholder="Warszawa, Polska"
-                      aria-invalid={fieldState.invalid}
-                      autoComplete="address-level2"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-              <Controller
-                name="area"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="register-area">
-                      Zasięg działania (km)
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="register-area"
-                      type="number"
-                      placeholder="50"
-                      min="0"
-                      aria-invalid={fieldState.invalid}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+            {watchedRole === Roles.OPERATOR && (
+              <>
+                <Controller
+                  name="localisation"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="register-localisation">
+                        Lokalizacja
+                      </FieldLabel>
+                      <Input
+                        {...field}
+                        id="register-localisation"
+                        type="text"
+                        placeholder="Warszawa, Polska"
+                        aria-invalid={fieldState.invalid}
+                        autoComplete="address-level2"
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+                <Controller
+                  name="area"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="register-area">
+                        Zasięg działania (km)
+                      </FieldLabel>
+                      <Input
+                        {...field}
+                        id="register-area"
+                        type="number"
+                        placeholder="50"
+                        min="0"
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+              </>
+            )}
             <Controller
               name="password"
               control={form.control}
