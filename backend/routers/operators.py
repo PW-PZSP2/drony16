@@ -254,24 +254,23 @@ async def remove_attachment(
 
 @router.get("/me/attachments")
 async def get_my_attachments(
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: AsyncSession = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
     if current_user.role != "ope":
         raise HTTPException(status_code=403, detail="Unauthorized")
 
     result = await db.execute(
-        select(Attachment).filter(
-            Attachment.operator_id == current_user.user_id
-        )
+        select(Attachment).filter(Attachment.operator_id == current_user.user_id)
     )
     attachments = []
     for a in result.scalars().all():
-        attachments.append({
-            "attachment_id": a.attachment_id,
-            "name": a.name,
-            "description": a.description,
-            "file_path": a.file_path,
-        })
+        attachments.append(
+            {
+                "attachment_id": a.attachment_id,
+                "name": a.name,
+                "description": a.description,
+                "file_path": a.file_path,
+            }
+        )
 
     return {"user_id": current_user.user_id, "attachments": attachments}

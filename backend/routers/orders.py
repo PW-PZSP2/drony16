@@ -5,7 +5,13 @@ from datetime import datetime, date
 from typing import cast
 from database import get_db
 from models import Order, OrderService, OrderParameter, User, Service, ServiceParameter
-from schemas import OrderCreate, OrderResponse, ServiceRequest, OpinionCreate, OpinionResponse
+from schemas import (
+    OrderCreate,
+    OrderResponse,
+    ServiceRequest,
+    OpinionCreate,
+    OpinionResponse,
+)
 from auth import get_current_user
 from utils import get_coordinates
 from services.matching import (
@@ -181,15 +187,11 @@ async def post_opinion(
         )
 
     if opinion_data.score < 1 or opinion_data.score > 5:
-        raise HTTPException(
-            status_code=400,
-            detail="Score must be between 1 and 5"
-        )
+        raise HTTPException(status_code=400, detail="Score must be between 1 and 5")
 
     if order_obj.score is not None:
         raise HTTPException(
-            status_code=400,
-            detail="Opinion already set for this order"
+            status_code=400, detail="Opinion already set for this order"
         )
 
     order_obj.score = opinion_data.score
@@ -201,5 +203,5 @@ async def post_opinion(
     return OpinionResponse(
         order_id=int(order_obj.order_id),
         score=int(order_obj.score),
-        opinion=str(order_obj.opinion)
+        opinion=str(order_obj.opinion),
     )
