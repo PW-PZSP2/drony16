@@ -29,7 +29,7 @@ export default function ClientDashboard() {
             <TabsTrigger value="completed">Pozostałe Zlecenia</TabsTrigger>
           </TabsList>
           <TabsContent value="create">
-            <CreateOrderTab/>
+            <CreateOrderTab />
           </TabsContent>
           <TabsContent value="select">
             <SelectOperatorTab />

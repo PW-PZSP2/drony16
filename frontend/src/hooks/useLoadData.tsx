@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 interface UseLoadDataOptions<T> {
   fetchFn: () => Promise<T>;
@@ -35,7 +35,7 @@ export function useLoadData<T>({
       setData(result);
       onSuccess?.(result);
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Unknown error');
+      const error = err instanceof Error ? err : new Error("Unknown error");
       setError(error);
       onError?.(error);
     } finally {
@@ -54,6 +54,3 @@ export function useLoadData<T>({
     refetch: loadData,
   };
 }
-
-
-
