@@ -1,11 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, Body, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, Body, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, delete
 from database import get_db
 from models import Order, User, OperatorService, Service, Attachment
-from pathlib import Path
-import uuid
-import os
 from auth import get_current_user
 from utils import get_coordinates
 

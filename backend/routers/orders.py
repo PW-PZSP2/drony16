@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select
 from datetime import datetime, date
 from typing import cast
 from database import get_db
@@ -203,4 +203,3 @@ async def post_opinion(
         score=int(order_obj.score),
         opinion=str(order_obj.opinion)
     )
-
