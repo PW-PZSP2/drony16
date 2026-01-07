@@ -7,6 +7,8 @@ from database import get_db
 from models import Order, OrderService, OrderParameter, User, Service, ServiceParameter
 from schemas import OrderCreate, OrderResponse
 from auth import get_current_user
+from utils import get_coordinates
+
 
 router = APIRouter(
     prefix="/orders",
@@ -33,6 +35,13 @@ async def create_order(
         operator_id=None,
         state="Złożone",
     )
+
+    location = get_coordinates(order_data.location)
+    if location:
+        new_order.latitude = location[0]
+        new_order.longitude = location[1]
+    else:
+        raise HTTPException(status_code=400, detail="Location not found")
 
     db.add(new_order)
     await db.flush()
@@ -78,6 +87,10 @@ async def create_order(
     await db.commit()
     await db.refresh(new_order)
 
+    # matched_operators = await find_matched_operators(
+    #     db, new_order, [service.service_id for service in order_data.services]
+    # )
+
     response_services = order_data.services
 
     return OrderResponse(
@@ -87,6 +100,8 @@ async def create_order(
         raid_date=str(new_order.raid_date) == "1",
         deadline=datetime.combine(cast(date, new_order.deadline), datetime.min.time()),
         location=str(new_order.location),
+        latitude=new_order.latitude,
+        longitude=new_order.longitude,
         description=str(new_order.description) if new_order.description else "",
         services=response_services,
         client_id=int(new_order.client_id),

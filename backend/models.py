@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, Text, Date, ForeignKey, CHAR, Enum, Float
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from database import Base
 
 
@@ -22,8 +22,8 @@ class User(Base):
         return [self.role]
 
     localisation = Column(Text)
-    latitude = Column(Float, nullable=True)
-    longitude = Column(Float, nullable=True)
+    latitude: Mapped[float | None] = mapped_column(Float, nullable=True)
+    longitude: Mapped[float | None] = mapped_column(Float, nullable=True)
     area = Column(Integer)
     description = Column(Text)
 
@@ -94,8 +94,8 @@ class Order(Base):
     completion_date = Column(CHAR(1), nullable=False)
     deadline = Column(Date, nullable=False)
     location = Column(Text, nullable=False)
-    latitude = Column(Float, nullable=True)
-    longitude = Column(Float, nullable=True)
+    latitude: Mapped[float | None] = mapped_column(Float, nullable=True)
+    longitude: Mapped[float | None] = mapped_column(Float, nullable=True)
     operator_selection_date = Column(Date)
 
     client_id = Column(Integer, ForeignKey("user.user_id"))
