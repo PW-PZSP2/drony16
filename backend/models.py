@@ -37,7 +37,7 @@ class User(Base):
         "Order", foreign_keys="[Order.operator_id]", back_populates="operator"
     )
     reports = relationship("ReportedOperator", back_populates="operator")
-    matched_orders = relationship("MatchedOrder", back_populates="operator")
+    reports = relationship("ReportedOperator", back_populates="operator")
 
 
 class Attachment(Base):
@@ -116,7 +116,6 @@ class Order(Base):
     )
     order_parameters = relationship("OrderParameter", back_populates="order")
     reported_entries = relationship("ReportedOperator", back_populates="order")
-    matched_operators = relationship("MatchedOrder", back_populates="order")
 
 
 class OrderService(Base):
@@ -149,16 +148,6 @@ class ReportedOperator(Base):
     operator_id = Column(Integer, ForeignKey("user.user_id"))
 
     order = relationship("Order", back_populates="reported_entries")
+    target_type = Column(Text, nullable=False)
+    target_id = Column(Integer, nullable=False)
     operator = relationship("User", back_populates="reports")
-
-
-class MatchedOrder(Base):
-    __tablename__ = "matched_order"
-
-    match_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    order_id: Mapped[int] = mapped_column(Integer, ForeignKey("order.order_id"))
-    operator_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.user_id"))
-    status: Mapped[str] = mapped_column(Text, default="pending")
-
-    order = relationship("Order", back_populates="matched_operators")
-    operator = relationship("User", back_populates="matched_orders")

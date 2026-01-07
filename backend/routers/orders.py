@@ -9,8 +9,6 @@ from schemas import OrderCreate, OrderResponse, ServiceRequest
 from auth import get_current_user
 from utils import get_coordinates
 from services.matching import (
-    find_matched_operators,
-    save_matched_order,
     get_matched_orders_for_operator,
 )
 
@@ -95,10 +93,6 @@ async def create_order(
     await db.commit()
     await db.refresh(new_order)
 
-    matched_operators = await find_matched_operators(db, new_order, order_service_ids)
-    for operator in matched_operators:
-        await save_matched_order(db, new_order, operator)
-
     response_services = order_data.services
 
     return OrderResponse(
@@ -122,12 +116,15 @@ async def create_order(
 
 @router.get("/matched", response_model=list[OrderResponse])
 async def get_matched_orders(
+    from_date: datetime | None = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     if current_user.role != "ope":
         raise HTTPException(status_code=403, detail="Unauthorized")
-    matched_orders = await get_matched_orders_for_operator(db, current_user.user_id)
+    matched_orders = await get_matched_orders_for_operator(
+        db, current_user.user_id, from_date
+    )
 
     response = []
     for order in matched_orders:
