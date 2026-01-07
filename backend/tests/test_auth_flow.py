@@ -27,7 +27,7 @@ async def test_auth_flow():
 
         print("Logging in...")
         response = await client.post(
-            "/token", data={"user_name": "test@example.com", "password": "password123"}
+            "/token", data={"username": "test@example.com", "password": "password123"}
         )
         assert response.status_code == 200, f"Login failed: {response.text}"
         print("Login successful, cookie set.")
