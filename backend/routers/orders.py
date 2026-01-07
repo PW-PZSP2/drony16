@@ -1,10 +1,19 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from datetime import datetime, date
 from typing import cast
 from database import get_db
-from models import Order, OrderService, OrderParameter, User, Service, ServiceParameter
+from models import (
+    Order,
+    OrderService,
+    OrderParameter,
+    User,
+    Service,
+    ServiceParameter,
+    ReportedOperator,
+)
 from schemas import (
     OrderCreate,
     OrderResponse,
@@ -166,6 +175,189 @@ async def get_matched_orders(
         )
 
     return response
+
+
+@router.get("/assigned", response_model=list[OrderResponse])
+async def get_assigned_orders(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role != "ope":
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+    query = (
+        select(Order)
+        .where(Order.operator_id == current_user.user_id)
+        .options(
+            selectinload(Order.order_services).selectinload(OrderService.service),
+            selectinload(Order.order_parameters).selectinload(OrderParameter.parameter),
+            selectinload(Order.reported_entries),
+        )
+    )
+    result = await db.execute(query)
+    orders = result.scalars().all()
+
+    response = []
+    for order in orders:
+        services_data = []
+        for os in order.order_services:
+            params = {}
+            for op in order.order_parameters:
+                if op.parameter.service_id == os.service_id:
+                    params[op.parameter.name] = op.value
+
+            services_data.append(
+                ServiceRequest(service_name=os.service.name, parameters=params)
+            )
+
+        interested_ops = [report.operator_id for report in order.reported_entries]
+
+        response.append(
+            OrderResponse(
+                order_id=order.order_id,
+                name=order.name,
+                deadline=datetime.combine(order.deadline, datetime.min.time()),
+                location=order.location,
+                latitude=order.latitude,
+                longitude=order.longitude,
+                description=order.description or "",
+                completion_date=str(order.completion_date) == "1",
+                raid_date=str(order.raid_date) == "1",
+                client_id=order.client_id,
+                operator_id=order.operator_id,
+                creation_date=datetime.combine(
+                    order.creation_date, datetime.min.time()
+                ),
+                services=services_data,
+                interested_operators=interested_ops,
+            )
+        )
+
+    return response
+
+
+@router.post("/{order_id}/interest")
+async def register_interest(
+    order_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role != "ope":
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+    result = await db.execute(select(Order).filter(Order.order_id == order_id))
+    order = result.scalars().first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    result = await db.execute(
+        select(ReportedOperator)
+        .filter(ReportedOperator.order_id == order_id)
+        .filter(ReportedOperator.operator_id == current_user.user_id)
+    )
+    existing_interest = result.scalars().first()
+    if existing_interest:
+        raise HTTPException(status_code=400, detail="Interest already registered")
+
+    new_interest = ReportedOperator(
+        date=datetime.now(),
+        order_id=order_id,
+        operator_id=current_user.user_id,
+    )
+    db.add(new_interest)
+    await db.commit()
+
+    return {"message": "Interest registered successfully"}
+
+
+@router.post("/{order_id}/select/{operator_id}")
+async def select_operator(
+    order_id: int,
+    operator_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Order)
+        .filter(Order.order_id == order_id)
+        .filter(Order.client_id == current_user.user_id)
+    )
+    order = result.scalars().first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found or unauthorized")
+
+    result = await db.execute(
+        select(ReportedOperator)
+        .filter(ReportedOperator.order_id == order_id)
+        .filter(ReportedOperator.operator_id == operator_id)
+    )
+    interest = result.scalars().first()
+    if not interest:
+        raise HTTPException(
+            status_code=400, detail="Operator has not registered interest in this order"
+        )
+
+    order.operator_id = operator_id
+    order.operator_selection_date = datetime.now()
+    order.state = "W trakcie"
+
+    await db.commit()
+
+    return {"message": "Operator selected successfully"}
+
+
+@router.get("/{order_id}", response_model=OrderResponse)
+async def get_order(
+    order_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    query = (
+        select(Order)
+        .where(Order.order_id == order_id)
+        .options(
+            selectinload(Order.order_services).selectinload(OrderService.service),
+            selectinload(Order.order_parameters).selectinload(OrderParameter.parameter),
+            selectinload(Order.reported_entries),
+        )
+    )
+    result = await db.execute(query)
+    order = result.scalars().first()
+
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    services_data = []
+    for os in order.order_services:
+        params = {}
+        for op in order.order_parameters:
+            if op.parameter.service_id == os.service_id:
+                params[op.parameter.name] = op.value
+
+        services_data.append(
+            ServiceRequest(service_name=os.service.name, parameters=params)
+        )
+
+    interested_ops = []
+    if order.client_id == current_user.user_id:
+        interested_ops = [report.operator_id for report in order.reported_entries]
+
+    return OrderResponse(
+        order_id=order.order_id,
+        name=order.name,
+        deadline=datetime.combine(order.deadline, datetime.min.time()),
+        location=order.location,
+        latitude=order.latitude,
+        longitude=order.longitude,
+        description=order.description or "",
+        completion_date=str(order.completion_date) == "1",
+        raid_date=str(order.raid_date) == "1",
+        client_id=order.client_id,
+        operator_id=order.operator_id,
+        creation_date=datetime.combine(order.creation_date, datetime.min.time()),
+        services=services_data,
+        interested_operators=interested_ops,
+    )
 
 
 @router.post("/{order_id}/opinion", response_model=OpinionResponse)

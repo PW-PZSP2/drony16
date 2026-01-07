@@ -14,7 +14,6 @@ import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { AuthService } from "@/services/authorization_service";
 import { useState } from "react";
-import { CircleCheck } from "lucide-react";
 import OperationStatus from "@/components/base/OperationStatus/OperationStatus";
 
 const loginSchema = z.object({
@@ -27,18 +26,6 @@ const loginSchema = z.object({
     .min(1, "Hasło jest wymagane.")
     .min(6, "Hasło musi mieć co najmniej 6 znaków."),
 });
-
-function LoginSuccess() {
-  return (
-    <div className="flex flex-col items-center gap-4">
-      <CircleCheck className="size-12 text-green-500" />
-      <h2 className="text-2xl font-bold">Zalogowano pomyślnie!</h2>
-      <p className="text-muted-foreground text-center">
-        Zostaniesz przekierowany na stronę główną za chwilę.
-      </p>
-    </div>
-  );
-}
 
 export function LoginForm({
   className,
@@ -69,7 +56,15 @@ export function LoginForm({
     if (result) {
       setFormState("success");
       setTimeout(() => {
-        window.location.href = "/";
+        if (result.roles.includes("adm")) {
+          window.location.href = "/admin";
+        } else if (result.roles.includes("ope")) {
+          window.location.href = "/operator";
+        } else if (result.roles.includes("cli")) {
+          window.location.href = "/client";
+        } else {
+          window.location.href = "/";
+        }
       }, 1000);
       console.log("Zalogowano użytkownika:", result);
     } else {
