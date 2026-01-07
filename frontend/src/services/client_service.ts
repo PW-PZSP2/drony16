@@ -77,8 +77,15 @@ async function create_order(orderData: OrderData): Promise<{ success: boolean; o
     });
 
   
-  
-  return await response.json();
+    if (!response.ok) {
+      return {
+        success: false,
+      };
+    }
+
+    return {
+      success: true,
+    }
 }
 
 async function fetch_current_orders(): Promise<Order[]> {
