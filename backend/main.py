@@ -73,12 +73,13 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
         localisation=user.localisation,
         area=user.area,
     )
-    coordinates = await run_in_threadpool(get_coordinates, user.localisation)
-    if coordinates:
-        new_user.latitude = float(coordinates[0])
-        new_user.longitude = float(coordinates[1])
-    else:
-        raise HTTPException(status_code=400, detail="Invalid address")
+    if user.localisation:
+        coordinates = await run_in_threadpool(get_coordinates, user.localisation)
+        if coordinates:
+            new_user.latitude = float(coordinates[0])
+            new_user.longitude = float(coordinates[1])
+        else:
+            raise HTTPException(status_code=400, detail="Invalid address")
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
