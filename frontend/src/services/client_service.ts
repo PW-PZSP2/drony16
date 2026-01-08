@@ -135,7 +135,12 @@ async function fetch_current_orders(): Promise<Order[]> {
       deadline: apiOrder.deadline,
       deadlineType: apiOrder.completion_date ? "completion" : "flight",
       applicants: apiOrder.interested_operators.length,
-      status: (apiOrder.status as "pending" | "in-progress" | "completed" | "cancelled") || "pending",
+      status:
+        (apiOrder.status as
+          | "pending"
+          | "in-progress"
+          | "completed"
+          | "cancelled") || "pending",
     }),
   );
 
@@ -234,7 +239,12 @@ async function fetch_completed_orders(): Promise<Order[]> {
       deadline: apiOrder.deadline,
       deadlineType: apiOrder.completion_date ? "completion" : "flight",
       applicants: apiOrder.interested_operators.length,
-      status: (apiOrder.status as "pending" | "in-progress" | "completed" | "cancelled") || "completed",
+      status:
+        (apiOrder.status as
+          | "pending"
+          | "in-progress"
+          | "completed"
+          | "cancelled") || "completed",
     }),
   );
 
