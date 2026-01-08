@@ -79,6 +79,8 @@ class OrderResponse(OrderBase):
     longitude: Optional[float] = None
     interested_operators: list[int] = []
     status: str = Field(..., validation_alias="state")
+    has_applied: Optional[bool] = False
+
 
     class Config:
         from_attributes = True
