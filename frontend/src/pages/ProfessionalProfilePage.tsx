@@ -13,7 +13,7 @@ import { Loader2, Star, MapPin, Plus, Trash2, FileText, Globe } from "lucide-rea
 import { AuthService } from "../services/authorization_service";
 import { OperatorService } from "../services/operator_service";
 import type { Service, Attachment } from "../services/operator_service";
-import { Roles } from "../types/auth/user_role";
+
 import { useNavigate } from "react-router-dom";
 
 export default function ProfessionalProfilePage() {
@@ -42,18 +42,11 @@ export default function ProfessionalProfilePage() {
     const init = async () => {
       try {
         const currentUser = await AuthService.getCurrentUser();
-        if (!currentUser) {
-            navigate("/login");
-            return;
-        }
-        if (!currentUser.roles.includes(Roles.OPERATOR)) {
-            navigate("/"); // or some error page
-            return;
-        }
+        if (!currentUser) return;
+
         setLocation(currentUser.localisation || "");
         setArea(currentUser.area || 0);
 
-        // Fetch data in parallel
         const [avgData, myServicesData, allServicesData, attachmentsData] = await Promise.all([
             OperatorService.getOperatorAverage(currentUser.user_id).catch(() => ({ average_score: null })),
             OperatorService.getMyServices(),
@@ -81,7 +74,6 @@ export default function ProfessionalProfilePage() {
     try {
         await OperatorService.updateLocation(location);
         await OperatorService.updateArea(Number(area));
-        // Update local user object conceptually? or just notify success
     } catch (error) {
         console.error("Failed to save location", error);
     } finally {
