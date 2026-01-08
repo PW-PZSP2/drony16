@@ -316,9 +316,7 @@ async def list_clients(
     for r in rows:
         is_blocked_raw = r[4]
         blocked_flag = (
-            "Zablokowany"
-            if str(is_blocked_raw).upper() in ("1")
-            else "Aktywny"
+            "Zablokowany" if str(is_blocked_raw).upper() in ("1") else "Aktywny"
         )
         creation = r[3]
         creation_val = (
@@ -367,9 +365,7 @@ async def list_operators(
     for r in rows:
         is_blocked_raw = r[4]
         blocked_flag = (
-            "Zablokowany"
-            if str(is_blocked_raw).upper() in ("1")
-            else "Aktywny"
+            "Zablokowany" if str(is_blocked_raw).upper() in ("1") else "Aktywny"
         )
         creation = r[3]
         creation_val = (
