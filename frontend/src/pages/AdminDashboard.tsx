@@ -463,8 +463,12 @@ function UsersTab() {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const res = await backendClient.get("/admins/users");
-        setUsers(res.data || []);
+        const [clientsRes, operatorsRes] = await Promise.all([
+          backendClient.get("/admins/stat_clients"),
+          backendClient.get("/admins/stat_operators"),
+        ]);
+        const allUsers = [...(clientsRes.data || []), ...(operatorsRes.data || [])];
+        setUsers(allUsers);
       } catch (err) {
         console.error("Failed to fetch users", err);
       } finally {
@@ -553,6 +557,9 @@ function UsersTab() {
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Zlecenia
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Akcje
                 </th>
               </tr>
@@ -560,13 +567,13 @@ function UsersTab() {
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
                     <Spinner className="h-5 w-5 text-gray-500 mx-auto" />
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
                     Brak użytkowników
                   </td>
                 </tr>
@@ -603,6 +610,9 @@ function UsersTab() {
                       >
                         {user.status}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {user.orders_count || 0}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       {user.status === "Aktywny" ? (
