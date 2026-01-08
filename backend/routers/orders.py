@@ -20,6 +20,7 @@ from schemas import (
     ServiceRequest,
     OpinionCreate,
     OpinionResponse,
+    UserResponse,
 )
 from auth import get_current_user
 from utils import get_coordinates
@@ -126,7 +127,7 @@ async def create_order(
         creation_date=datetime.combine(
             cast(date, new_order.creation_date), datetime.min.time()
         ),
-        state=new_order.state,
+        status=new_order.state,
     )
 
 
@@ -172,13 +173,161 @@ async def get_matched_orders(
                     order.creation_date, datetime.min.time()
                 ),
                 services=services_data,
+                status=order.state,
                 has_applied=current_user.user_id
                 in [report.operator_id for report in order.reported_entries],
-                state=order.state,
             )
         )
 
     return response
+
+
+@router.get("/client/pending", response_model=list[OrderResponse])
+async def get_pending_orders(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role != "cli":
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+    query = (
+        select(Order)
+        .where(Order.client_id == current_user.user_id)
+        .where(Order.operator_id.is_(None))
+        .options(
+            selectinload(Order.order_services).selectinload(OrderService.service),
+            selectinload(Order.order_parameters).selectinload(OrderParameter.parameter),
+            selectinload(Order.reported_entries),
+        )
+    )
+    result = await db.execute(query)
+    orders = result.scalars().all()
+
+    response = []
+    for order in orders:
+        services_data = []
+        for os in order.order_services:
+            params = {}
+            for op in order.order_parameters:
+                if op.parameter.service_id == os.service_id:
+                    params[op.parameter.name] = op.value
+
+            services_data.append(
+                ServiceRequest(service_name=os.service.name, parameters=params)
+            )
+
+        interested_ops = [report.operator_id for report in order.reported_entries]
+
+        response.append(
+            OrderResponse(
+                order_id=order.order_id,
+                name=order.name,
+                deadline=datetime.combine(order.deadline, datetime.min.time()),
+                location=order.location,
+                latitude=order.latitude,
+                longitude=order.longitude,
+                description=order.description or "",
+                completion_date=str(order.completion_date) == "1",
+                raid_date=str(order.raid_date) == "1",
+                client_id=order.client_id,
+                operator_id=order.operator_id,
+                creation_date=datetime.combine(
+                    order.creation_date, datetime.min.time()
+                ),
+                services=services_data,
+                interested_operators=interested_ops,
+                status=order.state,
+            )
+        )
+
+    return response
+
+
+@router.get("/client/history", response_model=list[OrderResponse])
+async def get_client_history(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role != "cli":
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+    query = (
+        select(Order)
+        .where(Order.client_id == current_user.user_id)
+        .where(Order.operator_id.is_not(None))
+        .options(
+            selectinload(Order.order_services).selectinload(OrderService.service),
+            selectinload(Order.order_parameters).selectinload(OrderParameter.parameter),
+            selectinload(Order.reported_entries),
+        )
+    )
+    result = await db.execute(query)
+    orders = result.scalars().all()
+
+    response = []
+    for order in orders:
+        services_data = []
+        for os in order.order_services:
+            params = {}
+            for op in order.order_parameters:
+                if op.parameter.service_id == os.service_id:
+                    params[op.parameter.name] = op.value
+
+            services_data.append(
+                ServiceRequest(service_name=os.service.name, parameters=params)
+            )
+
+        response.append(
+            OrderResponse(
+                order_id=order.order_id,
+                name=order.name,
+                deadline=datetime.combine(order.deadline, datetime.min.time()),
+                location=order.location,
+                latitude=order.latitude,
+                longitude=order.longitude,
+                description=order.description or "",
+                completion_date=str(order.completion_date) == "1",
+                raid_date=str(order.raid_date) == "1",
+                client_id=order.client_id,
+                operator_id=order.operator_id,
+                creation_date=datetime.combine(
+                    order.creation_date, datetime.min.time()
+                ),
+                services=services_data,
+                status=order.state,
+            )
+        )
+
+    return response
+
+
+@router.get("/{order_id}/candidates", response_model=list[UserResponse])
+async def get_order_candidates(
+    order_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role != "cli":
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+    result = await db.execute(
+        select(Order)
+        .where(Order.order_id == order_id)
+        .where(Order.client_id == current_user.user_id)
+    )
+    order = result.scalars().first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    query = (
+        select(User)
+        .join(ReportedOperator, User.user_id == ReportedOperator.operator_id)
+        .where(ReportedOperator.order_id == order_id)
+    )
+    result = await db.execute(query)
+    candidates = result.scalars().all()
+
+    return candidates
 
 
 @router.get("/assigned", response_model=list[OrderResponse])
@@ -235,7 +384,7 @@ async def get_assigned_orders(
                 ),
                 services=services_data,
                 interested_operators=interested_ops,
-                state=order.state,
+                status=order.state,
             )
         )
 
@@ -296,7 +445,7 @@ async def get_order_history(
                 ),
                 services=services_data,
                 interested_operators=interested_ops,
-                state=order.state,
+                status=order.state,
             )
         )
 
@@ -455,11 +604,11 @@ async def get_order(
         creation_date=datetime.combine(order.creation_date, datetime.min.time()),
         services=services_data,
         interested_operators=interested_ops,
+        status=order.state,
         has_applied=current_user.user_id
         in [report.operator_id for report in order.reported_entries]
         if current_user.role == "ope"
         else False,
-        state=order.state,
     )
 
 

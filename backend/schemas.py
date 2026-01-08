@@ -78,8 +78,8 @@ class OrderResponse(OrderBase):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     interested_operators: list[int] = []
+    status: str = Field(..., validation_alias="state")
     has_applied: Optional[bool] = False
-    state: str = "Złożone"
 
     class Config:
         from_attributes = True

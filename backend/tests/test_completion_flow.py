@@ -69,7 +69,7 @@ async def test_order_completion_flow():
         )
         assert res.status_code == 200, f"Create order failed: {res.text}"
         order_id = res.json()["order_id"]
-        assert res.json()["state"] == "Złożone"
+        assert res.json()["status"] == "Złożone"
 
         res = await client.post(
             "/token", data={"username": operator_email, "password": password}
@@ -127,7 +127,7 @@ async def test_order_completion_flow():
             f"/orders/{order_id}", headers={"Cookie": f"access_token={client_token}"}
         )
         assert res.status_code == 200
-        assert res.json()["state"] == "W trakcie"
+        assert res.json()["status"] == "W trakcie"
 
         res = await client.post(
             f"/orders/{order_id}/complete",
@@ -139,7 +139,7 @@ async def test_order_completion_flow():
             f"/orders/{order_id}", headers={"Cookie": f"access_token={client_token}"}
         )
         assert res.status_code == 200
-        assert res.json()["state"] == "Zakończone"
+        assert res.json()["status"] == "Zakończone"
 
 
 if __name__ == "__main__":
