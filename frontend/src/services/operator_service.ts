@@ -1,5 +1,28 @@
 const API_URL = "http://localhost:8080";
 
+export interface ServiceRequest {
+  service_name: string;
+  parameters: Record<string, string>;
+}
+
+export interface Order {
+  order_id: number;
+  name: string;
+  deadline: string;
+  location: string;
+  latitude: number | null;
+  longitude: number | null;
+  services: ServiceRequest[];
+  description: string;
+  completion_date: boolean;
+  raid_date: boolean;
+  client_id: number;
+  operator_id: number | null;
+  creation_date: string;
+  has_applied?: boolean; // Added field
+  state: string;
+}
+
 export interface Service {
   service_id: number;
   name: string;
@@ -104,6 +127,40 @@ async function removeAttachment(attachmentId: number): Promise<void> {
   if (!response.ok) throw new Error("Failed to remove attachment");
 }
 
+
+async function getMatchedOrders(): Promise<Order[]> {
+  const response = await fetch(`${API_URL}/orders/matched`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+       throw new Error("Unauthorized");
+    }
+    throw new Error("Failed to fetch matched orders");
+  }
+
+  return response.json();
+}
+
+async function applyForOrder(orderId: number): Promise<void> {
+  const response = await fetch(`${API_URL}/orders/${orderId}/interest`, {
+    method: "POST",
+    headers: {
+       "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+     const errorData = await response.json();
+     throw new Error(errorData.detail || "Failed to apply for order");
+  }
+}
+
 export const OperatorService = {
   getOperatorAverage,
   updateLocation,
@@ -114,4 +171,7 @@ export const OperatorService = {
   getMyAttachments,
   addAttachment,
   removeAttachment,
+  getMatchedOrders,
+  applyForOrder,
 };
+

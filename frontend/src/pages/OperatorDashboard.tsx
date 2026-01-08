@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
+
   CardFooter,
   CardHeader,
   CardTitle,
@@ -21,7 +21,8 @@ import {
   Check,
   History,
 } from "lucide-react";
-import { OrdersService, type OrderResponse } from "@/services/orders_service";
+import { OperatorService, type Order } from "@/services/operator_service";
+
 
 export default function OperatorDashboard() {
   return (
@@ -91,22 +92,40 @@ function OrdersSection() {
 
 function NewOrdersTab() {
   const [selectedOrder, setSelectedOrder] = useState<number | null>(null);
-  const [orders, setOrders] = useState<OrderResponse[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<'all' | 'applied' | 'not_applied'>('all');
+
+  const fetchOrders = async () => {
+    try {
+      const data = await OperatorService.getMatchedOrders();
+      setOrders(data);
+    } catch (error) {
+      console.error("Failed to fetch matched orders", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const data = await OrdersService.getMatchedOrders();
-        setOrders(data);
-      } catch (error) {
-        console.error("Failed to fetch matched orders", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchOrders();
   }, []);
+
+  const handleApply = async (orderId: number) => {
+    try {
+      await OperatorService.applyForOrder(orderId);
+      // Refresh logic or update local state
+      setOrders(prev => prev.map(o => o.order_id === orderId ? { ...o, has_applied: true } : o));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const filteredOrders = orders.filter(order => {
+    if (filter === 'applied') return order.has_applied;
+    if (filter === 'not_applied') return !order.has_applied;
+    return true;
+  });
 
   if (loading) {
     return (
@@ -129,6 +148,8 @@ function NewOrdersTab() {
   if (selectedOrder) {
     const order = orders.find((o) => o.order_id === selectedOrder);
     if (!order) return <div>Nie znaleziono zlecenia</div>;
+
+    const deadlineLabel = order.raid_date ? "Termin nalotu" : "Termin zakończenia";
 
     return (
       <Card className="overflow-hidden rounded-3xl border-gray-100 shadow-lg">
@@ -169,7 +190,7 @@ function NewOrdersTab() {
                 <div className="flex items-center text-gray-600">
                   <Calendar className="h-5 w-5 mr-3 text-gray-400" />
                   <span>
-                    Nalot do: {new Date(order.deadline).toLocaleDateString()}
+                    {deadlineLabel}: {new Date(order.deadline).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex items-center text-gray-600">
@@ -192,9 +213,13 @@ function NewOrdersTab() {
           </div>
         </CardContent>
         <CardFooter className="justify-end border-t bg-gray-50/50 p-6">
-          <Button className="bg-green-600 hover:bg-green-700 text-white font-medium px-8 rounded-full">
+          <Button
+            className={`font-medium rounded-full px-6 ${order.has_applied ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 text-white'}`}
+            onClick={() => handleApply(order.order_id)}
+            disabled={order.has_applied}
+          >
             <HandHelping className="h-4 w-4 mr-2" />
-            Zgłoś się do zlecenia
+            {order.has_applied ? "Zgłoszono" : "Zgłoś się"}
           </Button>
         </CardFooter>
       </Card>
@@ -203,60 +228,92 @@ function NewOrdersTab() {
 
   return (
     <div className="space-y-4">
-      {orders.map((order) => (
-        <Card
-          key={order.order_id}
-          className="overflow-hidden rounded-3xl border-gray-100 shadow-md hover:shadow-lg transition-shadow"
-        >
-          <CardContent className="p-6">
-            <div className="flex flex-col gap-4">
-              {/* Title and Distance Row */}
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900">
-                    {order.name}
-                  </h3>
-                  <p className="text-gray-600 font-medium mt-1">
-                    {order.services.map((s) => s.service_name).join(", ")}
+      <div className="flex justify-start pb-2">
+        <div className="relative inline-block w-64">
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as any)}
+            className="block appearance-none w-full bg-white border border-gray-200 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-gray-500 shadow-sm"
+          >
+            <option value="all">Wszystkie zlecenia</option>
+            <option value="applied">Zgłoszone</option>
+            <option value="not_applied">Nie zgłoszone</option>
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      {filteredOrders.length === 0 ? (
+         <Card className="rounded-3xl border-dashed">
+            <CardContent className="p-8 text-center text-gray-500">
+              Brak zleceń spełniających kryteria filtrowania.
+            </CardContent>
+         </Card>
+      ) : (
+        filteredOrders.map((order) => {
+          const deadlineLabel = order.raid_date ? "Termin nalotu" : "Termin zakończenia";
+          return (
+            <Card
+              key={order.order_id}
+              className="overflow-hidden rounded-3xl border-gray-100 shadow-md hover:shadow-lg transition-shadow"
+            >
+              <CardContent className="p-6">
+                <div className="flex flex-col gap-4">
+                  {/* Title and Distance Row */}
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {order.name}
+                      </h3>
+                      <p className="text-gray-600 font-medium mt-1">
+                        {order.services.map((s) => s.service_name).join(", ")}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Details Row */}
+                  <div className="flex flex-wrap gap-x-8 gap-y-2 text-gray-600 text-sm">
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-2 text-gray-500" />
+                      {order.location}
+                    </div>
+                    <div className="flex items-center">
+                      <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+                      {deadlineLabel}: {new Date(order.deadline).toLocaleDateString()}
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-gray-700 text-sm line-clamp-2">
+                    {order.description}
                   </p>
-                </div>
-              </div>
 
-              {/* Details Row */}
-              <div className="flex flex-wrap gap-x-8 gap-y-2 text-gray-600 text-sm">
-                <div className="flex items-center">
-                  <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-                  {order.location}
+                  {/* Actions */}
+                  <div className="flex justify-between items-center mt-2">
+                    <Button
+                      variant="outline"
+                      className="border-blue-600 text-blue-600 hover:bg-blue-50 font-medium rounded-full px-6"
+                      onClick={() => setSelectedOrder(order.order_id)}
+                    >
+                      Zobacz szczegóły
+                    </Button>
+                    <Button
+                      className={`font-medium rounded-full px-6 ${order.has_applied ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 text-white'}`}
+                      onClick={() => handleApply(order.order_id)}
+                      disabled={order.has_applied}
+                    >
+                      <HandHelping className="h-4 w-4 mr-2" />
+                      {order.has_applied ? "Zgłoszono" : "Zgłoś się"}
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                  Termin: {new Date(order.deadline).toLocaleDateString()}
-                </div>
-              </div>
-
-              {/* Description */}
-              <p className="text-gray-700 text-sm line-clamp-2">
-                {order.description}
-              </p>
-
-              {/* Actions */}
-              <div className="flex justify-between items-center mt-2">
-                <Button
-                  variant="outline"
-                  className="border-blue-600 text-blue-600 hover:bg-blue-50 font-medium rounded-full px-6"
-                  onClick={() => setSelectedOrder(order.order_id)}
-                >
-                  Zobacz szczegóły
-                </Button>
-                <Button className="bg-green-600 hover:bg-green-700 text-white font-medium rounded-full px-6">
-                  <HandHelping className="h-4 w-4 mr-2" />
-                  Zgłoś się
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+              </CardContent>
+            </Card>
+          );
+        })
+      )}
     </div>
   );
 }
