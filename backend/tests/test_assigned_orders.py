@@ -8,7 +8,7 @@ BASE_URL = "http://localhost:8080"
 
 @pytest.mark.asyncio
 async def test_assigned_orders():
-    async with httpx.AsyncClient(base_url=BASE_URL) as client:
+    async with httpx.AsyncClient(base_url=BASE_URL, timeout=30.0) as client:
         timestamp = int(datetime.now().timestamp())
 
         client_email = f"client_assign_{timestamp}@example.com"
