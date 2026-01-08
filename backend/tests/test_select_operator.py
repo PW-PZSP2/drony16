@@ -1,10 +1,12 @@
 import httpx
 import asyncio
+import pytest
 from datetime import datetime, timedelta
 
 BASE_URL = "http://localhost:8080"
 
 
+@pytest.mark.asyncio
 async def test_select_operator():
     async with httpx.AsyncClient(base_url=BASE_URL) as client:
         timestamp = int(datetime.now().timestamp())
