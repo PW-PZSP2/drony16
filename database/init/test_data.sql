@@ -12,22 +12,22 @@ INSERT INTO "user" (
 )
 VALUES
 -- ADMIN
-('Admin', 'admin@test.pl', 'hashed_admin_pw', 'adm', '600100100', '0', '2024-10-01',
+('Admin', 'admin@test.pl', '$2b$12$CvMDszzsF0SDogqyTcKE1ueglmmBLrYw9Lzd/dvVOwMVh6PDTRFXa', 'adm', '600100100', '0', '2024-10-01',
  NULL, NULL, NULL),
 
 -- CLIENT 1
-('Anna Nowak', 'anowak@test.pl', 'hashed_client_pw', 'cli', '600200200', '0', '2024-10-01',
+('Anna Nowak', 'anowak@test.pl', '$2b$12$CvMDszzsF0SDogqyTcKE1ueglmmBLrYw9Lzd/dvVOwMVh6PDTRFXa', 'cli', '600200200', '0', '2024-10-01',
  NULL, NULL, NULL),
 
 -- CLIENT 2
-('Jan Kowalski', 'jkowalski@test.pl', 'hashed_client_pw', 'cli', '600300300', '0', '2024-10-01',
+('Jan Kowalski', 'jkowalski@test.pl', '$2b$12$CvMDszzsF0SDogqyTcKE1ueglmmBLrYw9Lzd/dvVOwMVh6PDTRFXa', 'cli', '600300300', '0', '2024-10-01',
  NULL, NULL, NULL),
 -- OPERATOR (+ CLIENT)
-('Jerzy Brzeziński', 'jbrzezinski@test.pl', 'hashed_operator_pw', 'ope', '600400400', '0', '2024-10-01',
+('Jerzy Brzeziński', 'jbrzezinski@test.pl', '$2b$12$CvMDszzsF0SDogqyTcKE1ueglmmBLrYw9Lzd/dvVOwMVh6PDTRFXa', 'ope', '600400400', '0', '2024-10-01',
  'Grójecka 122, 02-367 Warszawa', 50, 'Operator dronów z 5-letnim doświadczeniem.'),
 
 -- OPERATOR (+ CLIENT)
-('Janina Kowalska', 'jankakowalska@test.pl', 'hashed_operator_pw', 'ope', '600500500', '0', '2024-10-01',
+('Janina Kowalska', 'jankakowalska@test.pl', '$2b$12$CvMDszzsF0SDogqyTcKE1ueglmmBLrYw9Lzd/dvVOwMVh6PDTRFXa', 'ope', '600500500', '0', '2024-10-01',
  'Siedmiogrodzka 1, 01-204 Warszawa', 60, 'Doświadczona operatorka z ponad 100 zrealizowanymi zleceniami');
 
 

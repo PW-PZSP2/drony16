@@ -161,6 +161,41 @@ async function applyForOrder(orderId: number): Promise<void> {
   }
 }
 
+async function getAssignedOrders(): Promise<Order[]> {
+  const response = await fetch(`${API_URL}/orders/assigned`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+       throw new Error("Unauthorized");
+    }
+    throw new Error("Failed to fetch assigned orders");
+  }
+
+  return response.json();
+}
+
+async function getOrderHistory(): Promise<Order[]> {
+  const response = await fetch(`${API_URL}/orders/history`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+     if (response.status === 401) {
+         throw new Error("Unauthorized");
+     }
+     throw new Error("Failed to fetch order history");
+  }
+  return response.json();
+}
+
 export const OperatorService = {
   getOperatorAverage,
   updateLocation,
@@ -173,5 +208,7 @@ export const OperatorService = {
   removeAttachment,
   getMatchedOrders,
   applyForOrder,
+  getAssignedOrders,
+  getOrderHistory,
 };
 
