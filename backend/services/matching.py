@@ -30,6 +30,7 @@ async def get_matched_orders_for_operator(
         .options(
             selectinload(Order.order_services).selectinload(OrderService.service),
             selectinload(Order.order_parameters).selectinload(OrderParameter.parameter),
+            selectinload(Order.reported_entries),
         )
     )
 
