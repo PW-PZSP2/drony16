@@ -1,10 +1,12 @@
 import httpx
 import asyncio
+import pytest
 from datetime import datetime, timedelta
 
 BASE_URL = "http://localhost:8080"
 
 
+@pytest.mark.asyncio
 async def test_assigned_orders():
     async with httpx.AsyncClient(base_url=BASE_URL) as client:
         timestamp = int(datetime.now().timestamp())
@@ -68,7 +70,6 @@ async def test_assigned_orders():
         print(f"Order created with ID: {order_id}", flush=True)
 
         await client.post("/logout")
-        client.cookies.clear()
 
         await client.post("/token", data={"username": op_email, "password": op_pass})
 
@@ -82,8 +83,6 @@ async def test_assigned_orders():
         assert len([o for o in assigned_orders if o["order_id"] == order_id]) == 0
 
         await client.post("/logout")
-        client.cookies.clear()
-
         await client.post(
             "/token", data={"username": client_email, "password": client_pass}
         )
@@ -93,7 +92,6 @@ async def test_assigned_orders():
         assert select_res.status_code == 200
 
         await client.post("/logout")
-        client.cookies.clear()
 
         await client.post("/token", data={"username": op_email, "password": op_pass})
 

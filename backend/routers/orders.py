@@ -126,6 +126,7 @@ async def create_order(
         creation_date=datetime.combine(
             cast(date, new_order.creation_date), datetime.min.time()
         ),
+        state=new_order.state,
     )
 
 
@@ -171,6 +172,9 @@ async def get_matched_orders(
                     order.creation_date, datetime.min.time()
                 ),
                 services=services_data,
+                has_applied=current_user.user_id
+                in [report.operator_id for report in order.reported_entries],
+                state=order.state,
             )
         )
 
@@ -230,6 +234,7 @@ async def get_assigned_orders(
                 ),
                 services=services_data,
                 interested_operators=interested_ops,
+                state=order.state,
             )
         )
 
@@ -303,7 +308,38 @@ async def select_operator(
 
     await db.commit()
 
+    await db.commit()
+
     return {"message": "Operator selected successfully"}
+
+
+@router.post("/{order_id}/complete")
+async def complete_order(
+    order_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    result = await db.execute(select(Order).filter(Order.order_id == order_id))
+    order = result.scalars().first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    if order.client_id != current_user.user_id:
+        raise HTTPException(
+            status_code=403, detail="Only the client can complete the order"
+        )
+
+    if order.state != "W trakcie":
+        raise HTTPException(
+            status_code=400, detail="Order must be in progress to be completed"
+        )
+
+    order.state = "Zakończone"
+
+    await db.commit()
+    await db.refresh(order)
+
+    return {"message": "Order completed successfully", "order_id": order.order_id}
 
 
 @router.get("/{order_id}", response_model=OrderResponse)
@@ -357,6 +393,11 @@ async def get_order(
         creation_date=datetime.combine(order.creation_date, datetime.min.time()),
         services=services_data,
         interested_operators=interested_ops,
+        has_applied=current_user.user_id
+        in [report.operator_id for report in order.reported_entries]
+        if current_user.role == "ope"
+        else False,
+        state=order.state,
     )
 
 
