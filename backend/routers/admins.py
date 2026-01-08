@@ -240,3 +240,151 @@ async def create_admin(
         "user_name": new_user.user_name,
         "email": new_user.email,
     }
+
+
+@router.get("/users")
+async def list_users(
+    db: AsyncSession = Depends(get_db), current_user=Depends(get_current_user)
+):
+    if not current_user or current_user.role != "adm":
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    stmt = select(
+        User.user_id,
+        User.user_name,
+        User.email,
+        User.role,
+        User.creation_date,
+        User.is_blocked,
+    ).where(cast(User.role, Text).in_(["ope", "cli"]))
+
+    res = await db.execute(stmt)
+    rows = res.all()
+
+    users = []
+    for r in rows:
+        role_raw = r[3]
+        role_label = "Operator" if role_raw == "ope" else "Klient"
+        is_blocked_raw = r[5]
+        blocked_flag = (
+            "Zablokowany" if str(is_blocked_raw).upper() in ("1") else "Aktywny"
+        )
+        creation = r[4]
+        creation_val = (
+            creation.isoformat() if hasattr(creation, "isoformat") else creation
+        )
+        users.append(
+            {
+                "user_id": r[0],
+                "user_name": r[1],
+                "email": r[2],
+                "type": role_label,
+                "creation_date": creation_val,
+                "status": blocked_flag,
+            }
+        )
+
+    return users
+
+
+@router.get("/stat_clients")
+async def list_clients(
+    db: AsyncSession = Depends(get_db), current_user=Depends(get_current_user)
+):
+    if not current_user or current_user.role != "adm":
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    stmt = (
+        select(
+            User.user_id,
+            User.user_name,
+            User.email,
+            User.creation_date,
+            User.is_blocked,
+            func.count(Order.order_id),
+        )
+        .select_from(User)
+        .join(Order, Order.client_id == User.user_id, isouter=True)
+        .where(cast(User.role, Text) == "cli")
+        .group_by(User.user_id, User.user_name, User.creation_date, User.is_blocked)
+    )
+
+    res = await db.execute(stmt)
+    rows = res.all()
+
+    out = []
+    for r in rows:
+        is_blocked_raw = r[4]
+        blocked_flag = (
+            "Zablokowany"
+            if str(is_blocked_raw).upper() in ("1")
+            else "Aktywny"
+        )
+        creation = r[3]
+        creation_val = (
+            creation.isoformat() if hasattr(creation, "isoformat") else creation
+        )
+        out.append(
+            {
+                "user_id": r[0],
+                "user_name": r[1],
+                "email": r[2],
+                "type": "Klient",
+                "creation_date": creation_val,
+                "status": blocked_flag,
+                "orders_count": int(r[5] or 0),
+            }
+        )
+    return out
+
+
+@router.get("/stat_operators")
+async def list_operators(
+    db: AsyncSession = Depends(get_db), current_user=Depends(get_current_user)
+):
+    if not current_user or current_user.role != "adm":
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    stmt = (
+        select(
+            User.user_id,
+            User.user_name,
+            User.email,
+            User.creation_date,
+            User.is_blocked,
+            func.count(Order.order_id),
+        )
+        .select_from(User)
+        .join(Order, Order.operator_id == User.user_id, isouter=True)
+        .where(cast(User.role, Text) == "ope")
+        .group_by(User.user_id, User.user_name, User.creation_date, User.is_blocked)
+    )
+
+    res = await db.execute(stmt)
+    rows = res.all()
+
+    out = []
+    for r in rows:
+        is_blocked_raw = r[4]
+        blocked_flag = (
+            "Zablokowany"
+            if str(is_blocked_raw).upper() in ("1")
+            else "Aktywny"
+        )
+        creation = r[3]
+        creation_val = (
+            creation.isoformat() if hasattr(creation, "isoformat") else creation
+        )
+        out.append(
+            {
+                "user_id": r[0],
+                "user_name": r[1],
+                "email": r[2],
+                "type": "Operator",
+                "creation_date": creation_val,
+                "status": blocked_flag,
+                "orders_count": int(r[5] or 0),
+            }
+        )
+
+    return out
