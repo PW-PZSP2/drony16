@@ -32,7 +32,7 @@ class UserResponse(UserBase):
     roles: list[str]
     phone_number: str
     creation_date: datetime
-    localisation: str
+    localisation: Optional[str] = None
     latitude: Optional[float]
     longitude: Optional[float]
     area: Optional[int]
@@ -78,6 +78,7 @@ class OrderResponse(OrderBase):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     interested_operators: list[int] = []
+    status: str = Field(..., validation_alias="state")
 
     class Config:
         from_attributes = True
