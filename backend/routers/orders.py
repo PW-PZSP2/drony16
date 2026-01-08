@@ -176,7 +176,6 @@ async def get_matched_orders(
                 status=order.state,
                 has_applied=current_user.user_id
                 in [report.operator_id for report in order.reported_entries],
-
             )
         )
 

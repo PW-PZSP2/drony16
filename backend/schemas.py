@@ -81,7 +81,6 @@ class OrderResponse(OrderBase):
     status: str = Field(..., validation_alias="state")
     has_applied: Optional[bool] = False
 
-
     class Config:
         from_attributes = True
         populate_by_name = True
