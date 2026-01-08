@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, cast, Text
+from sqlalchemy import select, func, cast, Text, delete
 from database import get_db
 from models import Order, User
 from auth import get_current_user
@@ -103,3 +103,61 @@ async def orders_month_stats(
     month_new = await _count_orders_in_range(db, start_curr, start_next)
 
     return {"total_orders": total_orders, "new_this_month": month_new}
+
+
+@router.get("/list")
+async def list_admins(
+    db: AsyncSession = Depends(get_db), current_user=Depends(get_current_user)
+):
+    if not current_user or current_user.role != "adm":
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    stmt = select(User.user_id, User.user_name, User.is_blocked).where(
+        cast(User.role, Text) == "adm", User.user_id != current_user.user_id
+    )
+    res = await db.execute(stmt)
+    rows = res.all()
+    admins = [{"user_id": r[0], "user_name": r[1], "is_blocked": r[2]} for r in rows]
+    return admins
+
+
+@router.patch("/block/{user_id}")
+async def block_user(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    if not current_user or current_user.role != "adm":
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    result = await db.execute(select(User).filter(User.user_id == user_id))
+    user = result.scalars().first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.is_blocked = "1"
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return {"user_id": user.user_id, "is_blocked": user.is_blocked}
+
+
+@router.patch("/unblock/{user_id}")
+async def unblock_user(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    if not current_user or current_user.role != "adm":
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    result = await db.execute(select(User).filter(User.user_id == user_id))
+    user = result.scalars().first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.is_blocked = "0"
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return {"user_id": user.user_id, "is_blocked": user.is_blocked}
