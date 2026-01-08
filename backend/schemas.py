@@ -96,3 +96,12 @@ class OpinionResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class AdminCreate(BaseModel):
+    email: EmailStr
+    user_name: str
+    password: str
+    phone_number: str
+    localisation: Optional[str] = None
+    area: Optional[int] = None
