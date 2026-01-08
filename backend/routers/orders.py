@@ -192,6 +192,68 @@ async def get_assigned_orders(
     query = (
         select(Order)
         .where(Order.operator_id == current_user.user_id)
+        .where(Order.state == "W trakcie")
+        .options(
+            selectinload(Order.order_services).selectinload(OrderService.service),
+            selectinload(Order.order_parameters).selectinload(OrderParameter.parameter),
+            selectinload(Order.reported_entries),
+        )
+    )
+    result = await db.execute(query)
+    orders = result.scalars().all()
+
+    response = []
+    for order in orders:
+        services_data = []
+        for os in order.order_services:
+            params = {}
+            for op in order.order_parameters:
+                if op.parameter.service_id == os.service_id:
+                    params[op.parameter.name] = op.value
+
+            services_data.append(
+                ServiceRequest(service_name=os.service.name, parameters=params)
+            )
+
+        interested_ops = [report.operator_id for report in order.reported_entries]
+
+        response.append(
+            OrderResponse(
+                order_id=order.order_id,
+                name=order.name,
+                deadline=datetime.combine(order.deadline, datetime.min.time()),
+                location=order.location,
+                latitude=order.latitude,
+                longitude=order.longitude,
+                description=order.description or "",
+                completion_date=str(order.completion_date) == "1",
+                raid_date=str(order.raid_date) == "1",
+                client_id=order.client_id,
+                operator_id=order.operator_id,
+                creation_date=datetime.combine(
+                    order.creation_date, datetime.min.time()
+                ),
+                services=services_data,
+                interested_operators=interested_ops,
+                state=order.state,
+            )
+        )
+
+    return response
+
+
+@router.get("/history", response_model=list[OrderResponse])
+async def get_order_history(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role != "ope":
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+    query = (
+        select(Order)
+        .where(Order.operator_id == current_user.user_id)
+        .where(Order.state == "Zakończone")
         .options(
             selectinload(Order.order_services).selectinload(OrderService.service),
             selectinload(Order.order_parameters).selectinload(OrderParameter.parameter),
