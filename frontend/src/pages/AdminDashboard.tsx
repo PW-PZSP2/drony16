@@ -192,7 +192,7 @@ function OverviewTab() {
 
   const handleCreateAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate before sending
     if (!adminFormData.user_name.trim()) {
       alert("Nazwa użytkownika nie może być pusta");
@@ -206,7 +206,7 @@ function OverviewTab() {
       alert("Hasło nie może być puste");
       return;
     }
-    
+
     // Clean up empty fields
     const payload = {
       user_name: adminFormData.user_name.trim(),
@@ -216,12 +216,12 @@ function OverviewTab() {
       localisation: adminFormData.localisation?.trim() || null,
       area: adminFormData.area || null,
     };
-    
+
     console.log("Sending admin data:", payload);
-    
+
     setCreatingAdmin(true);
     try {
-      const newAdmin = await backendClient.post("/admins/create", payload);
+      await backendClient.post("/admins/create", payload);
       // Refetch admins list to get fresh data
       const res = await backendClient.get("/admins/list");
       setAdmins(res.data || []);
@@ -456,50 +456,48 @@ function UsersTab() {
   const [selectedUserType, setSelectedUserType] = useState<
     "all" | "clients" | "operators"
   >("all");
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const users = [
-    {
-      id: 1,
-      name: "Jan Kowalski",
-      email: "jan.kowalski@email.com",
-      role: "client",
-      joinDate: "2024-01-15",
-      status: "active",
-      ordersCount: 5,
-    },
-    {
-      id: 2,
-      name: "SkyTech Drones",
-      email: "contact@skytech.com",
-      role: "operator",
-      joinDate: "2023-12-10",
-      status: "active",
-      ordersCount: 23,
-    },
-    {
-      id: 3,
-      name: "Anna Nowak",
-      email: "anna.nowak@email.com",
-      role: "client",
-      joinDate: "2024-01-20",
-      status: "active",
-      ordersCount: 2,
-    },
-    {
-      id: 4,
-      name: "AerialPro",
-      email: "info@aerialpro.pl",
-      role: "operator",
-      joinDate: "2023-11-05",
-      status: "inactive",
-      ordersCount: 45,
-    },
-  ];
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        const res = await backendClient.get("/admins/users");
+        setUsers(res.data || []);
+      } catch (err) {
+        console.error("Failed to fetch users", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  const handleBlockUser = async (userId: number) => {
+    try {
+      await backendClient.patch(`/admins/block/${userId}`);
+      setUsers(users.map((u) => u.user_id === userId ? { ...u, status: "Zablokowany" } : u));
+    } catch (err) {
+      console.error("Failed to block user", err);
+      alert("Błąd przy blokowaniu użytkownika");
+    }
+  };
+
+  const handleUnblockUser = async (userId: number) => {
+    try {
+      await backendClient.patch(`/admins/unblock/${userId}`);
+      setUsers(users.map((u) => u.user_id === userId ? { ...u, status: "Aktywny" } : u));
+    } catch (err) {
+      console.error("Failed to unblock user", err);
+      alert("Błąd przy odblokowaniu użytkownika");
+    }
+  };
 
   const filteredUsers = users.filter((user) => {
     if (selectedUserType === "all") return true;
-    if (selectedUserType === "clients") return user.role === "client";
-    if (selectedUserType === "operators") return user.role === "operator";
+    if (selectedUserType === "clients") return user.type === "Klient";
+    if (selectedUserType === "operators") return user.type === "Operator";
     return true;
   });
 
@@ -523,7 +521,7 @@ function UsersTab() {
             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
         >
-          Klienci ({users.filter((u) => u.role === "client").length})
+          Klienci ({users.filter((u) => u.type === "Klient").length})
         </button>
         <button
           onClick={() => setSelectedUserType("operators")}
@@ -532,7 +530,7 @@ function UsersTab() {
             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
         >
-          Operatorzy ({users.filter((u) => u.role === "operator").length})
+          Operatorzy ({users.filter((u) => u.type === "Operator").length})
         </button>
       </div>
 
@@ -555,57 +553,77 @@ function UsersTab() {
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Zlecenia
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Akcje
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {user.name}
-                      </div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${user.role === "client"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-green-100 text-green-800"
-                        }`}
-                    >
-                      {user.role === "client" ? "Klient" : "Operator"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.joinDate}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${user.status === "active"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                        }`}
-                    >
-                      {user.status === "active" ? "Aktywny" : "Nieaktywny"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.ordersCount}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-orange-600 hover:text-orange-900">
-                      {user.status === "active" ? "Zablokuj" : "Aktywuj"}
-                    </button>
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                    <Spinner className="h-5 w-5 text-gray-500 mx-auto" />
                   </td>
                 </tr>
-              ))}
+              ) : filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                    Brak użytkowników
+                  </td>
+                </tr>
+              ) : (
+                filteredUsers.map((user) => (
+                  <tr key={user.user_id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {user.user_name}
+                        </div>
+                        <div className="text-sm text-gray-500">{user.email}</div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${user.type === "Klient"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-green-100 text-green-800"
+                          }`}
+                      >
+                        {user.type}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(user.creation_date).toLocaleDateString("pl-PL")}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${user.status === "Aktywny"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                          }`}
+                      >
+                        {user.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      {user.status === "Aktywny" ? (
+                        <button
+                          onClick={() => handleBlockUser(user.user_id)}
+                          className="text-orange-600 hover:text-orange-900"
+                        >
+                          Zablokuj
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleUnblockUser(user.user_id)}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          Odblokuj
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
