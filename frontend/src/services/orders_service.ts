@@ -28,7 +28,7 @@ async function getMatchedOrders(): Promise<OrderResponse[]> {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include", // Important for auth
+      credentials: "include",
     });
 
     if (!response.ok) {

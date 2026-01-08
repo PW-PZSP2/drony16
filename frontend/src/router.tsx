@@ -10,6 +10,7 @@ import ClientDashboard from "./pages/ClientDashboard";
 import OperatorDashboard from "./pages/OperatorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProfilePage from "./pages/ProfilePage";
+import ProfessionalProfilePage from "./pages/ProfessionalProfilePage";
 
 export function buildRouter() {
   return createBrowserRouter([
@@ -48,6 +49,10 @@ export function buildRouter() {
             {
               path: "profile",
               element: <ProfilePage />,
+            },
+            {
+              path: "professional-profile",
+              element: <ProfessionalProfilePage />,
             },
           ],
         },
