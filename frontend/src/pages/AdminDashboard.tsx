@@ -12,8 +12,12 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Panel Administratora</h1>
-            <p className="text-gray-500 mt-1">Zarządzaj platformą i użytkownikami</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Panel Administratora
+            </h1>
+            <p className="text-gray-500 mt-1">
+              Zarządzaj platformą i użytkownikami
+            </p>
           </div>
         </div>
 
@@ -94,7 +98,11 @@ function OverviewTab() {
         const operatorsData = getData(operatorsRes);
         const ordersData = getData(ordersRes);
 
-        console.log("Dashboard stats raw:", { clientsData, operatorsData, ordersData });
+        console.log("Dashboard stats raw:", {
+          clientsData,
+          operatorsData,
+          ordersData,
+        });
 
         setStats({
           clients: {
@@ -164,7 +172,11 @@ function OverviewTab() {
   const handleBlockAdmin = async (userId: number) => {
     try {
       await backendClient.patch(`/admins/block/${userId}`);
-      setAdmins(admins.map((a) => a.user_id === userId ? { ...a, is_blocked: "1" } : a));
+      setAdmins(
+        admins.map((a) =>
+          a.user_id === userId ? { ...a, is_blocked: "1" } : a,
+        ),
+      );
     } catch (err) {
       console.error("Failed to block admin", err);
     }
@@ -173,7 +185,11 @@ function OverviewTab() {
   const handleUnblockAdmin = async (userId: number) => {
     try {
       await backendClient.patch(`/admins/unblock/${userId}`);
-      setAdmins(admins.map((a) => a.user_id === userId ? { ...a, is_blocked: "0" } : a));
+      setAdmins(
+        admins.map((a) =>
+          a.user_id === userId ? { ...a, is_blocked: "0" } : a,
+        ),
+      );
     } catch (err) {
       console.error("Failed to unblock admin", err);
     }
@@ -225,12 +241,22 @@ function OverviewTab() {
       // Refetch admins list to get fresh data
       const res = await backendClient.get("/admins/list");
       setAdmins(res.data || []);
-      setAdminFormData({ user_name: "", email: "", password: "", phone_number: "", localisation: "", area: "" });
+      setAdminFormData({
+        user_name: "",
+        email: "",
+        password: "",
+        phone_number: "",
+        localisation: "",
+        area: "",
+      });
       setShowAddAdminModal(false);
       alert("Administrator został dodany!");
     } catch (err: any) {
       console.error("Failed to create admin", err);
-      const errorMsg = err.response?.data?.detail || JSON.stringify(err.response?.data) || "Błąd przy tworzeniu administratora";
+      const errorMsg =
+        err.response?.data?.detail ||
+        JSON.stringify(err.response?.data) ||
+        "Błąd przy tworzeniu administratora";
       alert(errorMsg);
     } finally {
       setCreatingAdmin(false);
@@ -242,10 +268,15 @@ function OverviewTab() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {statCards.map((stat, index) => (
-          <div key={index} className="bg-white p-6 rounded-lg border border-gray-200">
+          <div
+            key={index}
+            className="bg-white p-6 rounded-lg border border-gray-200"
+          >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  {stat.title}
+                </p>
                 <p className="text-2xl font-bold text-gray-900">
                   {loading ? (
                     <Spinner className="h-5 w-5 text-gray-500" />
@@ -254,8 +285,9 @@ function OverviewTab() {
                   )}
                 </p>
                 <p
-                  className={`text-sm ${stat.newValue > 0 ? "text-green-600" : "text-gray-500"
-                    }`}
+                  className={`text-sm ${
+                    stat.newValue > 0 ? "text-green-600" : "text-gray-500"
+                  }`}
                 >
                   {loading
                     ? ""
@@ -280,7 +312,10 @@ function OverviewTab() {
           <h3 className="text-lg font-semibold text-gray-800">
             Administratorzy
           </h3>
-          <Button className="bg-green-600 hover:bg-green-700 flex items-center gap-2" onClick={() => setShowAddAdminModal(true)}>
+          <Button
+            className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
+            onClick={() => setShowAddAdminModal(true)}
+          >
             <i className="ri-add-line"></i>
             Dodaj nowego
           </Button>
@@ -301,13 +336,19 @@ function OverviewTab() {
               <tbody>
                 {adminsLoading ? (
                   <tr>
-                    <td colSpan={2} className="py-4 px-4 text-center text-gray-500">
+                    <td
+                      colSpan={2}
+                      className="py-4 px-4 text-center text-gray-500"
+                    >
                       Ładuję administratorów...
                     </td>
                   </tr>
                 ) : admins.length === 0 ? (
                   <tr>
-                    <td colSpan={2} className="py-4 px-4 text-center text-gray-500">
+                    <td
+                      colSpan={2}
+                      className="py-4 px-4 text-center text-gray-500"
+                    >
                       Brak administratorów
                     </td>
                   </tr>
@@ -380,7 +421,12 @@ function OverviewTab() {
                 <input
                   type="text"
                   value={adminFormData.user_name}
-                  onChange={(e) => setAdminFormData({ ...adminFormData, user_name: e.target.value })}
+                  onChange={(e) =>
+                    setAdminFormData({
+                      ...adminFormData,
+                      user_name: e.target.value,
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   placeholder=""
                   required
@@ -394,7 +440,12 @@ function OverviewTab() {
                 <input
                   type="email"
                   value={adminFormData.email}
-                  onChange={(e) => setAdminFormData({ ...adminFormData, email: e.target.value })}
+                  onChange={(e) =>
+                    setAdminFormData({
+                      ...adminFormData,
+                      email: e.target.value,
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   placeholder=""
                   required
@@ -408,7 +459,12 @@ function OverviewTab() {
                 <input
                   type="password"
                   value={adminFormData.password}
-                  onChange={(e) => setAdminFormData({ ...adminFormData, password: e.target.value })}
+                  onChange={(e) =>
+                    setAdminFormData({
+                      ...adminFormData,
+                      password: e.target.value,
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   placeholder=""
                   required
@@ -422,7 +478,12 @@ function OverviewTab() {
                 <input
                   type="tel"
                   value={adminFormData.phone_number}
-                  onChange={(e) => setAdminFormData({ ...adminFormData, phone_number: e.target.value })}
+                  onChange={(e) =>
+                    setAdminFormData({
+                      ...adminFormData,
+                      phone_number: e.target.value,
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   placeholder=""
                 />
@@ -467,7 +528,10 @@ function UsersTab() {
           backendClient.get("/admins/stat_clients"),
           backendClient.get("/admins/stat_operators"),
         ]);
-        const allUsers = [...(clientsRes.data || []), ...(operatorsRes.data || [])];
+        const allUsers = [
+          ...(clientsRes.data || []),
+          ...(operatorsRes.data || []),
+        ];
         setUsers(allUsers);
       } catch (err) {
         console.error("Failed to fetch users", err);
@@ -481,7 +545,11 @@ function UsersTab() {
   const handleBlockUser = async (userId: number) => {
     try {
       await backendClient.patch(`/admins/block/${userId}`);
-      setUsers(users.map((u) => u.user_id === userId ? { ...u, status: "Zablokowany" } : u));
+      setUsers(
+        users.map((u) =>
+          u.user_id === userId ? { ...u, status: "Zablokowany" } : u,
+        ),
+      );
     } catch (err) {
       console.error("Failed to block user", err);
       alert("Błąd przy blokowaniu użytkownika");
@@ -491,7 +559,11 @@ function UsersTab() {
   const handleUnblockUser = async (userId: number) => {
     try {
       await backendClient.patch(`/admins/unblock/${userId}`);
-      setUsers(users.map((u) => u.user_id === userId ? { ...u, status: "Aktywny" } : u));
+      setUsers(
+        users.map((u) =>
+          u.user_id === userId ? { ...u, status: "Aktywny" } : u,
+        ),
+      );
     } catch (err) {
       console.error("Failed to unblock user", err);
       alert("Błąd przy odblokowaniu użytkownika");
@@ -511,28 +583,31 @@ function UsersTab() {
       <div className="flex space-x-4">
         <button
           onClick={() => setSelectedUserType("all")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedUserType === "all"
-            ? "bg-purple-100 text-purple-700"
-            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            selectedUserType === "all"
+              ? "bg-purple-100 text-purple-700"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
         >
           Wszyscy ({users.length})
         </button>
         <button
           onClick={() => setSelectedUserType("clients")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedUserType === "clients"
-            ? "bg-purple-100 text-purple-700"
-            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            selectedUserType === "clients"
+              ? "bg-purple-100 text-purple-700"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
         >
           Klienci ({users.filter((u) => u.type === "Klient").length})
         </button>
         <button
           onClick={() => setSelectedUserType("operators")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedUserType === "operators"
-            ? "bg-purple-100 text-purple-700"
-            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            selectedUserType === "operators"
+              ? "bg-purple-100 text-purple-700"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+          }`}
         >
           Operatorzy ({users.filter((u) => u.type === "Operator").length})
         </button>
@@ -567,13 +642,19 @@ function UsersTab() {
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                  <td
+                    colSpan={6}
+                    className="px-6 py-4 text-center text-gray-500"
+                  >
                     <Spinner className="h-5 w-5 text-gray-500 mx-auto" />
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                  <td
+                    colSpan={6}
+                    className="px-6 py-4 text-center text-gray-500"
+                  >
                     Brak użytkowników
                   </td>
                 </tr>
@@ -585,15 +666,18 @@ function UsersTab() {
                         <div className="text-sm font-medium text-gray-900">
                           {user.user_name}
                         </div>
-                        <div className="text-sm text-gray-500">{user.email}</div>
+                        <div className="text-sm text-gray-500">
+                          {user.email}
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${user.type === "Klient"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-green-100 text-green-800"
-                          }`}
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          user.type === "Klient"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
                       >
                         {user.type}
                       </span>
@@ -603,10 +687,11 @@ function UsersTab() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2 py-1 text-xs font-medium rounded-full ${user.status === "Aktywny"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                          }`}
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          user.status === "Aktywny"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
                       >
                         {user.status}
                       </span>
