@@ -90,44 +90,54 @@ async function create_order(
 async function fetch_current_orders(): Promise<Order[]> {
   await mockDelay(API_DELAY);
 
-  const pendingOrders: Order[] = [
-    {
-      id: 1,
-      title: "Ortofotomapa działki budowlanej",
-      service: "Ortofotomapa",
-      description:
-        "Ortofotomapa działki budowlanej o powierzchni 2 ha z dokładnością 2cm/px.",
-      location: "Warszawa, ul. Przykładowa 123",
-      deadline: "2026-02-15",
-      deadlineType: "flight",
-      applicants: 3,
-      status: "pending",
+  const response = await fetch(`${API_URL}/orders/client/pending`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      credentials: "include",
     },
-    {
-      id: 2,
-      title: "Model 3D budynku",
-      service: "Modele 3D",
-      description:
-        "Model 3D budynku mieszkalnego o wysokiej dokładności z teksturami.",
-      location: "Kraków, ul. Testowa 45",
-      deadline: "2026-02-20",
-      deadlineType: "completion",
-      applicants: 1,
-      status: "pending",
-    },
-    {
-      id: 3,
-      title: "Chmura punktów terenu przemysłowego",
-      service: "Chmura punktów",
-      description:
-        "Skanowanie laserowe terenu przemysłowego z gęstością 100 pkt/m².",
-      location: "Gdańsk, ul. Portowa 67",
-      deadlineType: "flight",
-      deadline: "2026-02-25",
-      applicants: 5,
-      status: "pending",
-    },
-  ];
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    return [];
+  }
+
+  const data = await response.json();
+
+  const pendingOrders: Order[] = data.map(
+    (apiOrder: {
+      name: string;
+      deadline: string;
+      location: string;
+      description: string;
+      completion_date: boolean;
+      raid_date: boolean;
+      order_id: number;
+      services: Array<{
+        service_name: string;
+        parameters: Record<string, unknown>;
+      }>;
+      client_id: number;
+      operator_id: number;
+      creation_date: string;
+      latitude: number;
+      longitude: number;
+      interested_operators: unknown[];
+      status: string;
+      has_applied: boolean;
+    }) => ({
+      id: apiOrder.order_id,
+      title: apiOrder.name,
+      service: apiOrder.services[0]?.service_name || "Unknown",
+      description: apiOrder.description,
+      location: apiOrder.location,
+      deadline: apiOrder.deadline,
+      deadlineType: apiOrder.completion_date ? "completion" : "flight",
+      applicants: apiOrder.interested_operators.length,
+      status: (apiOrder.status as "pending" | "in-progress" | "completed" | "cancelled") || "pending",
+    }),
+  );
 
   return pendingOrders;
 }
@@ -135,41 +145,43 @@ async function fetch_current_orders(): Promise<Order[]> {
 async function fetch_order_applicants(orderId?: number): Promise<Applicant[]> {
   await mockDelay(API_DELAY);
 
-  const applicants: Applicant[] = [
-    {
-      id: 1,
-      name: "SkyTech Drones",
-      rating: 4.8,
-      completedJobs: 156,
-      description:
-        "Specjalizujemy się w ortofotomapach wysokiej jakości. Posiadamy najnowszy sprzęt i doświadczenie w projektach budowlanych.",
-      equipment: ["DJI Phantom 4 RTK", "Odbiornik RTK", "Pix4D"],
-      price: 2500,
-      estimatedDuration: "2 dni",
+  const response = await fetch(`${API_URL}/orders/${orderId}/candidates`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      credentials: "include",
     },
-    {
-      id: 2,
-      name: "AerialPro",
-      rating: 4.9,
-      completedJobs: 203,
-      description:
-        "Oferujemy kompleksowe usługi fotogrametryczne z gwarancją jakości i terminowości.",
-      equipment: ["DJI Matrice 300", "Zenmuse P1", "Agisoft Metashape"],
-      price: 3200,
-      estimatedDuration: "3 dni",
-    },
-    {
-      id: 3,
-      name: "DroneMapping",
-      rating: 4.7,
-      completedJobs: 89,
-      description:
-        "Młody zespół z pasją do nowoczesnych technologii mapowania.",
-      equipment: ["DJI Mini 3 Pro", "Ground Station Pro"],
-      price: 1800,
-      estimatedDuration: "2 dni",
-    },
-  ];
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    return [];
+  }
+
+  const data = await response.json();
+
+  const applicants: Applicant[] = data.map(
+    (apiApplicant: {
+      email: string;
+      user_id: number;
+      user_name: string;
+      is_blocked: string;
+      roles: string[];
+      phone_number: string;
+      creation_date: string;
+      localisation: string;
+      latitude: number;
+      longitude: number;
+      area: number;
+    }) => ({
+      id: apiApplicant.user_id,
+      name: apiApplicant.user_name,
+      rating: 0,
+      completedJobs: 0,
+      description: apiApplicant.localisation,
+      equipment: [],
+    }),
+  );
 
   return applicants;
 }
@@ -177,37 +189,54 @@ async function fetch_order_applicants(orderId?: number): Promise<Applicant[]> {
 async function fetch_completed_orders(): Promise<Order[]> {
   await mockDelay(API_DELAY);
 
-  const completedOrders: Order[] = [
-    {
-      id: 101,
-      title: "Ortofotomapa parceli mieszkaniowej",
-      service: "Ortofotomapa",
-      description: "Ortofotomapa działki mieszkaniowej o powierzchni 0.5 ha.",
-      location: "Wrocław, ul. Ogrodowa 89",
-      deadline: "2025-12-10",
-      deadlineType: "completion",
-      applicants: 2,
-      status: "completed",
-      selectedOperator: "SkyTech Drones",
-      rating: 5,
-      completedDate: "2025-12-08",
+  const response = await fetch(`${API_URL}/orders/client/history`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      credentials: "include",
     },
-    {
-      id: 102,
-      title: "Inspekcja dachu budynku",
-      service: "Inspekcja",
-      description:
-        "Szczegółowa inspekcja stanu dachu z dokumentacją fotograficzną.",
-      location: "Poznań, ul. Główna 12",
-      deadline: "2025-11-25",
-      deadlineType: "flight",
-      applicants: 4,
-      status: "completed",
-      selectedOperator: "AerialPro",
-      rating: 4,
-      completedDate: "2025-11-23",
-    },
-  ];
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    return [];
+  }
+
+  const data = await response.json();
+
+  const completedOrders: Order[] = data.map(
+    (apiOrder: {
+      name: string;
+      deadline: string;
+      location: string;
+      description: string;
+      completion_date: boolean;
+      raid_date: boolean;
+      order_id: number;
+      services: Array<{
+        service_name: string;
+        parameters: Record<string, unknown>;
+      }>;
+      client_id: number;
+      operator_id: number;
+      creation_date: string;
+      latitude: number;
+      longitude: number;
+      interested_operators: unknown[];
+      status: string;
+      has_applied: boolean;
+    }) => ({
+      id: apiOrder.order_id,
+      title: apiOrder.name,
+      service: apiOrder.services[0]?.service_name || "Unknown",
+      description: apiOrder.description,
+      location: apiOrder.location,
+      deadline: apiOrder.deadline,
+      deadlineType: apiOrder.completion_date ? "completion" : "flight",
+      applicants: apiOrder.interested_operators.length,
+      status: (apiOrder.status as "pending" | "in-progress" | "completed" | "cancelled") || "completed",
+    }),
+  );
 
   return completedOrders;
 }
