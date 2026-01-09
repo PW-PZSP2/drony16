@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Drone } from "lucide-react";
 import type { JSX } from "react";
 // import type {User} from '../../../types/auth/user';
 import {
@@ -67,12 +66,13 @@ export default function Header(): JSX.Element {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <div className="flex items-center gap-2 self-center font-medium">
-              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-white">
-                <Drone className="size-4" />
-              </div>
-              <span className="text-xl">Droneo</span>
-            </div>
+            <Link to="/" className="flex items-center">
+              <img
+                src="/images/logo.png"
+                alt="Droneo"
+                className="h-50 object-contain object-center translate-y-3 -translate-x-1"
+              />
+            </Link>
           </div>
 
           <nav className="hidden md:flex space-x-8">
