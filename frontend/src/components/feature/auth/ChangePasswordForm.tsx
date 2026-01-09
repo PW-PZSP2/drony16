@@ -15,9 +15,7 @@ import OperationStatus from "@/components/base/OperationStatus/OperationStatus";
 
 const changePasswordSchema = z
   .object({
-    currentPassword: z
-      .string()
-      .min(1, "Aktualne hasło jest wymagane."),
+    currentPassword: z.string().min(1, "Aktualne hasło jest wymagane."),
     newPassword: z
       .string()
       .min(1, "Nowe hasło jest wymagane.")
@@ -61,7 +59,7 @@ export function ChangePasswordForm({
       // });
 
       // Symulation
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       const success = true; // result !== null;
 
       if (success) {

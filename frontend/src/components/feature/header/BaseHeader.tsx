@@ -112,22 +112,24 @@ export default function Header(): JSX.Element {
                 </a>
               </>
             )}
-            {user && user.roles.includes(Roles.CLIENT) && !user.roles.includes(Roles.OPERATOR) && (
-              <>
-                <a
-                  href="/client/dashboard"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-                >
-                  Panel Zleceniodawcy
-                </a>
-                <a
-                  href="/client/calendar"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-                >
-                  Kalendarz
-                </a>
-              </>
-            )}
+            {user &&
+              user.roles.includes(Roles.CLIENT) &&
+              !user.roles.includes(Roles.OPERATOR) && (
+                <>
+                  <a
+                    href="/client/dashboard"
+                    className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  >
+                    Panel Zleceniodawcy
+                  </a>
+                  <a
+                    href="/client/calendar"
+                    className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  >
+                    Kalendarz
+                  </a>
+                </>
+              )}
             <a
               href="/#kontakt"
               className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
