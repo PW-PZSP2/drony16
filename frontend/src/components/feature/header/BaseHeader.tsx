@@ -76,29 +76,50 @@ export default function Header(): JSX.Element {
           </div>
 
           <nav className="hidden md:flex space-x-8">
-            {!user ? (
-              <>
-                <a
-                  href="/"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-                >
-                  Strona Główna
-                </a>
-                <a
-                  href="#kontakt"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-                >
-                  Kontakt
-                </a>
-              </>
-            ) : (
+            <a
+              href="/"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            >
+              Strona Główna
+            </a>
+            {user && user.roles.includes(Roles.ADMIN) && (
               <a
-                href={getDashboardLink()}
+                href="/admin/dashboard"
                 className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
               >
-                {getDashboardLabel()}
+                Panel Admina
               </a>
             )}
+            {user && user.roles.includes(Roles.OPERATOR) && (
+              <>
+                <a
+                  href="/operator/dashboard"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Panel Operatora
+                </a>
+                <a
+                  href="/client/dashboard"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Panel Zleceniodawcy
+                </a>
+              </>
+            )}
+            {user && user.roles.includes(Roles.CLIENT) && !user.roles.includes(Roles.OPERATOR) && (
+              <a
+                href="/client/dashboard"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+              >
+                Panel Zleceniodawcy
+              </a>
+            )}
+            <a
+              href="/#kontakt"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            >
+              Kontakt
+            </a>
           </nav>
 
           <div className="flex items-center space-x-4">
