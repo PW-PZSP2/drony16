@@ -122,6 +122,14 @@ export default function Header(): JSX.Element {
                       <i className="ri-user-line mr-2"></i>
                       Mój Profil
                     </Link>
+                    <Link
+                      to="/change-password"
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <i className="ri-lock-password-line mr-2"></i>
+                      Zmień hasło
+                    </Link>
                     <button
                       onClick={() => {
                         window.location.href = "/logout";
