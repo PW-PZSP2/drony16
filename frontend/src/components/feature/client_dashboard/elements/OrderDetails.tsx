@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { fetch_order_applicants, select_operator } from "@/services/client_service";
+import {
+  fetch_order_applicants,
+  select_operator,
+} from "@/services/client_service";
 import type { Order, Applicant } from "@/services/client_service";
 
 export default function OrderDetails({
@@ -38,7 +41,9 @@ export default function OrderDetails({
         window.alert("Operator został wybrany pomyślnie.");
         onBack();
       } else {
-        window.alert(result.message || "Wystąpił błąd podczas wybierania operatora.");
+        window.alert(
+          result.message || "Wystąpił błąd podczas wybierania operatora.",
+        );
       }
     } catch (error) {
       console.error("Selection error", error);
@@ -131,14 +136,15 @@ export default function OrderDetails({
                       Sprzęt:
                     </h6>
                     <div className="flex flex-wrap gap-2">
-                      {applicant.equipment && applicant.equipment.map((item, index) => (
-                        <span
-                          key={index}
-                          className="px-2 py-1 bg-gray-100 text-xs text-gray-600 rounded"
-                        >
-                          {item}
-                        </span>
-                      ))}
+                      {applicant.equipment &&
+                        applicant.equipment.map((item, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 bg-gray-100 text-xs text-gray-600 rounded"
+                          >
+                            {item}
+                          </span>
+                        ))}
                     </div>
                   </div>
 
@@ -153,7 +159,9 @@ export default function OrderDetails({
                 </div>
               ))}
               {applicants.length === 0 && (
-                <p className="text-gray-500">Brak zgłoszeń dla tego zlecenia.</p>
+                <p className="text-gray-500">
+                  Brak zgłoszeń dla tego zlecenia.
+                </p>
               )}
             </div>
           )}

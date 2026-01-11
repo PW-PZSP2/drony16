@@ -92,8 +92,8 @@ async function clientProtectedLoader() {
   const current_user = await AuthService.getCurrentUser();
   if (
     !current_user ||
-    !current_user.roles.includes(Roles.OPERATOR) &&
-    !current_user.roles.includes(Roles.CLIENT)
+    (!current_user.roles.includes(Roles.OPERATOR) &&
+      !current_user.roles.includes(Roles.CLIENT))
   ) {
     throw new Response("Unauthorized", { status: 401 });
   }

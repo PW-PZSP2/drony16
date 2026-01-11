@@ -72,6 +72,13 @@ def main():
             "phone_number": "456123789",
             "localisation": "Warsaw, North",
             "area": 100
+        },
+        "admin": {
+            "email": "admin@example.com",
+            "password": "string",
+            "user_name": "Demo Admin",
+            "role": "adm",
+            "phone_number": "999888777"
         }
     }
 
@@ -189,6 +196,7 @@ def main():
     print(f"Client: {users['client']['email']} / {users['client']['password']}")
     print(f"Op1:    {users['op1']['email']} / {users['op1']['password']}")
     print(f"Op2:    {users['op2']['email']} / {users['op2']['password']}")
+    print(f"Admin:  {users['admin']['email']} / {users['admin']['password']}")
 
 if __name__ == "__main__":
     main()
