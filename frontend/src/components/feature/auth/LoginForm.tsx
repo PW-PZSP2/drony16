@@ -57,11 +57,11 @@ export function LoginForm({
       setFormState("success");
       setTimeout(() => {
         if (result.roles.includes("adm")) {
-          window.location.href = "/admin";
+          window.location.href = "/admin/dashboard";
         } else if (result.roles.includes("ope")) {
-          window.location.href = "/operator";
+          window.location.href = "/operator/dashboard";
         } else if (result.roles.includes("cli")) {
-          window.location.href = "/client";
+          window.location.href = "/client/dashboard";
         } else {
           window.location.href = "/";
         }

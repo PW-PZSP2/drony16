@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Drone } from "lucide-react";
 import type { JSX } from "react";
 // import type {User} from '../../../types/auth/user';
 import {
@@ -67,38 +66,76 @@ export default function Header(): JSX.Element {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <div className="flex items-center gap-2 self-center font-medium">
-              <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-white">
-                <Drone className="size-4" />
-              </div>
-              <span className="text-xl">Droneo</span>
-            </div>
+            <Link to="/" className="flex items-center">
+              <img
+                src="/images/logo.png"
+                alt="Droneo"
+                className="h-50 object-contain object-center translate-y-3 -translate-x-1"
+              />
+            </Link>
           </div>
 
           <nav className="hidden md:flex space-x-8">
-            {!user ? (
-              <>
-                <a
-                  href="/"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-                >
-                  Strona Główna
-                </a>
-                <a
-                  href="#kontakt"
-                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-                >
-                  Kontakt
-                </a>
-              </>
-            ) : (
+            <a
+              href="/"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            >
+              Strona Główna
+            </a>
+            {user && user.roles.includes(Roles.ADMIN) && (
               <a
-                href={getDashboardLink()}
+                href="/admin/dashboard"
                 className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
               >
-                {getDashboardLabel()}
+                Panel Admina
               </a>
             )}
+            {user && user.roles.includes(Roles.OPERATOR) && (
+              <>
+                <a
+                  href="/operator/dashboard"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Panel Operatora
+                </a>
+                <a
+                  href="/client/dashboard"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Panel Zleceniodawcy
+                </a>
+                <a
+                  href="/operator/calendar"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Kalendarz
+                </a>
+              </>
+            )}
+            {user &&
+              user.roles.includes(Roles.CLIENT) &&
+              !user.roles.includes(Roles.OPERATOR) && (
+                <>
+                  <a
+                    href="/client/dashboard"
+                    className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  >
+                    Panel Zleceniodawcy
+                  </a>
+                  <a
+                    href="/client/calendar"
+                    className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  >
+                    Kalendarz
+                  </a>
+                </>
+              )}
+            <a
+              href="/#kontakt"
+              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+            >
+              Kontakt
+            </a>
           </nav>
 
           <div className="flex items-center space-x-4">
@@ -121,6 +158,14 @@ export default function Header(): JSX.Element {
                     >
                       <i className="ri-user-line mr-2"></i>
                       Mój Profil
+                    </Link>
+                    <Link
+                      to="/change-password"
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors flex items-center"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <i className="ri-lock-password-line mr-2"></i>
+                      Zmień hasło
                     </Link>
                     <button
                       onClick={() => {

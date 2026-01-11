@@ -10,6 +10,8 @@ import ClientDashboard from "./pages/ClientDashboard";
 import OperatorDashboard from "./pages/OperatorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProfilePage from "./pages/ProfilePage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
+import CalendarPage from "./pages/CalendarPage";
 
 export function buildRouter() {
   return createBrowserRouter([
@@ -35,6 +37,10 @@ export function buildRouter() {
               path: "profile",
               element: <ProfilePage />,
             },
+            {
+              path: "calendar",
+              element: <CalendarPage />,
+            },
           ],
         },
         {
@@ -48,6 +54,10 @@ export function buildRouter() {
             {
               path: "profile",
               element: <ProfilePage />,
+            },
+            {
+              path: "calendar",
+              element: <CalendarPage />,
             },
           ],
         },
@@ -70,6 +80,10 @@ export function buildRouter() {
     {
       path: "/logout",
       element: <LogoutPage />,
+    },
+    {
+      path: "/change-password",
+      element: <ChangePasswordPage />,
     },
   ]);
 }
