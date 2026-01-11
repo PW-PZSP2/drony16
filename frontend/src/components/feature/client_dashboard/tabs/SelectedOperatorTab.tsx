@@ -13,9 +13,12 @@ export default function SelectOperatorTab() {
   });
 
   if (selectedOrder) {
+    const order = data?.find((o) => o.id === selectedOrder);
+    if (!order) return null;
+
     return (
       <OrderDetails
-        orderId={selectedOrder}
+        order={order}
         onBack={() => setSelectedOrder(null)}
       />
     );

@@ -281,7 +281,7 @@ async function select_operator(
   const response = await fetch(
     `${API_URL}/orders/${orderId}/select/${operatorId}`,
     {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         credentials: "include",
@@ -289,12 +289,11 @@ async function select_operator(
       credentials: "include",
     },
   );
-  console.log(response);
 
-  if (!orderId || !operatorId) {
+  if (!response.ok) {
     return {
       success: false,
-      message: "Order ID and Operator ID are required",
+      message: "Failed to select operator",
     };
   }
 
