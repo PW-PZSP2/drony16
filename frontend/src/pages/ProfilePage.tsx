@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Edit2, Save, Loader2 } from "lucide-react";
 import { AuthService } from "../services/authorization_service";
+import { Roles } from "../types/auth/user_role";
+import { ChangePasswordForm } from "../components/feature/auth/ChangePasswordForm";
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
@@ -139,6 +141,14 @@ export default function ProfilePage() {
           </div>
         </CardContent>
       </Card>
+
+      <div className="mt-8">
+        <Card>
+          <CardContent className="pt-6">
+            <ChangePasswordForm />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

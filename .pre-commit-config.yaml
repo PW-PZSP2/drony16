@@ -37,4 +37,4 @@ repos:
         entry: bash -c 'cd frontend && npx prettier --write . > /dev/null'
         language: system
         files: ^frontend/
-        types_or: [javascript, jsx, css, json, html]
+        types_or: [javascript, jsx, css, json, html, ts, tsx]

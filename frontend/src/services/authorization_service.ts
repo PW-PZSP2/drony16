@@ -6,6 +6,7 @@ interface LoginPasswordCredentials {
 }
 
 const API_URL = "http://localhost:8080";
+export { API_URL };
 
 async function login(
   credentials: LoginPasswordCredentials,
@@ -89,9 +90,46 @@ async function getCurrentUser(): Promise<User | null> {
   }
 }
 
+interface ChangePasswordPayload {
+  current_password: string;
+  new_password: string;
+  confirm_new_password: string;
+}
+
+async function changePassword(payload: ChangePasswordPayload): Promise<void> {
+  try {
+    const response = await fetch(`${API_URL}/users/me/password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      credentials: "include",
+    });
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error(
+        `Invalid server response (Status: ${response.status}, Content-Type: ${contentType}). Possible API URL mismatch.`,
+      );
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Password change failed");
+    }
+
+    await response.json();
+  } catch (error) {
+    console.error("Change password error:", error);
+    throw error;
+  }
+}
+
 export const AuthService = {
   login,
   logout,
   register,
   getCurrentUser,
+  changePassword,
 };

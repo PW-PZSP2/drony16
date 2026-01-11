@@ -109,6 +109,18 @@ class AdminCreate(BaseModel):
     area: Optional[int] = None
 
 
+class UserChangePassword(BaseModel):
+    current_password: str
+    new_password: str
+    confirm_new_password: str
+
+    @model_validator(mode="after")
+    def check_passwords_match(self):
+        if self.new_password != self.confirm_new_password:
+            raise ValueError("New passwords do not match")
+        return self
+
+
 class CalendarOrderResponse(BaseModel):
     order_id: int
     deadline: date
