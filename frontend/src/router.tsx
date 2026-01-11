@@ -11,6 +11,8 @@ import OperatorDashboard from "./pages/OperatorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProfilePage from "./pages/ProfilePage";
 import ProfessionalProfilePage from "./pages/ProfessionalProfilePage";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
+import CalendarPage from "./pages/CalendarPage";
 
 export function buildRouter() {
   return createBrowserRouter([
@@ -36,6 +38,10 @@ export function buildRouter() {
               path: "profile",
               element: <ProfilePage />,
             },
+            {
+              path: "calendar",
+              element: <CalendarPage />,
+            },
           ],
         },
         {
@@ -53,6 +59,10 @@ export function buildRouter() {
             {
               path: "professional-profile",
               element: <ProfessionalProfilePage />,
+            },
+            {
+              path: "calendar",
+              element: <CalendarPage />,
             },
           ],
         },
@@ -76,12 +86,20 @@ export function buildRouter() {
       path: "/logout",
       element: <LogoutPage />,
     },
+    {
+      path: "/change-password",
+      element: <ChangePasswordPage />,
+    },
   ]);
 }
 
 async function clientProtectedLoader() {
   const current_user = await AuthService.getCurrentUser();
-  if (!current_user || !current_user.roles.includes(Roles.CLIENT)) {
+  if (
+    !current_user ||
+    (!current_user.roles.includes(Roles.OPERATOR) &&
+      !current_user.roles.includes(Roles.CLIENT))
+  ) {
     throw new Response("Unauthorized", { status: 401 });
   }
 }

@@ -240,11 +240,11 @@ async function fetch_completed_orders(): Promise<Order[]> {
       deadlineType: apiOrder.completion_date ? "completion" : "flight",
       applicants: apiOrder.interested_operators.length,
       status:
-        (apiOrder.status as
-          | "pending"
-          | "in-progress"
-          | "completed"
-          | "cancelled") || "completed",
+        apiOrder.status === "W trakcie"
+          ? "in-progress"
+          : apiOrder.status === "Zakończone"
+            ? "completed"
+            : "pending",
     }),
   );
 
@@ -278,12 +278,22 @@ async function select_operator(
   orderId: number,
   operatorId: number,
 ): Promise<{ success: boolean; message?: string }> {
-  await mockDelay(API_DELAY);
+  const response = await fetch(
+    `${API_URL}/orders/${orderId}/select/${operatorId}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        credentials: "include",
+      },
+      credentials: "include",
+    },
+  );
 
-  if (!orderId || !operatorId) {
+  if (!response.ok) {
     return {
       success: false,
-      message: "Order ID and Operator ID are required",
+      message: "Failed to select operator",
     };
   }
 

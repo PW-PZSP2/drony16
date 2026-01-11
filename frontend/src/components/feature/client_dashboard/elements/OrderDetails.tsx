@@ -1,53 +1,54 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  fetch_order_applicants,
+  select_operator,
+} from "@/services/client_service";
+import type { Order, Applicant } from "@/services/client_service";
 
 export default function OrderDetails({
-  orderId,
+  order,
   onBack,
 }: {
-  orderId: number;
+  order: Order;
   onBack: () => void;
 }) {
-  const order = {
-    id: orderId,
-    title: "Ortofotomapa działki budowlanej",
-    service: "Ortofotomapa",
-    description:
-      "Potrzebuję wykonania ortofotomapy działki budowlanej o powierzchni około 2 hektarów. Zlecenie obejmuje nalot dronem oraz opracowanie ortofotomapy w rozdzielczości 2 cm/px.",
-    location: "Warszawa, ul. Przykładowa 123",
-    deadline: "2024-02-15",
-    deadlineType: "flight",
-    createdDate: "2024-01-20",
-    applicants: [
-      {
-        id: 1,
-        name: "SkyTech Drones",
-        rating: 4.8,
-        completedJobs: 156,
-        description:
-          "Specjalizujemy się w ortofotomapach wysokiej jakości. Posiadamy najnowszy sprzęt i doświadczenie w projektach budowlanych.",
-        equipment: ["DJI Phantom 4 RTK", "Odbiornik RTK", "Pix4D"],
-      },
-      {
-        id: 2,
-        name: "AerialPro",
-        rating: 4.9,
-        completedJobs: 203,
-        description:
-          "Oferujemy kompleksowe usługi fotogrametryczne z gwarancją jakości i terminowości.",
-        equipment: ["DJI Matrice 300", "Zenmuse P1", "Agisoft Metashape"],
-      },
-      {
-        id: 3,
-        name: "DroneMapping",
-        rating: 4.7,
-        completedJobs: 89,
-        description:
-          "Młody zespół z pasją do nowoczesnych technologii mapowania.",
-        equipment: ["DJI Mini 3 Pro", "Ground Station Pro"],
-      },
-    ],
+  const [applicants, setApplicants] = useState<Applicant[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const loadApplicants = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetch_order_applicants(order.id);
+        setApplicants(data);
+      } catch (error) {
+        console.error("Failed to load applicants", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (order.id) {
+      loadApplicants();
+    }
+  }, [order.id]);
+
+  const handleSelectOperator = async (operatorId: number) => {
+    try {
+      const result = await select_operator(order.id, operatorId);
+      if (result.success) {
+        window.alert("Operator został wybrany pomyślnie.");
+        onBack();
+      } else {
+        window.alert(
+          result.message || "Wystąpił błąd podczas wybierania operatora.",
+        );
+      }
+    } catch (error) {
+      console.error("Selection error", error);
+      window.alert("Wystąpił niespodziewany błąd.");
+    }
   };
 
   return (
@@ -90,10 +91,6 @@ export default function OrderDetails({
                   : "Zakończenie do: "}
                 {order.deadline}
               </div>
-              <div className="flex items-center text-gray-600">
-                <i className="ri-calendar-check-line mr-2"></i>
-                Utworzono: {order.createdDate}
-              </div>
             </div>
           </div>
           <div>
@@ -104,58 +101,70 @@ export default function OrderDetails({
 
         <div>
           <h4 className="font-medium text-gray-800 mb-4">
-            Zgłoszenia operatorów ({order.applicants.length})
+            Zgłoszenia operatorów ({applicants.length})
           </h4>
-          <div className="space-y-4">
-            {order.applicants.map((applicant) => (
-              <div
-                key={applicant.id}
-                className="border border-gray-200 rounded-lg p-4"
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h5 className="font-medium text-gray-800">
-                      {applicant.name}
-                    </h5>
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <div className="flex items-center">
-                        <i className="ri-star-fill text-yellow-400 mr-1"></i>
-                        {applicant.rating}
+          {isLoading ? (
+            <p>Ładowanie zgłoszeń...</p>
+          ) : (
+            <div className="space-y-4">
+              {applicants.map((applicant) => (
+                <div
+                  key={applicant.id}
+                  className="border border-gray-200 rounded-lg p-4"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h5 className="font-medium text-gray-800">
+                        {applicant.name}
+                      </h5>
+                      <div className="flex items-center space-x-4 text-sm text-gray-600">
+                        <div className="flex items-center">
+                          <i className="ri-star-fill text-yellow-400 mr-1"></i>
+                          {applicant.rating}
+                        </div>
+                        <span>{applicant.completedJobs} zleceń</span>
                       </div>
-                      <span>{applicant.completedJobs} zleceń</span>
                     </div>
                   </div>
-                </div>
 
-                <p className="text-sm text-gray-600 mb-3">
-                  {applicant.description}
-                </p>
+                  <p className="text-sm text-gray-600 mb-3">
+                    {applicant.description}
+                  </p>
 
-                <div className="mb-4">
-                  <h6 className="text-xs font-medium text-gray-700 mb-2">
-                    Sprzęt:
-                  </h6>
-                  <div className="flex flex-wrap gap-2">
-                    {applicant.equipment.map((item, index) => (
-                      <span
-                        key={index}
-                        className="px-2 py-1 bg-gray-100 text-xs text-gray-600 rounded"
-                      >
-                        {item}
-                      </span>
-                    ))}
+                  <div className="mb-4">
+                    <h6 className="text-xs font-medium text-gray-700 mb-2">
+                      Sprzęt:
+                    </h6>
+                    <div className="flex flex-wrap gap-2">
+                      {applicant.equipment &&
+                        applicant.equipment.map((item, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 bg-gray-100 text-xs text-gray-600 rounded"
+                          >
+                            {item}
+                          </span>
+                        ))}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end space-x-2">
+                    <Button
+                      size="sm"
+                      onClick={() => handleSelectOperator(applicant.id)}
+                    >
+                      Wybierz operatora
+                    </Button>
                   </div>
                 </div>
-
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" size="sm">
-                    Zobacz profil
-                  </Button>
-                  <Button size="sm">Wybierz operatora</Button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+              {applicants.length === 0 && (
+                <p className="text-gray-500">
+                  Brak zgłoszeń dla tego zlecenia.
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
