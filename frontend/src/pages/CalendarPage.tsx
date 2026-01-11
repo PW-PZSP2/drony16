@@ -1,43 +1,54 @@
 import { useState, useEffect } from "react";
 import OrderCalendar from "../components/feature/calendar/OrderCalendar";
+import { backendClient } from "../utils/backend_client";
 
-// TODO: Replace mock data with API data
-const mockOrders = [
-  {
-    id: 1,
-    title: "Dostawa paczki - Warszawa Centrum",
-    deadline: new Date(2026, 0, 15, 14, 30),
-    status: "pending",
-  },
-  {
-    id: 2,
-    title: "Transport materiałów - Mokotów",
-    deadline: new Date(2026, 0, 15, 16, 0),
-    status: "in_progress",
-  },
-  {
-    id: 3,
-    title: "Dostawa dokumentów - Wilanów",
-    deadline: new Date(2026, 0, 18, 10, 0),
-    status: "pending",
-  },
-  {
-    id: 4,
-    title: "Inspekcja drona - Serwis",
-    deadline: new Date(2026, 0, 20, 12, 0),
-    status: "completed",
-  },
-];
+interface CalendarOrder {
+  order_id: number;
+  deadline: string;
+  name: string;
+  status: string;
+  service_id: number;
+}
 
 export default function CalendarPage() {
-  const [orders, setOrders] = useState(mockOrders);
+  const [orders, setOrders] = useState<CalendarOrder[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // TODO: Add fetching real data from the backend
-  // useEffect(() => {
-  //   fetch('/api/orders')
-  //     .then(res => res.json())
-  //     .then(data => setOrders(data));
-  // }, []);
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setLoading(true);
+        const response =
+          await backendClient.get<CalendarOrder[]>("/calendars/orders");
+        setOrders(response.data);
+        setError(null);
+      } catch (err: any) {
+        console.error("Error fetching calendar orders:", err);
+        setError(err.response?.data?.detail || "Nie udało się pobrać zleceń");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8 px-4 flex items-center justify-center">
+        <p className="text-gray-600">Ładowanie...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8 px-4 flex items-center justify-center">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">

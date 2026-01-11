@@ -4,10 +4,11 @@ import "react-calendar/dist/Calendar.css";
 import "./OrderCalendar.css";
 
 interface Order {
-  id: number;
-  title: string;
-  deadline: Date;
+  order_id: number;
+  name: string;
+  deadline: string;
   status: string;
+  service_id: number;
 }
 
 interface OrderCalendarProps {
@@ -39,6 +40,18 @@ export default function OrderCalendar({ orders }: OrderCalendarProps) {
         orderDate.getDate() === date.getDate()
       );
     });
+  };
+
+  const getStatusLabel = (status: string) => {
+    const statusMap: Record<string, string> = {
+      pending: "Oczekujące",
+      in_progress: "W trakcie",
+      completed: "Ukończone",
+      cancelled: "Anulowane",
+      assigned: "Przypisane",
+      interested: "Zainteresowany",
+    };
+    return statusMap[status] || status;
   };
 
   const selectedOrders = getOrdersForDate(selectedDate);
@@ -73,29 +86,30 @@ export default function OrderCalendar({ orders }: OrderCalendarProps) {
             <div className="space-y-3">
               {selectedOrders.map((order) => (
                 <div
-                  key={order.id}
+                  key={order.order_id}
                   className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
                 >
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="font-medium text-gray-900">
-                        {order.title}
+                        {order.name}
                       </h3>
                       <p className="text-sm text-gray-500 mt-1">
                         Deadline:{" "}
-                        {new Date(order.deadline).toLocaleString("pl-PL")}
+                        {new Date(order.deadline).toLocaleDateString("pl-PL")}
                       </p>
                     </div>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${
                         order.status === "completed"
                           ? "bg-green-100 text-green-800"
-                          : order.status === "in_progress"
+                          : order.status === "in_progress" ||
+                              order.status === "assigned"
                             ? "bg-blue-100 text-blue-800"
                             : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
-                      {order.status}
+                      {getStatusLabel(order.status)}
                     </span>
                   </div>
                 </div>
