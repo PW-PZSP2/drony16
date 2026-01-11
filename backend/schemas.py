@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field, model_validator
 from typing import Optional, Literal, Dict, Any
-from datetime import datetime
+from datetime import date, datetime
 
 
 class UserBase(BaseModel):
@@ -107,3 +107,14 @@ class AdminCreate(BaseModel):
     phone_number: str
     localisation: Optional[str] = None
     area: Optional[int] = None
+
+
+class CalendarOrderResponse(BaseModel):
+    order_id: int
+    deadline: date
+    name: str
+    status: str
+    service_id: Optional[int] = None
+
+    class Config:
+        from_attributes = True
