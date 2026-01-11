@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field, model_validator
 from typing import Optional, Literal, Dict, Any
-from datetime import datetime
+from datetime import date, datetime
 
 
 class UserBase(BaseModel):
@@ -119,3 +119,13 @@ class UserChangePassword(BaseModel):
         if self.new_password != self.confirm_new_password:
             raise ValueError("New passwords do not match")
         return self
+
+class CalendarOrderResponse(BaseModel):
+    order_id: int
+    deadline: date
+    name: str
+    status: str
+    service_id: Optional[int] = None
+
+    class Config:
+        from_attributes = True

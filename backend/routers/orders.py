@@ -187,9 +187,6 @@ async def get_pending_orders(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.role != "cli":
-        raise HTTPException(status_code=403, detail="Unauthorized")
-
     query = (
         select(Order)
         .where(Order.client_id == current_user.user_id)
@@ -248,9 +245,6 @@ async def get_client_history(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.role != "cli":
-        raise HTTPException(status_code=403, detail="Unauthorized")
-
     query = (
         select(Order)
         .where(Order.client_id == current_user.user_id)
@@ -307,9 +301,6 @@ async def get_order_candidates(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.role != "cli":
-        raise HTTPException(status_code=403, detail="Unauthorized")
-
     result = await db.execute(
         select(Order)
         .where(Order.order_id == order_id)

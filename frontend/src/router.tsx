@@ -10,6 +10,7 @@ import ClientDashboard from "./pages/ClientDashboard";
 import OperatorDashboard from "./pages/OperatorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProfilePage from "./pages/ProfilePage";
+import ProfessionalProfilePage from "./pages/ProfessionalProfilePage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import CalendarPage from "./pages/CalendarPage";
 
@@ -54,6 +55,10 @@ export function buildRouter() {
             {
               path: "profile",
               element: <ProfilePage />,
+            },
+            {
+              path: "professional-profile",
+              element: <ProfessionalProfilePage />,
             },
             {
               path: "calendar",
