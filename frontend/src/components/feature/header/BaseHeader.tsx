@@ -66,22 +66,22 @@ export default function Header(): JSX.Element {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center">
-              <img
-                src="/images/logo.png"
-                alt="Droneo"
-                className="h-50 object-contain object-center translate-y-3 -translate-x-1"
-              />
-            </Link>
+            <img
+              src="/images/logo.png"
+              alt="Droneo"
+              className="h-50 object-contain object-center translate-y-3 -translate-x-1"
+            />
           </div>
 
           <nav className="hidden md:flex space-x-8">
-            <a
-              href="/"
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              Strona Główna
-            </a>
+            {!user && (
+              <a
+                href="/"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+              >
+                Strona Główna
+              </a>
+            )}
             {user && user.roles.includes(Roles.ADMIN) && (
               <a
                 href="/admin/dashboard"
@@ -110,6 +110,12 @@ export default function Header(): JSX.Element {
                 >
                   Kalendarz
                 </a>
+                <a
+                  href="/operator/professional-profile"
+                  className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                >
+                  Profil Zawodowy
+                </a>
               </>
             )}
             {user &&
@@ -130,12 +136,14 @@ export default function Header(): JSX.Element {
                   </a>
                 </>
               )}
-            <a
-              href="/#kontakt"
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
-            >
-              Kontakt
-            </a>
+            {!user && (
+              <a
+                href="/#kontakt"
+                className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+              >
+                Kontakt
+              </a>
+            )}
           </nav>
 
           <div className="flex items-center space-x-4">
