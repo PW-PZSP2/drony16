@@ -12,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Edit2, Save, Loader2 } from "lucide-react";
 import { AuthService } from "../services/authorization_service";
-import { Roles } from "../types/auth/user_role";
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
@@ -21,24 +20,18 @@ export default function ProfilePage() {
     name: "",
     email: "",
     phone: "",
-    location: "",
-    operatingRadius: 0,
     description: "",
   });
-  const [isOperator, setIsOperator] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const user = await AuthService.getCurrentUser();
         if (user) {
-          setIsOperator(user.roles.includes(Roles.OPERATOR));
           setProfile({
             name: user.user_name || "",
             email: user.email || "",
             phone: user.phone_number || "",
-            location: user.localisation || "",
-            operatingRadius: user.area || 0,
             description: "",
           });
         }
@@ -66,8 +59,8 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex flex-col flex-grow bg-gray-50 p-4 md:p-8 h-full min-h-[calc(100vh-64px)]">
-      <Card className="flex-1 w-full">
+    <div className="flex flex-col flex-grow bg-gray-50 p-4 md:p-8 h-full min-h-[calc(100vh-64px)] justify-center">
+      <Card className="w-full flex-1 flex flex-col shadow-sm rounded-3xl">
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
@@ -79,6 +72,7 @@ export default function ProfilePage() {
             <Button
               variant={isEditing ? "default" : "outline"}
               onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
+              className="rounded-full"
             >
               {isEditing ? (
                 <>
@@ -94,14 +88,14 @@ export default function ProfilePage() {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="flex-1 flex flex-col gap-6 p-6">
           <div className="space-y-2">
             <Label htmlFor="name">Nazwa użytkownika</Label>
             <Input
               id="name"
               value={profile.name}
               disabled={true}
-              className="bg-gray-100"
+              className="bg-gray-100 rounded-lg"
             />
           </div>
 
@@ -113,7 +107,7 @@ export default function ProfilePage() {
                 type="email"
                 value={profile.email}
                 disabled={true}
-                className="bg-gray-100"
+                className="bg-gray-100 rounded-lg"
               />
             </div>
             <div className="space-y-2">
@@ -125,41 +119,12 @@ export default function ProfilePage() {
                 onChange={(e) =>
                   setProfile({ ...profile, phone: e.target.value })
                 }
+                className="rounded-lg"
               />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="location">Lokalizacja</Label>
-            <Input
-              id="location"
-              value={profile.location}
-              disabled={!isEditing}
-              onChange={(e) =>
-                setProfile({ ...profile, location: e.target.value })
-              }
-            />
-          </div>
-
-          {isOperator && (
-            <div className="space-y-2">
-              <Label htmlFor="operatingRadius">Zasięg działania (km)</Label>
-              <Input
-                id="operatingRadius"
-                type="number"
-                value={profile.operatingRadius}
-                disabled={!isEditing}
-                onChange={(e) =>
-                  setProfile({
-                    ...profile,
-                    operatingRadius: Number(e.target.value),
-                  })
-                }
-              />
-            </div>
-          )}
-
-          <div className="space-y-2">
+          <div className="space-y-2 flex-1 flex flex-col">
             <Label htmlFor="description">O mnie</Label>
             <Textarea
               id="description"
@@ -168,7 +133,7 @@ export default function ProfilePage() {
               onChange={(e) =>
                 setProfile({ ...profile, description: e.target.value })
               }
-              className="min-h-[100px]"
+              className="flex-1 min-h-[100px] rounded-lg resize-none"
               placeholder="Napisz coś o sobie..."
             />
           </div>

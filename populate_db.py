@@ -5,8 +5,10 @@ import sys
 
 BASE_URL = "http://localhost:8080"
 
+
 def get_session():
     return requests.Session()
+
 
 def register_user(session, user_data):
     try:
@@ -19,10 +21,7 @@ def register_user(session, user_data):
         else:
             print(f"Registered {user_data['email']}")
 
-        login_data = {
-            "username": user_data["email"],
-            "password": user_data["password"]
-        }
+        login_data = {"username": user_data["email"], "password": user_data["password"]}
         resp = session.post(f"{BASE_URL}/token", data=login_data)
         if resp.status_code == 200:
             print(f"Logged in as {user_data['email']}")
@@ -34,26 +33,28 @@ def register_user(session, user_data):
         print(f"Error handling user {user_data['email']}: {e}")
         return False
 
+
 def create_order(session, order_data):
     resp = session.post(f"{BASE_URL}/orders", json=order_data)
     if resp.status_code == 200:
         order = resp.json()
         print(f"Created Order '{order['name']}' (ID: {order['order_id']})")
-        return order['order_id']
+        return order["order_id"]
     else:
         print(f"Failed to create order '{order_data['name']}': {resp.text}")
         return None
 
+
 def main():
     print("Starting database population...")
-    
+
     users = {
         "client": {
             "email": "client@example.com",
             "password": "string",
             "user_name": "Demo Client",
             "role": "cli",
-            "phone_number": "123456789"
+            "phone_number": "123456789",
         },
         "op1": {
             "email": "op1@example.com",
@@ -62,7 +63,7 @@ def main():
             "role": "ope",
             "phone_number": "987654321",
             "localisation": "Warsaw, Center",
-            "area": 50
+            "area": 50,
         },
         "op2": {
             "email": "op2@example.com",
@@ -71,15 +72,15 @@ def main():
             "role": "ope",
             "phone_number": "456123789",
             "localisation": "Warsaw, North",
-            "area": 100
+            "area": 100,
         },
         "admin": {
             "email": "admin@example.com",
             "password": "string",
             "user_name": "Demo Admin",
             "role": "adm",
-            "phone_number": "999888777"
-        }
+            "phone_number": "999888777",
+        },
     }
 
     sessions = {}
@@ -99,16 +100,16 @@ def main():
         return
 
     client_sess = sessions["client"]
-    
+
     orders_info = [
         {
             "name": "Zlecenie A - Sesja ślubna",
             "description": "Sesja w plenerze, potrzebny dron z kamerą 4K.",
             "location": "Łazienki Królewskie, Warszawa",
             "raid_date": True,  # 1
-            "completion_date": False, # 0
+            "completion_date": False,  # 0
             "deadline": (datetime.now() + timedelta(days=30)).isoformat(),
-            "services": [{"service_name": "Film", "parameters": {}}] 
+            "services": [{"service_name": "Film", "parameters": {}}],
         },
         {
             "name": "Zlecenie B - Dron nad budową",
@@ -117,7 +118,7 @@ def main():
             "raid_date": True,
             "completion_date": False,
             "deadline": (datetime.now() + timedelta(days=14)).isoformat(),
-            "services": [{"service_name": "Ortofotomapa", "parameters": {}}]
+            "services": [{"service_name": "Ortofotomapa", "parameters": {}}],
         },
         {
             "name": "Zlecenie C - Inspekcja paneli",
@@ -126,7 +127,7 @@ def main():
             "raid_date": True,
             "completion_date": False,
             "deadline": (datetime.now() + timedelta(days=7)).isoformat(),
-            "services": [{"service_name": "Film", "parameters": {}}]
+            "services": [{"service_name": "Film", "parameters": {}}],
         },
         {
             "name": "Zlecenie D - Promocja Dewelopera",
@@ -135,7 +136,7 @@ def main():
             "raid_date": True,
             "completion_date": False,
             "deadline": (datetime.now() + timedelta(days=60)).isoformat(),
-            "services": [{"service_name": "Film", "parameters": {}}]
+            "services": [{"service_name": "Film", "parameters": {}}],
         },
         {
             "name": "Zlecenie E - Mapa 3D Terenu",
@@ -144,12 +145,12 @@ def main():
             "raid_date": False,
             "completion_date": True,
             "deadline": (datetime.now() + timedelta(days=10)).isoformat(),
-            "services": [{"service_name": "Modele 3D", "parameters": {}}]
-        }
+            "services": [{"service_name": "Modele 3D", "parameters": {}}],
+        },
     ]
 
     order_ids = {}
-    
+
     for i, o_data in enumerate(orders_info):
         oid = create_order(client_sess, o_data)
         if oid:
@@ -170,7 +171,7 @@ def main():
     if 3 in order_ids and "op1" in sessions:
         sessions["op1"].post(f"{BASE_URL}/orders/{order_ids[3]}/interest")
         op1_id = users["op1"]["id"]
-        
+
         resp = client_sess.post(f"{BASE_URL}/orders/{order_ids[3]}/select/{op1_id}")
         if resp.status_code == 200:
             print(f"Client selected Op1 for Order D (In Progress)")
@@ -180,7 +181,7 @@ def main():
     if 4 in order_ids and "op2" in sessions:
         sessions["op2"].post(f"{BASE_URL}/orders/{order_ids[4]}/interest")
         op2_id = users["op2"]["id"]
-        
+
         resp = client_sess.post(f"{BASE_URL}/orders/{order_ids[4]}/select/{op2_id}")
         if resp.status_code == 200:
             print(f"Client selected Op2 for Order E")
@@ -197,6 +198,7 @@ def main():
     print(f"Op1:    {users['op1']['email']} / {users['op1']['password']}")
     print(f"Op2:    {users['op2']['email']} / {users['op2']['password']}")
     print(f"Admin:  {users['admin']['email']} / {users['admin']['password']}")
+
 
 if __name__ == "__main__":
     main()
