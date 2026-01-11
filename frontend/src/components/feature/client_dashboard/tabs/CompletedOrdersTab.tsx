@@ -37,14 +37,12 @@ export default function CompletedOrdersTab() {
                 </div>
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    order.status === "in-progress" ||
-                    order.status === "W trakcie"
-                      ? "bg-blue-100 text-blue-800"
-                      : "bg-green-100 text-green-800"
+                    order.status === "in-progress" || order.status === "pending"
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-green-600 bg-green-50"
                   }`}
                 >
-                  {order.status === "in-progress" ||
-                  order.status === "W trakcie"
+                  {order.status === "in-progress" || order.status === "pending"
                     ? "W trakcie"
                     : "Zakończone"}
                 </span>
@@ -74,7 +72,7 @@ export default function CompletedOrdersTab() {
                         {[1, 2, 3, 4, 5].map((star) => (
                           <i
                             key={star}
-                            className={`ri-star-${star <= order.rating ? "fill" : "line"} text-yellow-400`}
+                            className={`ri-star-${star <= (order.rating || 0) ? "fill" : "line"} text-yellow-400`}
                           ></i>
                         ))}
                       </div>
