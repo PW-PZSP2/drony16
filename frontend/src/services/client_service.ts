@@ -278,7 +278,16 @@ async function select_operator(
   orderId: number,
   operatorId: number,
 ): Promise<{ success: boolean; message?: string }> {
-  await mockDelay(API_DELAY);
+
+  const response = await fetch(`${API_URL}/orders/${orderId}/select/${operatorId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      credentials: "include",
+    },
+    credentials: "include",
+  });
+  console.log(response);
 
   if (!orderId || !operatorId) {
     return {
