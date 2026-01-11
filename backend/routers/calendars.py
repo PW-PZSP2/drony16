@@ -17,8 +17,7 @@ router = APIRouter(
 
 @router.get("/orders", response_model=List[CalendarOrderResponse])
 async def get_calendar_orders(
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
     """
     Get orders for the calendar based on user role:
@@ -28,24 +27,28 @@ async def get_calendar_orders(
 
     if current_user.role == "cli":
         # Client sees only their own orders
-        query = select(Order).where(Order.client_id == current_user.user_id).options(
-            selectinload(Order.order_services)
+        query = (
+            select(Order)
+            .where(Order.client_id == current_user.user_id)
+            .options(selectinload(Order.order_services))
         )
     elif current_user.role == "ope":
         # Operator sees orders where they are either the client or the operator
-        query = select(Order).where(
-            or_(
-                Order.client_id == current_user.user_id,
-                Order.operator_id == current_user.user_id
+        query = (
+            select(Order)
+            .where(
+                or_(
+                    Order.client_id == current_user.user_id,
+                    Order.operator_id == current_user.user_id,
+                )
             )
-        ).options(
-            selectinload(Order.order_services)
+            .options(selectinload(Order.order_services))
         )
     else:
         # Admin doesn't have access to calendar
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admins do not have access to calendar"
+            detail="Admins do not have access to calendar",
         )
 
     result = await db.execute(query)
@@ -56,15 +59,17 @@ async def get_calendar_orders(
     for order in orders:
         # Get the first service_id for this order
         service_id = None
-        if hasattr(order, 'order_services') and order.order_services:
+        if hasattr(order, "order_services") and order.order_services:
             service_id = order.order_services[0].service_id
 
-        orders_response.append(CalendarOrderResponse(
-            order_id=order.order_id,
-            deadline=order.deadline,
-            name=order.name,
-            status=order.state,
-            service_id=service_id
-        ))
+        orders_response.append(
+            CalendarOrderResponse(
+                order_id=order.order_id,
+                deadline=order.deadline,
+                name=order.name,
+                status=order.state,
+                service_id=service_id,
+            )
+        )
 
     return orders_response
