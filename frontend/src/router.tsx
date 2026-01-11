@@ -90,14 +90,18 @@ export function buildRouter() {
 
 async function clientProtectedLoader() {
   const current_user = await AuthService.getCurrentUser();
-  if (!current_user || (!current_user.roles.includes(Roles.OPERATOR) || current_user.roles.includes(Roles.CLIENT))) {
+  if (
+    !current_user ||
+    !current_user.roles.includes(Roles.OPERATOR) ||
+    current_user.roles.includes(Roles.CLIENT)
+  ) {
     throw new Response("Unauthorized", { status: 401 });
   }
 }
 
 async function operatorProtectedLoader() {
   const current_user = await AuthService.getCurrentUser();
-  if (!current_user || (!current_user.roles.includes(Roles.OPERATOR))) {
+  if (!current_user || !current_user.roles.includes(Roles.OPERATOR)) {
     throw new Response("Unauthorized", { status: 401 });
   }
 }
