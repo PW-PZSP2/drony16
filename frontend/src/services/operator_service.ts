@@ -40,7 +40,9 @@ export interface OperatorAverage {
   average_score: number | null;
 }
 
-async function getOperatorAverage(operatorId: number): Promise<OperatorAverage> {
+async function getOperatorAverage(
+  operatorId: number,
+): Promise<OperatorAverage> {
   const response = await fetch(`${API_URL}/operators/average/${operatorId}`, {
     credentials: "include",
   });
@@ -104,7 +106,11 @@ async function getMyAttachments(): Promise<{ attachments: Attachment[] }> {
   return response.json();
 }
 
-async function addAttachment(name: string, description: string, fileUrl: string): Promise<Attachment> {
+async function addAttachment(
+  name: string,
+  description: string,
+  fileUrl: string,
+): Promise<Attachment> {
   const formData = new FormData();
   formData.append("name", name);
   if (description) formData.append("description", description);
@@ -120,13 +126,15 @@ async function addAttachment(name: string, description: string, fileUrl: string)
 }
 
 async function removeAttachment(attachmentId: number): Promise<void> {
-  const response = await fetch(`${API_URL}/operators/me/remove_attachments/${attachmentId}`, {
-    method: "DELETE",
-    credentials: "include",
-  });
+  const response = await fetch(
+    `${API_URL}/operators/me/remove_attachments/${attachmentId}`,
+    {
+      method: "DELETE",
+      credentials: "include",
+    },
+  );
   if (!response.ok) throw new Error("Failed to remove attachment");
 }
-
 
 async function getMatchedOrders(): Promise<Order[]> {
   const response = await fetch(`${API_URL}/orders/matched`, {
@@ -138,7 +146,7 @@ async function getMatchedOrders(): Promise<Order[]> {
 
   if (!response.ok) {
     if (response.status === 401) {
-       throw new Error("Unauthorized");
+      throw new Error("Unauthorized");
     }
     throw new Error("Failed to fetch matched orders");
   }
@@ -150,14 +158,14 @@ async function applyForOrder(orderId: number): Promise<void> {
   const response = await fetch(`${API_URL}/orders/${orderId}/interest`, {
     method: "POST",
     headers: {
-       "Content-Type": "application/json",
+      "Content-Type": "application/json",
     },
     credentials: "include",
   });
 
   if (!response.ok) {
-     const errorData = await response.json();
-     throw new Error(errorData.detail || "Failed to apply for order");
+    const errorData = await response.json();
+    throw new Error(errorData.detail || "Failed to apply for order");
   }
 }
 
@@ -171,7 +179,7 @@ async function getAssignedOrders(): Promise<Order[]> {
 
   if (!response.ok) {
     if (response.status === 401) {
-       throw new Error("Unauthorized");
+      throw new Error("Unauthorized");
     }
     throw new Error("Failed to fetch assigned orders");
   }
@@ -188,10 +196,10 @@ async function getOrderHistory(): Promise<Order[]> {
   });
 
   if (!response.ok) {
-     if (response.status === 401) {
-         throw new Error("Unauthorized");
-     }
-     throw new Error("Failed to fetch order history");
+    if (response.status === 401) {
+      throw new Error("Unauthorized");
+    }
+    throw new Error("Failed to fetch order history");
   }
   return response.json();
 }
@@ -211,4 +219,3 @@ export const OperatorService = {
   getAssignedOrders,
   getOrderHistory,
 };
-

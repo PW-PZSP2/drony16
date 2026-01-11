@@ -13,7 +13,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Edit2, Save, Loader2 } from "lucide-react";
 import { AuthService } from "../services/authorization_service";
 
-
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);

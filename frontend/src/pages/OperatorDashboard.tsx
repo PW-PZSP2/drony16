@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-
   CardFooter,
   CardHeader,
   CardTitle,
@@ -22,7 +21,6 @@ import {
   History,
 } from "lucide-react";
 import { OperatorService, type Order } from "@/services/operator_service";
-
 
 export default function OperatorDashboard() {
   return (
@@ -94,7 +92,9 @@ function NewOrdersTab() {
   const [selectedOrder, setSelectedOrder] = useState<number | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'applied' | 'not_applied'>('all');
+  const [filter, setFilter] = useState<"all" | "applied" | "not_applied">(
+    "all",
+  );
 
   const fetchOrders = async () => {
     try {
@@ -115,15 +115,19 @@ function NewOrdersTab() {
     try {
       await OperatorService.applyForOrder(orderId);
       // Refresh logic or update local state
-      setOrders(prev => prev.map(o => o.order_id === orderId ? { ...o, has_applied: true } : o));
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.order_id === orderId ? { ...o, has_applied: true } : o,
+        ),
+      );
     } catch (error) {
       console.error(error);
     }
   };
 
-  const filteredOrders = orders.filter(order => {
-    if (filter === 'applied') return order.has_applied;
-    if (filter === 'not_applied') return !order.has_applied;
+  const filteredOrders = orders.filter((order) => {
+    if (filter === "applied") return order.has_applied;
+    if (filter === "not_applied") return !order.has_applied;
     return true;
   });
 
@@ -149,7 +153,9 @@ function NewOrdersTab() {
     const order = orders.find((o) => o.order_id === selectedOrder);
     if (!order) return <div>Nie znaleziono zlecenia</div>;
 
-    const deadlineLabel = order.raid_date ? "Termin nalotu" : "Termin zakończenia";
+    const deadlineLabel = order.raid_date
+      ? "Termin nalotu"
+      : "Termin zakończenia";
 
     return (
       <Card className="overflow-hidden rounded-3xl border-gray-100 shadow-lg">
@@ -190,7 +196,8 @@ function NewOrdersTab() {
                 <div className="flex items-center text-gray-600">
                   <Calendar className="h-5 w-5 mr-3 text-gray-400" />
                   <span>
-                    {deadlineLabel}: {new Date(order.deadline).toLocaleDateString()}
+                    {deadlineLabel}:{" "}
+                    {new Date(order.deadline).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex items-center text-gray-600">
@@ -214,7 +221,7 @@ function NewOrdersTab() {
         </CardContent>
         <CardFooter className="justify-end border-t bg-gray-50/50 p-6">
           <Button
-            className={`font-medium rounded-full px-6 ${order.has_applied ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 text-white'}`}
+            className={`font-medium rounded-full px-6 ${order.has_applied ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700 text-white"}`}
             onClick={() => handleApply(order.order_id)}
             disabled={order.has_applied}
           >
@@ -240,20 +247,28 @@ function NewOrdersTab() {
             <option value="not_applied">Nie zgłoszone</option>
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+            <svg
+              className="fill-current h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+            >
+              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+            </svg>
           </div>
         </div>
       </div>
 
       {filteredOrders.length === 0 ? (
-         <Card className="rounded-3xl border-dashed">
-            <CardContent className="p-8 text-center text-gray-500">
-              Brak zleceń spełniających kryteria filtrowania.
-            </CardContent>
-         </Card>
+        <Card className="rounded-3xl border-dashed">
+          <CardContent className="p-8 text-center text-gray-500">
+            Brak zleceń spełniających kryteria filtrowania.
+          </CardContent>
+        </Card>
       ) : (
         filteredOrders.map((order) => {
-          const deadlineLabel = order.raid_date ? "Termin nalotu" : "Termin zakończenia";
+          const deadlineLabel = order.raid_date
+            ? "Termin nalotu"
+            : "Termin zakończenia";
           return (
             <Card
               key={order.order_id}
@@ -281,7 +296,8 @@ function NewOrdersTab() {
                     </div>
                     <div className="flex items-center">
                       <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                      {deadlineLabel}: {new Date(order.deadline).toLocaleDateString()}
+                      {deadlineLabel}:{" "}
+                      {new Date(order.deadline).toLocaleDateString()}
                     </div>
                   </div>
 
@@ -300,7 +316,7 @@ function NewOrdersTab() {
                       Zobacz szczegóły
                     </Button>
                     <Button
-                      className={`font-medium rounded-full px-6 ${order.has_applied ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 text-white'}`}
+                      className={`font-medium rounded-full px-6 ${order.has_applied ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700 text-white"}`}
                       onClick={() => handleApply(order.order_id)}
                       disabled={order.has_applied}
                     >
@@ -357,120 +373,131 @@ function ConfirmedOrdersTab() {
   return (
     <div className="space-y-4">
       {orders.map((order) => {
-         const deadlineLabel = order.raid_date ? "Termin nalotu" : "Termin zakończenia";
-         return (
-        <Card
-          key={order.order_id}
-          className="overflow-hidden rounded-3xl border-gray-100 shadow-md hover:shadow-lg transition-shadow"
-        >
-          <CardContent className="p-6">
-            <div className="flex flex-col gap-4">
-              <div className="flex justify-between items-start">
-                <div>
-                    <h3 className="text-xl font-bold text-gray-900">{order.name}</h3>
+        const deadlineLabel = order.raid_date
+          ? "Termin nalotu"
+          : "Termin zakończenia";
+        return (
+          <Card
+            key={order.order_id}
+            className="overflow-hidden rounded-3xl border-gray-100 shadow-md hover:shadow-lg transition-shadow"
+          >
+            <CardContent className="p-6">
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">
+                      {order.name}
+                    </h3>
                     <p className="text-gray-600 font-medium mt-1">
-                        {order.services.map((s) => s.service_name).join(", ")}
+                      {order.services.map((s) => s.service_name).join(", ")}
                     </p>
+                  </div>
+                  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                    W trakcie
+                  </span>
                 </div>
-                <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">W trakcie</span>
-              </div>
 
-              <div className="flex flex-wrap gap-x-8 gap-y-2 text-gray-600 text-sm">
-                <div className="flex items-center">
-                  <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-                  {order.location}
+                <div className="flex flex-wrap gap-x-8 gap-y-2 text-gray-600 text-sm">
+                  <div className="flex items-center">
+                    <MapPin className="h-4 w-4 mr-2 text-gray-500" />
+                    {order.location}
+                  </div>
+                  <div className="flex items-center">
+                    <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+                    {deadlineLabel}:{" "}
+                    {new Date(order.deadline).toLocaleDateString()}
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                  {deadlineLabel}: {new Date(order.deadline).toLocaleDateString()}
-                </div>
-              </div>
 
-              <p className="text-gray-700 text-sm line-clamp-2">
-                {order.description}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      );
+                <p className="text-gray-700 text-sm line-clamp-2">
+                  {order.description}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        );
       })}
     </div>
   );
 }
 
 function HistoryOrdersTab() {
-    const [orders, setOrders] = useState<Order[]>([]);
-    const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetch = async () => {
-        try {
-            const data = await OperatorService.getOrderHistory();
-            setOrders(data);
-        } catch (error) {
-            console.error("Failed to fetch order history", error);
-        } finally {
-            setLoading(false);
-        }
-        };
-        fetch();
-    }, []);
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const data = await OperatorService.getOrderHistory();
+        setOrders(data);
+      } catch (error) {
+        console.error("Failed to fetch order history", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetch();
+  }, []);
 
-    if (loading) {
-        return (
-        <div className="flex justify-center p-8">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-        );
-    }
-
-    if (orders.length === 0) {
-        return (
-        <Card className="rounded-3xl">
-            <CardContent className="p-8 text-center text-gray-500">
-            Historia zleceń jest pusta.
-            </CardContent>
-        </Card>
-        );
-    }
-
+  if (loading) {
     return (
-        <div className="space-y-4">
-        {orders.map((order) => (
-            <Card
-            key={order.order_id}
-            className="overflow-hidden rounded-3xl border-gray-100 shadow-md hover:shadow-lg transition-shadow bg-gray-50 opacity-90"
-            >
-            <CardContent className="p-6">
-                <div className="flex flex-col gap-4">
-                <div className="flex justify-between items-start">
-                    <div>
-                        <h3 className="text-xl font-bold text-gray-800">{order.name}</h3>
-                        <p className="text-gray-500 font-medium mt-1">
-                            {order.services.map((s) => s.service_name).join(", ")}
-                        </p>
-                    </div>
-                    <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">Zakończone</span>
-                </div>
-
-                <div className="flex flex-wrap gap-x-8 gap-y-2 text-gray-600 text-sm">
-                    <div className="flex items-center">
-                    <MapPin className="h-4 w-4 mr-2 text-gray-400" />
-                    {order.location}
-                    </div>
-                    <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                    Zrealizowano: {new Date(order.deadline).toLocaleDateString()}
-                    </div>
-                </div>
-
-                <p className="text-gray-600 text-sm line-clamp-2">
-                    {order.description}
-                </p>
-                </div>
-            </CardContent>
-            </Card>
-        ))}
-        </div>
+      <div className="flex justify-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
     );
+  }
+
+  if (orders.length === 0) {
+    return (
+      <Card className="rounded-3xl">
+        <CardContent className="p-8 text-center text-gray-500">
+          Historia zleceń jest pusta.
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {orders.map((order) => (
+        <Card
+          key={order.order_id}
+          className="overflow-hidden rounded-3xl border-gray-100 shadow-md hover:shadow-lg transition-shadow bg-gray-50 opacity-90"
+        >
+          <CardContent className="p-6">
+            <div className="flex flex-col gap-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">
+                    {order.name}
+                  </h3>
+                  <p className="text-gray-500 font-medium mt-1">
+                    {order.services.map((s) => s.service_name).join(", ")}
+                  </p>
+                </div>
+                <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
+                  Zakończone
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-x-8 gap-y-2 text-gray-600 text-sm">
+                <div className="flex items-center">
+                  <MapPin className="h-4 w-4 mr-2 text-gray-400" />
+                  {order.location}
+                </div>
+                <div className="flex items-center">
+                  <Calendar className="h-4 w-4 mr-2 text-gray-400" />
+                  Zrealizowano: {new Date(order.deadline).toLocaleDateString()}
+                </div>
+              </div>
+
+              <p className="text-gray-600 text-sm line-clamp-2">
+                {order.description}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
 }
