@@ -11,7 +11,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import OperationStatus from "@/components/base/OperationStatus/OperationStatus";
+import { AuthService } from "@/services/authorization_service";
 
 const changePasswordSchema = z
   .object({
@@ -47,37 +49,33 @@ export function ChangePasswordForm({
   >("inProgress");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
+  const navigate = useNavigate();
+
   async function onSubmit(data: z.infer<typeof changePasswordSchema>) {
     setFormState("loading");
     console.log("Zmiana hasła:", data);
 
     try {
-      // TODO: Add endpoint for changing password in AuthService
-      // const result = await AuthService.changePassword({
-      //   currentPassword: data.currentPassword,
-      //   newPassword: data.newPassword,
-      // });
+      await AuthService.changePassword({
+        current_password: data.currentPassword,
+        new_password: data.newPassword,
+        confirm_new_password: data.confirmNewPassword,
+      });
 
-      // Symulation
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const success = true; // result !== null;
+      setFormState("success");
 
-      if (success) {
-        setFormState("success");
-        form.reset();
-        setTimeout(() => {
-          setFormState("inProgress");
-        }, 3000);
-      } else {
-        setErrorMessage("Nieprawidłowe aktualne hasło");
-        setFormState("error");
-        setTimeout(() => {
-          setFormState("inProgress");
-        }, 3000);
-      }
-    } catch (error) {
+      setTimeout(async () => {
+        await AuthService.logout();
+        navigate("/");
+      }, 2000);
+
+      form.reset();
+      setTimeout(() => {
+        setFormState("inProgress");
+      }, 3000);
+    } catch (error: any) {
       console.error("Błąd zmiany hasła:", error);
-      setErrorMessage("Wystąpił błąd podczas zmiany hasła");
+      setErrorMessage(error.message || "Wystąpił błąd podczas zmiany hasła");
       setFormState("error");
       setTimeout(() => {
         setFormState("inProgress");
