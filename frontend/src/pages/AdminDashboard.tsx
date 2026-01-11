@@ -1,67 +1,63 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Users, LayoutDashboard, FileText, Drone } from "lucide-react";
+import backendClient from "@/utils/backend_client";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<"overview" | "users" | "content">(
-    "overview",
-  );
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Panel Administratora
-          </h1>
-          <p className="text-gray-600">Zarządzaj platformą i użytkownikami</p>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Panel Administratora
+            </h1>
+            <p className="text-gray-500 mt-1">
+              Zarządzaj platformą i użytkownikami
+            </p>
+          </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="bg-white rounded-lg shadow-sm mb-8">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6">
-              <button
-                onClick={() => setActiveTab("overview")}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === "overview"
-                    ? "border-purple-500 text-purple-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
+        <Card className="border-none shadow-none bg-transparent">
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="w-full justify-start bg-transparent p-0 gap-4 h-auto flex-wrap">
+              <TabsTrigger
+                value="overview"
+                className="rounded-full border border-gray-200 bg-white px-6 py-2.5 text-gray-600 data-[state=active]:border-purple-500 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 data-[state=active]:shadow-sm gap-2 font-medium transition-all hover:bg-gray-50"
               >
-                <i className="ri-dashboard-line mr-2"></i>
+                <LayoutDashboard className="h-4 w-4" />
                 Przegląd
-              </button>
-              <button
-                onClick={() => setActiveTab("users")}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === "users"
-                    ? "border-purple-500 text-purple-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
+              </TabsTrigger>
+              <TabsTrigger
+                value="users"
+                className="rounded-full border border-gray-200 bg-white px-6 py-2.5 text-gray-600 data-[state=active]:border-purple-500 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 data-[state=active]:shadow-sm gap-2 font-medium transition-all hover:bg-gray-50"
               >
-                <i className="ri-user-line mr-2"></i>
+                <Users className="h-4 w-4" />
                 Użytkownicy
-              </button>
-              <button
-                onClick={() => setActiveTab("content")}
-                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === "content"
-                    ? "border-purple-500 text-purple-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
+              </TabsTrigger>
+              <TabsTrigger
+                value="content"
+                className="rounded-full border border-gray-200 bg-white px-6 py-2.5 text-gray-600 data-[state=active]:border-purple-500 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 data-[state=active]:shadow-sm gap-2 font-medium transition-all hover:bg-gray-50"
               >
-                <i className="ri-edit-line mr-2"></i>
-                Treści strony
-              </button>
-            </nav>
-          </div>
+                <FileText className="h-4 w-4" />
+                Treści
+              </TabsTrigger>
+            </TabsList>
 
-          <div className="p-6">
-            {activeTab === "overview" && <OverviewTab />}
-            {activeTab === "users" && <UsersTab />}
-            {activeTab === "content" && <ContentTab />}
-          </div>
-        </div>
+            <TabsContent value="overview" className="mt-4">
+              <OverviewTab />
+            </TabsContent>
+            <TabsContent value="users" className="mt-4">
+              <UsersTab />
+            </TabsContent>
+            <TabsContent value="content" className="mt-4">
+              <ContentTab />
+            </TabsContent>
+          </Tabs>
+        </Card>
       </div>
     </div>
   );
@@ -69,51 +65,209 @@ export default function AdminDashboard() {
 
 function OverviewTab() {
   const [showAddAdminModal, setShowAddAdminModal] = useState(false);
+  const [adminFormData, setAdminFormData] = useState({
+    user_name: "",
+    email: "",
+    password: "",
+    phone_number: "",
+    localisation: "",
+    area: "",
+  });
+  const [creatingAdmin, setCreatingAdmin] = useState(false);
 
-  const stats = [
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    clients: { total: 0, new: 0 },
+    operators: { total: 0, new: 0 },
+    orders: { total: 0, new: 0 },
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [clientsRes, operatorsRes, ordersRes] = await Promise.all([
+          backendClient.get("/admins/stats/clients"),
+          backendClient.get("/admins/stats/operators"),
+          backendClient.get("/admins/stats/orders"),
+        ]);
+
+        // Helper to handle both axios response object and direct data return
+        const getData = (res: any) => res?.data || res || {};
+
+        const clientsData = getData(clientsRes);
+        const operatorsData = getData(operatorsRes);
+        const ordersData = getData(ordersRes);
+
+        console.log("Dashboard stats raw:", {
+          clientsData,
+          operatorsData,
+          ordersData,
+        });
+
+        setStats({
+          clients: {
+            total: clientsData.total_clients || 0,
+            new: clientsData.new_this_month || 0,
+          },
+          operators: {
+            total: operatorsData.total_operators || 0,
+            new: operatorsData.new_this_month || 0,
+          },
+          orders: {
+            total: ordersData.total_orders || 0,
+            new: ordersData.new_this_month || 0,
+          },
+        });
+      } catch (err) {
+        console.error("Failed to fetch dashboard stats", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  const statCards = [
     {
       title: "Zleceniodawcy",
-      value: "847",
-      change: "+12%",
-      icon: "ri-user-line",
-      color: "blue",
-    },
-    {
-      title: "Zlecenia w tym miesiącu",
-      value: "89",
-      change: "+8%",
-      icon: "ri-file-list-line",
-      color: "green",
+      value: stats.clients.total,
+      newValue: stats.clients.new,
+      icon: <Users className="text-blue-600 h-6 w-6" />,
+      bgClass: "bg-blue-100",
     },
     {
       title: "Operatorzy",
-      value: "156",
-      change: "+5%",
-      icon: "ri-flight-takeoff-line",
-      color: "purple",
+      value: stats.operators.total,
+      newValue: stats.operators.new,
+      icon: <Drone className="text-purple-600 h-6 w-6" />,
+      bgClass: "bg-purple-100",
+    },
+    {
+      title: "Zlecenia",
+      value: stats.orders.total,
+      newValue: stats.orders.new,
+      icon: <FileText className="text-green-600 h-6 w-6" />,
+      bgClass: "bg-green-100",
     },
   ];
 
-  const admins = [
-    {
-      id: 1,
-      name: "Jan Kowalski",
-    },
-    {
-      id: 2,
-      name: "Anna Nowak",
-    },
-    {
-      id: 3,
-      name: "Piotr Wiśniewski",
-    },
-  ];
+  const [admins, setAdmins] = useState<any[]>([]);
+  const [adminsLoading, setAdminsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchAdmins = async () => {
+      setAdminsLoading(true);
+      try {
+        const res = await backendClient.get("/admins/list");
+        setAdmins(res.data || []);
+      } catch (err) {
+        console.error("Failed to fetch admins", err);
+      } finally {
+        setAdminsLoading(false);
+      }
+    };
+    fetchAdmins();
+  }, []);
+
+  const handleBlockAdmin = async (userId: number) => {
+    try {
+      await backendClient.patch(`/admins/block/${userId}`);
+      setAdmins(
+        admins.map((a) =>
+          a.user_id === userId ? { ...a, is_blocked: "1" } : a,
+        ),
+      );
+    } catch (err) {
+      console.error("Failed to block admin", err);
+    }
+  };
+
+  const handleUnblockAdmin = async (userId: number) => {
+    try {
+      await backendClient.patch(`/admins/unblock/${userId}`);
+      setAdmins(
+        admins.map((a) =>
+          a.user_id === userId ? { ...a, is_blocked: "0" } : a,
+        ),
+      );
+    } catch (err) {
+      console.error("Failed to unblock admin", err);
+    }
+  };
+
+  const handleDeleteAdmin = async (userId: number) => {
+    if (window.confirm("Czy na pewno chcesz usunąć tego administratora?")) {
+      try {
+        await backendClient.delete(`/admins/remove/${userId}`);
+        setAdmins(admins.filter((a) => a.user_id !== userId));
+      } catch (err) {
+        console.error("Failed to delete admin", err);
+      }
+    }
+  };
+
+  const handleCreateAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate before sending
+    if (!adminFormData.user_name.trim()) {
+      alert("Nazwa użytkownika nie może być pusta");
+      return;
+    }
+    if (!adminFormData.email.trim()) {
+      alert("Email nie może być pusty");
+      return;
+    }
+    if (!adminFormData.password.trim()) {
+      alert("Hasło nie może być puste");
+      return;
+    }
+
+    // Clean up empty fields
+    const payload = {
+      user_name: adminFormData.user_name.trim(),
+      email: adminFormData.email.trim(),
+      password: adminFormData.password.trim(),
+      phone_number: adminFormData.phone_number.trim() || "",
+      localisation: adminFormData.localisation?.trim() || null,
+      area: adminFormData.area || null,
+    };
+
+    console.log("Sending admin data:", payload);
+
+    setCreatingAdmin(true);
+    try {
+      await backendClient.post("/admins/create", payload);
+      // Refetch admins list to get fresh data
+      const res = await backendClient.get("/admins/list");
+      setAdmins(res.data || []);
+      setAdminFormData({
+        user_name: "",
+        email: "",
+        password: "",
+        phone_number: "",
+        localisation: "",
+        area: "",
+      });
+      setShowAddAdminModal(false);
+      alert("Administrator został dodany!");
+    } catch (err: any) {
+      console.error("Failed to create admin", err);
+      const errorMsg =
+        err.response?.data?.detail ||
+        JSON.stringify(err.response?.data) ||
+        "Błąd przy tworzeniu administratora";
+      alert(errorMsg);
+    } finally {
+      setCreatingAdmin(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {stats.map((stat, index) => (
+        {statCards.map((stat, index) => (
           <div
             key={index}
             className="bg-white p-6 rounded-lg border border-gray-200"
@@ -123,23 +277,29 @@ function OverviewTab() {
                 <p className="text-sm font-medium text-gray-600">
                   {stat.title}
                 </p>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {loading ? (
+                    <Spinner className="h-5 w-5 text-gray-500" />
+                  ) : (
+                    stat.value
+                  )}
+                </p>
                 <p
                   className={`text-sm ${
-                    stat.change.startsWith("+")
-                      ? "text-green-600"
-                      : "text-red-600"
+                    stat.newValue > 0 ? "text-green-600" : "text-gray-500"
                   }`}
                 >
-                  {stat.change} vs poprzedni miesiąc
+                  {loading
+                    ? ""
+                    : stat.newValue > 0
+                      ? `+${stat.newValue} w tym miesiącu`
+                      : "0 w tym miesiącu"}
                 </p>
               </div>
               <div
-                className={`w-12 h-12 rounded-lg flex items-center justify-center bg-${stat.color}-100`}
+                className={`w-12 h-12 rounded-lg flex items-center justify-center ${stat.bgClass}`}
               >
-                <i
-                  className={`${stat.icon} text-${stat.color}-600 text-xl`}
-                ></i>
+                {stat.icon}
               </div>
             </div>
           </div>
@@ -152,8 +312,11 @@ function OverviewTab() {
           <h3 className="text-lg font-semibold text-gray-800">
             Administratorzy
           </h3>
-          <Button onClick={() => setShowAddAdminModal(true)}>
-            <i className="ri-add-line mr-2"></i>
+          <Button
+            className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
+            onClick={() => setShowAddAdminModal(true)}
+          >
+            <i className="ri-add-line"></i>
             Dodaj nowego
           </Button>
         </div>
@@ -171,28 +334,63 @@ function OverviewTab() {
                 </tr>
               </thead>
               <tbody>
-                {admins.map((admin) => (
-                  <tr
-                    key={admin.id}
-                    className="border-b border-gray-100 hover:bg-gray-50"
-                  >
-                    <td className="py-3 px-4">
-                      <div className="font-medium text-gray-900">
-                        {admin.name}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex space-x-2">
-                        <button className="text-orange-600 hover:text-orange-900 text-sm">
-                          Zablokuj
-                        </button>
-                        <button className="text-red-600 hover:text-red-900 text-sm">
-                          Usuń
-                        </button>
-                      </div>
+                {adminsLoading ? (
+                  <tr>
+                    <td
+                      colSpan={2}
+                      className="py-4 px-4 text-center text-gray-500"
+                    >
+                      Ładuję administratorów...
                     </td>
                   </tr>
-                ))}
+                ) : admins.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={2}
+                      className="py-4 px-4 text-center text-gray-500"
+                    >
+                      Brak administratorów
+                    </td>
+                  </tr>
+                ) : (
+                  admins.map((admin) => (
+                    <tr
+                      key={admin.user_id}
+                      className="border-b border-gray-100 hover:bg-gray-50"
+                    >
+                      <td className="py-3 px-4">
+                        <div className="font-medium text-gray-900">
+                          {admin.user_name}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex space-x-2">
+                          {admin.is_blocked === "1" ? (
+                            <button
+                              onClick={() => handleUnblockAdmin(admin.user_id)}
+                              className="text-green-600 hover:text-green-900 text-sm"
+                            >
+                              Odblokuj
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleBlockAdmin(admin.user_id)}
+                              className="text-orange-600 hover:text-orange-900 text-sm"
+                            >
+                              Zablokuj
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDeleteAdmin(admin.user_id)}
+                            className="text-red-600 hover:text-red-900 text-sm"
+                          >
+                            Usuń
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -215,15 +413,22 @@ function OverviewTab() {
               </button>
             </div>
 
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleCreateAdmin}>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Imię i nazwisko
+                  Nazwa użytkownika
                 </label>
                 <input
                   type="text"
+                  value={adminFormData.user_name}
+                  onChange={(e) =>
+                    setAdminFormData({
+                      ...adminFormData,
+                      user_name: e.target.value,
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  placeholder="Jan Kowalski"
+                  placeholder=""
                   required
                 />
               </div>
@@ -234,21 +439,53 @@ function OverviewTab() {
                 </label>
                 <input
                   type="email"
+                  value={adminFormData.email}
+                  onChange={(e) =>
+                    setAdminFormData({
+                      ...adminFormData,
+                      email: e.target.value,
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  placeholder="jan.kowalski@admin.pl"
+                  placeholder=""
                   required
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Hasło tymczasowe
+                  Hasło
                 </label>
                 <input
                   type="password"
+                  value={adminFormData.password}
+                  onChange={(e) =>
+                    setAdminFormData({
+                      ...adminFormData,
+                      password: e.target.value,
+                    })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  placeholder="••••••••"
+                  placeholder=""
                   required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Numer telefonu
+                </label>
+                <input
+                  type="tel"
+                  value={adminFormData.phone_number}
+                  onChange={(e) =>
+                    setAdminFormData({
+                      ...adminFormData,
+                      phone_number: e.target.value,
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  placeholder=""
                 />
               </div>
 
@@ -262,12 +499,10 @@ function OverviewTab() {
                 </Button>
                 <Button
                   type="submit"
-                  onClick={() => {
-                    alert("Administrator został dodany!");
-                    setShowAddAdminModal(false);
-                  }}
+                  disabled={creatingAdmin}
+                  className="bg-green-600 hover:bg-green-700"
                 >
-                  Dodaj
+                  {creatingAdmin ? "Dodaję..." : "Dodaj"}
                 </Button>
               </div>
             </form>
@@ -282,50 +517,63 @@ function UsersTab() {
   const [selectedUserType, setSelectedUserType] = useState<
     "all" | "clients" | "operators"
   >("all");
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const users = [
-    {
-      id: 1,
-      name: "Jan Kowalski",
-      email: "jan.kowalski@email.com",
-      role: "client",
-      joinDate: "2024-01-15",
-      status: "active",
-      ordersCount: 5,
-    },
-    {
-      id: 2,
-      name: "SkyTech Drones",
-      email: "contact@skytech.com",
-      role: "operator",
-      joinDate: "2023-12-10",
-      status: "active",
-      ordersCount: 23,
-    },
-    {
-      id: 3,
-      name: "Anna Nowak",
-      email: "anna.nowak@email.com",
-      role: "client",
-      joinDate: "2024-01-20",
-      status: "active",
-      ordersCount: 2,
-    },
-    {
-      id: 4,
-      name: "AerialPro",
-      email: "info@aerialpro.pl",
-      role: "operator",
-      joinDate: "2023-11-05",
-      status: "inactive",
-      ordersCount: 45,
-    },
-  ];
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        const [clientsRes, operatorsRes] = await Promise.all([
+          backendClient.get("/admins/stat_clients"),
+          backendClient.get("/admins/stat_operators"),
+        ]);
+        const allUsers = [
+          ...(clientsRes.data || []),
+          ...(operatorsRes.data || []),
+        ];
+        setUsers(allUsers);
+      } catch (err) {
+        console.error("Failed to fetch users", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  const handleBlockUser = async (userId: number) => {
+    try {
+      await backendClient.patch(`/admins/block/${userId}`);
+      setUsers(
+        users.map((u) =>
+          u.user_id === userId ? { ...u, status: "Zablokowany" } : u,
+        ),
+      );
+    } catch (err) {
+      console.error("Failed to block user", err);
+      alert("Błąd przy blokowaniu użytkownika");
+    }
+  };
+
+  const handleUnblockUser = async (userId: number) => {
+    try {
+      await backendClient.patch(`/admins/unblock/${userId}`);
+      setUsers(
+        users.map((u) =>
+          u.user_id === userId ? { ...u, status: "Aktywny" } : u,
+        ),
+      );
+    } catch (err) {
+      console.error("Failed to unblock user", err);
+      alert("Błąd przy odblokowaniu użytkownika");
+    }
+  };
 
   const filteredUsers = users.filter((user) => {
     if (selectedUserType === "all") return true;
-    if (selectedUserType === "clients") return user.role === "client";
-    if (selectedUserType === "operators") return user.role === "operator";
+    if (selectedUserType === "clients") return user.type === "Klient";
+    if (selectedUserType === "operators") return user.type === "Operator";
     return true;
   });
 
@@ -351,7 +599,7 @@ function UsersTab() {
               : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           }`}
         >
-          Klienci ({users.filter((u) => u.role === "client").length})
+          Klienci ({users.filter((u) => u.type === "Klient").length})
         </button>
         <button
           onClick={() => setSelectedUserType("operators")}
@@ -361,7 +609,7 @@ function UsersTab() {
               : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           }`}
         >
-          Operatorzy ({users.filter((u) => u.role === "operator").length})
+          Operatorzy ({users.filter((u) => u.type === "Operator").length})
         </button>
       </div>
 
@@ -392,51 +640,85 @@ function UsersTab() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {user.name}
-                      </div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        user.role === "client"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
-                    >
-                      {user.role === "client" ? "Klient" : "Operator"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.joinDate}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        user.status === "active"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {user.status === "active" ? "Aktywny" : "Nieaktywny"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {user.ordersCount}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-orange-600 hover:text-orange-900">
-                      {user.status === "active" ? "Zablokuj" : "Aktywuj"}
-                    </button>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-6 py-4 text-center text-gray-500"
+                  >
+                    <Spinner className="h-5 w-5 text-gray-500 mx-auto" />
                   </td>
                 </tr>
-              ))}
+              ) : filteredUsers.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-6 py-4 text-center text-gray-500"
+                  >
+                    Brak użytkowników
+                  </td>
+                </tr>
+              ) : (
+                filteredUsers.map((user) => (
+                  <tr key={user.user_id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {user.user_name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {user.email}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          user.type === "Klient"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {user.type}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(user.creation_date).toLocaleDateString("pl-PL")}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 py-1 text-xs font-medium rounded-full ${
+                          user.status === "Aktywny"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {user.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {user.orders_count || 0}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      {user.status === "Aktywny" ? (
+                        <button
+                          onClick={() => handleBlockUser(user.user_id)}
+                          className="text-orange-600 hover:text-orange-900"
+                        >
+                          Zablokuj
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleUnblockUser(user.user_id)}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          Odblokuj
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
