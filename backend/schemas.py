@@ -120,6 +120,7 @@ class UserChangePassword(BaseModel):
             raise ValueError("New passwords do not match")
         return self
 
+
 class CalendarOrderResponse(BaseModel):
     order_id: int
     deadline: date
