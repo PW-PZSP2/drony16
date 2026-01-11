@@ -35,8 +35,15 @@ export default function CompletedOrdersTab() {
                     Wykonane przez: {order.selectedOperator}
                   </p>
                 </div>
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  Zakończone
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${order.status === "in-progress" || order.status === "W trakcie"
+                    ? "bg-blue-100 text-blue-800"
+                    : "bg-green-100 text-green-800"
+                    }`}
+                >
+                  {order.status === "in-progress" || order.status === "W trakcie"
+                    ? "W trakcie"
+                    : "Zakończone"}
                 </span>
               </div>
 
@@ -47,7 +54,9 @@ export default function CompletedOrdersTab() {
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <i className="ri-calendar-check-line mr-2"></i>
-                  {order.completedDate}
+                  {order.status === "in-progress"
+                    ? `Deadline: ${order.deadline}`
+                    : order.completedDate}
                 </div>
               </div>
 
