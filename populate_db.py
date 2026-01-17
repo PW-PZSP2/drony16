@@ -1,7 +1,5 @@
 import requests
-import random
 from datetime import datetime, timedelta
-import sys
 
 BASE_URL = "http://localhost:8080"
 
@@ -163,10 +161,10 @@ def main():
     if 2 in order_ids:
         if "op1" in sessions:
             sessions["op1"].post(f"{BASE_URL}/orders/{order_ids[2]}/interest")
-            print(f"Op1 applied to Order C")
+            print("Op1 applied to Order C")
         if "op2" in sessions:
             sessions["op2"].post(f"{BASE_URL}/orders/{order_ids[2]}/interest")
-            print(f"Op2 applied to Order C")
+            print("Op2 applied to Order C")
 
     if 3 in order_ids and "op1" in sessions:
         sessions["op1"].post(f"{BASE_URL}/orders/{order_ids[3]}/interest")
@@ -174,7 +172,7 @@ def main():
 
         resp = client_sess.post(f"{BASE_URL}/orders/{order_ids[3]}/select/{op1_id}")
         if resp.status_code == 200:
-            print(f"Client selected Op1 for Order D (In Progress)")
+            print("Client selected Op1 for Order D (In Progress)")
         else:
             print(f"Failed to select op for Order D: {resp.text}")
 
@@ -184,11 +182,11 @@ def main():
 
         resp = client_sess.post(f"{BASE_URL}/orders/{order_ids[4]}/select/{op2_id}")
         if resp.status_code == 200:
-            print(f"Client selected Op2 for Order E")
+            print("Client selected Op2 for Order E")
             # Complete
             resp_comp = client_sess.post(f"{BASE_URL}/orders/{order_ids[4]}/complete")
             if resp_comp.status_code == 200:
-                print(f"Client completed Order E (Finished)")
+                print("Client completed Order E (Finished)")
             else:
                 print(f"Failed to complete Order E: {resp_comp.text}")
 

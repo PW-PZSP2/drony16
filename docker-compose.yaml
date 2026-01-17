@@ -42,6 +42,8 @@ services:
       POSTGRES_USER_FILE: /run/secrets/db_user_login
       POSTGRES_PASSWORD_FILE: /run/secrets/db_user_password
       POSTGRES_DB: dbname
+    ports:
+      - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     secrets:
