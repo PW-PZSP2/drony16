@@ -1,0 +1,54 @@
+<html>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+      <div class="mermaid">
+    
+        classDiagram
+          class backend {
+          }
+          class auth {
+          }
+          class database {
+          }
+          class main {
+          }
+          class models {
+          }
+          class routers {
+          }
+          class admins {
+          }
+          class calendars {
+          }
+          class operators {
+          }
+          class orders {
+          }
+          class users {
+          }
+          class schemas {
+          }
+          class services {
+          }
+          class matching {
+          }
+          class utils {
+          }
+          auth --> database
+          auth --> models
+          main --> auth
+          main --> database
+          main --> models
+          main --> routers
+          main --> admins
+          main --> calendars
+          main --> operators
+          main --> orders
+          main --> users
+          main --> schemas
+          main --> utils
+          models --> database
+  
+       </div>
+  </body>
+</html>

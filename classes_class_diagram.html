@@ -1,0 +1,222 @@
+<html>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+      <div class="mermaid">
+    
+        classDiagram
+          class AdminCreate {
+            area : Optional[int]
+            email : EmailStr
+            localisation : Optional[str]
+            password : str
+            phone_number : str
+            user_name : str
+          }
+          class Attachment {
+            attachment_id : int
+            description : str | None
+            file_path : str
+            name : str
+            operator
+            operator_id : int
+          }
+          class CalendarOrderResponse {
+            deadline : date
+            name : str
+            order_id : int
+            service_id : Optional[int]
+            status : str
+          }
+          class Config {
+            from_attributes : bool
+            populate_by_name : bool
+          }
+          class Config {
+            from_attributes : bool
+            populate_by_name : bool
+          }
+          class Config {
+            from_attributes : bool
+          }
+          class Config {
+            from_attributes : bool
+          }
+          class OperatorService {
+            entry_id : int
+            operator
+            operator_id : int
+            service
+            service_id : int
+          }
+          class OpinionCreate {
+            opinion : str
+            score : int
+          }
+          class OpinionResponse {
+            opinion : str
+            order_id : int
+            score : int
+          }
+          class Order {
+            client
+            client_id : int
+            completion_date : str
+            creation_date : date
+            deadline : date
+            description : str | None
+            latitude : float | None
+            location : str
+            longitude : float | None
+            name : str
+            operator : User | None
+            operator_id : int | None
+            operator_selection_date : date | None
+            opinion : str | None
+            order_id : int
+            order_parameters : List[OrderParameter]
+            order_services : List[OrderService]
+            raid_date : str
+            reported_entries : List[ReportedOperator]
+            score : int | None
+            state : str
+          }
+          class OrderBase {
+            completion_date : bool
+            deadline : datetime
+            description : str
+            location : str
+            name : str
+            raid_date : bool
+          }
+          class OrderCreate {
+            services : list[ServiceRequest]
+          }
+          class OrderParameter {
+            entry_id : int
+            order
+            order_id : int
+            parameter
+            parameter_id : int
+            value : str
+          }
+          class OrderResponse {
+            client_id : int
+            creation_date : datetime
+            has_applied : Optional[bool]
+            interested_operators : list[int]
+            latitude : Optional[float]
+            longitude : Optional[float]
+            operator_id : Optional[int]
+            order_id : Optional[int]
+            services : list[ServiceRequest]
+            status : Optional[str]
+          }
+          class OrderService {
+            order
+            order_id : int
+            service
+            service_id : int
+          }
+          class ReportedOperator {
+            date : date
+            operator
+            operator_id : int
+            order
+            order_id : int
+            report_id : int
+          }
+          class Service {
+            name : str
+            operator_services : List[OperatorService]
+            parameters : List[ServiceParameter]
+            service_id : int
+          }
+          class ServiceParameter {
+            name : str
+            order_parameters : List[OrderParameter]
+            parameter_id : int
+            service
+            service_id : int
+            unit : str
+          }
+          class ServiceRequest {
+            parameters : Dict[str, Any]
+            service_name : str
+          }
+          class Token {
+            access_token : str
+            token_type : str
+          }
+          class TokenData {
+            email : Optional[str]
+          }
+          class User {
+            area : int | None
+            attachments : List[Attachment]
+            creation_date : date
+            description : str | None
+            email : str
+            is_blocked : str
+            latitude : float | None
+            localisation : str | None
+            longitude : float | None
+            orders_as_client : List[Order]
+            orders_as_operator : List[Order]
+            password : str
+            phone_number : str
+            reports : List[ReportedOperator]
+            role : str
+            roles
+            services_provided : List[OperatorService]
+            user_id : int
+            user_name : str
+          }
+          class UserBase {
+            email : EmailStr
+          }
+          class UserChangePassword {
+            confirm_new_password : str
+            current_password : str
+            new_password : str
+            check_passwords_match()
+          }
+          class UserCreate {
+            area : Optional[int]
+            localisation : Optional[str]
+            password : str
+            phone_number : str
+            role : Literal['adm', 'ope', 'cli']
+            user_name : str
+            check_operator_requirements()
+          }
+          class UserResponse {
+            area : Optional[int]
+            creation_date : datetime
+            id : Optional[int]
+            is_blocked : str
+            latitude : Optional[float]
+            localisation : Optional[str]
+            longitude : Optional[float]
+            phone_number : str
+            roles : list[str]
+            user_name : str
+          }
+          OrderCreate --|> OrderBase
+          OrderResponse --|> OrderBase
+          UserCreate --|> UserBase
+          UserResponse --|> UserBase
+          OrderParameter --> Order : order
+          OrderService --> Order : order
+          ReportedOperator --> Order : order
+          OperatorService --> Service : service
+          OrderService --> Service : service
+          ServiceParameter --> Service : service
+          OrderParameter --> ServiceParameter : parameter
+          Attachment --> User : operator
+          OperatorService --> User : operator
+          Order --> User : client
+          ReportedOperator --> User : operator
+  
+       </div>
+  </body>
+</html>
