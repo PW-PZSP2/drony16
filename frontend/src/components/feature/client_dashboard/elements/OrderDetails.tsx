@@ -107,7 +107,9 @@ export default function OrderDetails({
             <div className="flex items-center justify-center py-12">
               <div className="flex flex-col items-center space-y-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                <p className="text-gray-600 font-medium">Ładowanie zgłoszeń operatorów...</p>
+                <p className="text-gray-600 font-medium">
+                  Ładowanie zgłoszeń operatorów...
+                </p>
               </div>
             </div>
           ) : (
@@ -141,38 +143,54 @@ export default function OrderDetails({
                         <i className="ri-mail-line text-blue-600 text-sm"></i>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Email</p>
-                        <p className="text-sm text-gray-800">{applicant.email}</p>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                          Email
+                        </p>
+                        <p className="text-sm text-gray-800">
+                          {applicant.email}
+                        </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                         <i className="ri-phone-line text-green-600 text-sm"></i>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Telefon</p>
-                        <p className="text-sm text-gray-800">{applicant.phone_number}</p>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                          Telefon
+                        </p>
+                        <p className="text-sm text-gray-800">
+                          {applicant.phone_number}
+                        </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
                         <i className="ri-map-pin-line text-red-600 text-sm"></i>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Lokalizacja</p>
-                        <p className="text-sm text-gray-800">{applicant.localisation}</p>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                          Lokalizacja
+                        </p>
+                        <p className="text-sm text-gray-800">
+                          {applicant.localisation}
+                        </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
                         <i className="ri-compass-line text-purple-600 text-sm"></i>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Zasięg działania</p>
-                        <p className="text-sm text-gray-800">{applicant.area} km</p>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                          Zasięg działania
+                        </p>
+                        <p className="text-sm text-gray-800">
+                          {applicant.area} km
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -204,9 +222,12 @@ export default function OrderDetails({
                   <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
                     <i className="ri-user-search-line text-4xl text-gray-400"></i>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Brak zgłoszeń</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    Brak zgłoszeń
+                  </h3>
                   <p className="text-gray-500 max-w-md mx-auto leading-relaxed">
-                    Nie ma jeszcze żadnych zgłoszeń od operatorów dla tego zlecenia. Operatorzy mogą zgłaszać się w każdej chwili.
+                    Nie ma jeszcze żadnych zgłoszeń od operatorów dla tego
+                    zlecenia. Operatorzy mogą zgłaszać się w każdej chwili.
                   </p>
                   <div className="mt-6">
                     <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-700">

@@ -75,181 +75,192 @@ export default function CreateOrderTab() {
         <div className="overflow-hidden rounded-3xl border-gray-100 shadow-lg bg-white mt-6">
           <div className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tytuł zlecenia
-              </label>
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                placeholder="np. Ortofotomapa działki budowlanej"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Typ terminu
-              </label>
-              <div className="flex space-x-6">
-                <label className="flex items-center cursor-pointer">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tytuł zlecenia
+                  </label>
                   <input
-                    type="radio"
-                    name="deadlineType"
-                    value="flight"
-                    checked={formData.deadlineType === "flight"}
+                    type="text"
+                    value={formData.title}
                     onChange={(e) =>
-                      setFormData({ ...formData, deadlineType: e.target.value })
+                      setFormData({ ...formData, title: e.target.value })
                     }
-                    className="mr-3 h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    placeholder="np. Ortofotomapa działki budowlanej"
+                    required
                   />
-                  <span className="text-sm font-medium text-gray-700">Termin nalotu</span>
-                </label>
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="radio"
-                    name="deadlineType"
-                    value="completion"
-                    checked={formData.deadlineType === "completion"}
-                    onChange={(e) =>
-                      setFormData({ ...formData, deadlineType: e.target.value })
-                    }
-                    className="mr-3 h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500"
-                  />
-                  <span className="text-sm font-medium text-gray-700">Termin zakończenia</span>
-                </label>
-              </div>
-            </div>
-          </div>
+                </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Rodzaj usługi
-            </label>
-            <div className="grid md:grid-cols-3 gap-4">
-              {services.map((service) => (
-                <label
-                  key={service.id}
-                  className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all hover:shadow-sm ${
-                    formData.service === service.id
-                      ? "border-emerald-500 bg-emerald-50 shadow-sm"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="service"
-                    value={service.id}
-                    checked={formData.service === service.id}
-                    onChange={(e) => handleServiceChange(e.target.value)}
-                    className="sr-only"
-                  />
-                  <div className="w-8 h-8 flex items-center justify-center mr-3">
-                    <i
-                      className={`${service.icon} text-lg ${
-                        formData.service === service.id
-                          ? "text-emerald-600"
-                          : "text-gray-400"
-                      }`}
-                    ></i>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Typ terminu
+                  </label>
+                  <div className="flex space-x-6">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="deadlineType"
+                        value="flight"
+                        checked={formData.deadlineType === "flight"}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            deadlineType: e.target.value,
+                          })
+                        }
+                        className="mr-3 h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500"
+                      />
+                      <span className="text-sm font-medium text-gray-700">
+                        Termin nalotu
+                      </span>
+                    </label>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="deadlineType"
+                        value="completion"
+                        checked={formData.deadlineType === "completion"}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            deadlineType: e.target.value,
+                          })
+                        }
+                        className="mr-3 h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500"
+                      />
+                      <span className="text-sm font-medium text-gray-700">
+                        Termin zakończenia
+                      </span>
+                    </label>
                   </div>
-                  <span
-                    className={`text-sm font-medium ${
-                      formData.service === service.id
-                        ? "text-emerald-600"
-                        : "text-gray-700"
-                    }`}
-                  >
-                    {service.name}
-                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Rodzaj usługi
                 </label>
-              ))}
-            </div>
-          </div>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {services.map((service) => (
+                    <label
+                      key={service.id}
+                      className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all hover:shadow-sm ${
+                        formData.service === service.id
+                          ? "border-emerald-500 bg-emerald-50 shadow-sm"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="service"
+                        value={service.id}
+                        checked={formData.service === service.id}
+                        onChange={(e) => handleServiceChange(e.target.value)}
+                        className="sr-only"
+                      />
+                      <div className="w-8 h-8 flex items-center justify-center mr-3">
+                        <i
+                          className={`${service.icon} text-lg ${
+                            formData.service === service.id
+                              ? "text-emerald-600"
+                              : "text-gray-400"
+                          }`}
+                        ></i>
+                      </div>
+                      <span
+                        className={`text-sm font-medium ${
+                          formData.service === service.id
+                            ? "text-emerald-600"
+                            : "text-gray-700"
+                        }`}
+                      >
+                        {service.name}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Lokalizacja
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={formData.location}
-                onChange={(e) =>
-                  setFormData({ ...formData, location: e.target.value })
-                }
-                className="w-full px-4 py-3 pr-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                placeholder="Wpisz adres lub współrzędne"
-                required
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                <i className="ri-map-pin-line"></i>
-              </button>
-            </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Możesz wpisać adres, nazwę miejsca lub współrzędne GPS. Rekomendujemy użycie pełnych danych(miejscowość, kod pocztowy, ulica..) dla dokładności.
-            </p>
-          </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Lokalizacja
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.location}
+                    onChange={(e) =>
+                      setFormData({ ...formData, location: e.target.value })
+                    }
+                    className="w-full px-4 py-3 pr-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    placeholder="Wpisz adres lub współrzędne"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <i className="ri-map-pin-line"></i>
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Możesz wpisać adres, nazwę miejsca lub współrzędne GPS.
+                  Rekomendujemy użycie pełnych danych(miejscowość, kod pocztowy,
+                  ulica..) dla dokładności.
+                </p>
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {formData.deadlineType === "flight"
-                ? "Termin nalotu"
-                : "Termin zakończenia"}
-            </label>
-            <input
-              type="date"
-              value={formData.deadline}
-              onChange={(e) =>
-                setFormData({ ...formData, deadline: e.target.value })
-              }
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-              required
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {formData.deadlineType === "flight"
+                    ? "Termin nalotu"
+                    : "Termin zakończenia"}
+                </label>
+                <input
+                  type="date"
+                  value={formData.deadline}
+                  onChange={(e) =>
+                    setFormData({ ...formData, deadline: e.target.value })
+                  }
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                  required
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Opis zlecenia
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              rows={4}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors resize-none"
-              placeholder="Opisz szczegóły zlecenia, wymagania techniczne, oczekiwania..."
-              required
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Opis zlecenia
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  rows={4}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors resize-none"
+                  placeholder="Opisz szczegóły zlecenia, wymagania techniczne, oczekiwania..."
+                  required
+                />
+              </div>
 
-          {
-            formData.service && 
-            <ServiceParameters 
-              service={formData.service} 
-              parameters={formData.parameters}
-              onParametersChange={handleParametersChange}
-            />
-          }
+              {formData.service && (
+                <ServiceParameters
+                  service={formData.service}
+                  parameters={formData.parameters}
+                  onParametersChange={handleParametersChange}
+                />
+              )}
 
               <div className="flex justify-end space-x-4 pt-4 border-t bg-gray-50/50 -mx-8 px-8 py-6 mt-8">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   type="button"
                   className="rounded-full px-6 font-medium"
                 >
                   Zapisz jako szkic
                 </Button>
-                <Button 
+                <Button
                   type="submit"
                   className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6 font-medium"
                 >

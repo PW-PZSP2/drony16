@@ -62,7 +62,7 @@ async function create_order(
 
   try {
     const response = await backendClient.post("/orders", mapped_request);
-    
+
     return {
       success: true,
     };
@@ -82,46 +82,46 @@ async function fetch_current_orders(): Promise<Order[]> {
     const response = await backendClient.get("/orders/client/pending");
     const data = response.data;
 
-  const pendingOrders: Order[] = data.map(
-    (apiOrder: {
-      name: string;
-      deadline: string;
-      location: string;
-      description: string;
-      completion_date: boolean;
-      raid_date: boolean;
-      order_id: number;
-      services: Array<{
-        service_name: string;
-        parameters: Record<string, unknown>;
-      }>;
-      client_id: number;
-      operator_id: number;
-      creation_date: string;
-      latitude: number;
-      longitude: number;
-      interested_operators: unknown[];
-      status: string;
-      has_applied: boolean;
-    }) => ({
-      id: apiOrder.order_id,
-      title: apiOrder.name,
-      service: apiOrder.services[0]?.service_name || "Unknown",
-      description: apiOrder.description,
-      location: apiOrder.location,
-      deadline: apiOrder.deadline,
-      deadlineType: apiOrder.completion_date ? "completion" : "flight",
-      applicants: apiOrder.interested_operators.length,
-      status:
-        (apiOrder.status as
-          | "pending"
-          | "in-progress"
-          | "completed"
-          | "cancelled") || "pending",
-    }),
-  );
+    const pendingOrders: Order[] = data.map(
+      (apiOrder: {
+        name: string;
+        deadline: string;
+        location: string;
+        description: string;
+        completion_date: boolean;
+        raid_date: boolean;
+        order_id: number;
+        services: Array<{
+          service_name: string;
+          parameters: Record<string, unknown>;
+        }>;
+        client_id: number;
+        operator_id: number;
+        creation_date: string;
+        latitude: number;
+        longitude: number;
+        interested_operators: unknown[];
+        status: string;
+        has_applied: boolean;
+      }) => ({
+        id: apiOrder.order_id,
+        title: apiOrder.name,
+        service: apiOrder.services[0]?.service_name || "Unknown",
+        description: apiOrder.description,
+        location: apiOrder.location,
+        deadline: apiOrder.deadline,
+        deadlineType: apiOrder.completion_date ? "completion" : "flight",
+        applicants: apiOrder.interested_operators.length,
+        status:
+          (apiOrder.status as
+            | "pending"
+            | "in-progress"
+            | "completed"
+            | "cancelled") || "pending",
+      }),
+    );
 
-  return pendingOrders;
+    return pendingOrders;
   } catch (error) {
     console.error("Error fetching current orders:", error);
     return [];
@@ -133,30 +133,30 @@ async function fetch_order_applicants(orderId?: number): Promise<Applicant[]> {
     const response = await backendClient.get(`/orders/${orderId}/candidates`);
     const data = response.data;
 
-  const applicants: Applicant[] = data.map(
-    (apiApplicant: {
-      email: string;
-      user_id: number;
-      user_name: string;
-      is_blocked: string;
-      roles: string[];
-      phone_number: string;
-      creation_date: string;
-      localisation: string;
-      latitude: number;
-      longitude: number;
-      area: number;
-    }) => ({
-      id: apiApplicant.user_id,
-      name: apiApplicant.user_name,
-      email: apiApplicant.email,
-      phone_number: apiApplicant.phone_number,
-      localisation: apiApplicant.localisation,
-      area: apiApplicant.area,
-    }),
-  );
+    const applicants: Applicant[] = data.map(
+      (apiApplicant: {
+        email: string;
+        user_id: number;
+        user_name: string;
+        is_blocked: string;
+        roles: string[];
+        phone_number: string;
+        creation_date: string;
+        localisation: string;
+        latitude: number;
+        longitude: number;
+        area: number;
+      }) => ({
+        id: apiApplicant.user_id,
+        name: apiApplicant.user_name,
+        email: apiApplicant.email,
+        phone_number: apiApplicant.phone_number,
+        localisation: apiApplicant.localisation,
+        area: apiApplicant.area,
+      }),
+    );
 
-  return applicants;
+    return applicants;
   } catch (error) {
     console.error("Error fetching order applicants:", error);
     return [];
@@ -168,48 +168,48 @@ async function fetch_completed_orders(): Promise<Order[]> {
     const response = await backendClient.get("/orders/client/history");
     const data = response.data;
 
-  const completedOrders: Order[] = data.map(
-    (apiOrder: {
-      name: string;
-      deadline: string;
-      location: string;
-      description: string;
-      completion_date: boolean;
-      raid_date: boolean;
-      order_id: number;
-      services: Array<{
-        service_name: string;
-        parameters: Record<string, unknown>;
-      }>;
-      client_id: number;
-      operator_id: number;
-      creation_date: string;
-      latitude: number;
-      longitude: number;
-      interested_operators: unknown[];
-      status: string;
-      has_applied: boolean;
-      score: number;
-    }) => ({
-      id: apiOrder.order_id,
-      title: apiOrder.name,
-      service: apiOrder.services[0]?.service_name || "Unknown",
-      description: apiOrder.description,
-      location: apiOrder.location,
-      deadline: apiOrder.deadline,
-      deadlineType: apiOrder.completion_date ? "completion" : "flight",
-      applicants: apiOrder.interested_operators.length,
-      rating: apiOrder.score,
-      status:
-        apiOrder.status === "W trakcie"
-          ? "in-progress"
-          : apiOrder.status === "Zakończone"
-            ? "completed"
-            : "pending",
-    }),
-  );
+    const completedOrders: Order[] = data.map(
+      (apiOrder: {
+        name: string;
+        deadline: string;
+        location: string;
+        description: string;
+        completion_date: boolean;
+        raid_date: boolean;
+        order_id: number;
+        services: Array<{
+          service_name: string;
+          parameters: Record<string, unknown>;
+        }>;
+        client_id: number;
+        operator_id: number;
+        creation_date: string;
+        latitude: number;
+        longitude: number;
+        interested_operators: unknown[];
+        status: string;
+        has_applied: boolean;
+        score: number;
+      }) => ({
+        id: apiOrder.order_id,
+        title: apiOrder.name,
+        service: apiOrder.services[0]?.service_name || "Unknown",
+        description: apiOrder.description,
+        location: apiOrder.location,
+        deadline: apiOrder.deadline,
+        deadlineType: apiOrder.completion_date ? "completion" : "flight",
+        applicants: apiOrder.interested_operators.length,
+        rating: apiOrder.score,
+        status:
+          apiOrder.status === "W trakcie"
+            ? "in-progress"
+            : apiOrder.status === "Zakończone"
+              ? "completed"
+              : "pending",
+      }),
+    );
 
-  return completedOrders;
+    return completedOrders;
   } catch (error) {
     console.error("Error fetching completed orders:", error);
     return [];
@@ -240,7 +240,6 @@ async function rate_order(
       message: "Failed to submit rating",
     };
   }
-
 }
 
 async function select_operator(
