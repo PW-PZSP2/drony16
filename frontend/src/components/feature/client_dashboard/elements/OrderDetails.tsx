@@ -104,64 +104,117 @@ export default function OrderDetails({
             Zgłoszenia operatorów ({applicants.length})
           </h4>
           {isLoading ? (
-            <p>Ładowanie zgłoszeń...</p>
+            <div className="flex items-center justify-center py-12">
+              <div className="flex flex-col items-center space-y-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <p className="text-gray-600 font-medium">Ładowanie zgłoszeń operatorów...</p>
+              </div>
+            </div>
           ) : (
             <div className="space-y-4">
               {applicants.map((applicant) => (
                 <div
                   key={applicant.id}
-                  className="border border-gray-200 rounded-lg p-4"
+                  className="border border-gray-200 rounded-lg p-6 hover:border-blue-300 hover:shadow-md transition-all duration-200 bg-white"
                 >
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h5 className="font-medium text-gray-800">
-                        {applicant.name}
-                      </h5>
-                      <div className="flex items-center space-x-4 text-sm text-gray-600">
-                        <div className="flex items-center">
-                          <i className="ri-star-fill text-yellow-400 mr-1"></i>
-                          {applicant.rating}
-                        </div>
-                        <span>{applicant.completedJobs} zleceń</span>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
+                        <span className="text-white font-bold text-xl">
+                          {applicant.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        <h5 className="font-semibold text-gray-900 text-lg mb-1">
+                          {applicant.name}
+                        </h5>
+                        <p className="text-sm text-gray-500">
+                          Operator ID: #{applicant.id}
+                        </p>
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-sm text-gray-600 mb-3">
-                    {applicant.description}
-                  </p>
-
-                  <div className="mb-4">
-                    <h6 className="text-xs font-medium text-gray-700 mb-2">
-                      Sprzęt:
-                    </h6>
-                    <div className="flex flex-wrap gap-2">
-                      {applicant.equipment &&
-                        applicant.equipment.map((item, index) => (
-                          <span
-                            key={index}
-                            className="px-2 py-1 bg-gray-100 text-xs text-gray-600 rounded"
-                          >
-                            {item}
-                          </span>
-                        ))}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i className="ri-mail-line text-blue-600 text-sm"></i>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Email</p>
+                        <p className="text-sm text-gray-800">{applicant.email}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <i className="ri-phone-line text-green-600 text-sm"></i>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Telefon</p>
+                        <p className="text-sm text-gray-800">{applicant.phone_number}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                        <i className="ri-map-pin-line text-red-600 text-sm"></i>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Lokalizacja</p>
+                        <p className="text-sm text-gray-800">{applicant.localisation}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i className="ri-compass-line text-purple-600 text-sm"></i>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Zasięg działania</p>
+                        <p className="text-sm text-gray-800">{applicant.area} km</p>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex justify-end space-x-2">
+                  <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+                    <div className="flex items-center space-x-4">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <i className="ri-shield-check-line mr-1"></i>
+                        Dostępny
+                      </span>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <i className="ri-user-line mr-1"></i>
+                        Operator
+                      </span>
+                    </div>
                     <Button
                       size="sm"
                       onClick={() => handleSelectOperator(applicant.id)}
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
                     >
+                      <i className="ri-user-add-line mr-2"></i>
                       Wybierz operatora
                     </Button>
                   </div>
                 </div>
               ))}
               {applicants.length === 0 && (
-                <p className="text-gray-500">
-                  Brak zgłoszeń dla tego zlecenia.
-                </p>
+                <div className="text-center py-16">
+                  <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                    <i className="ri-user-search-line text-4xl text-gray-400"></i>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Brak zgłoszeń</h3>
+                  <p className="text-gray-500 max-w-md mx-auto leading-relaxed">
+                    Nie ma jeszcze żadnych zgłoszeń od operatorów dla tego zlecenia. Operatorzy mogą zgłaszać się w każdej chwili.
+                  </p>
+                  <div className="mt-6">
+                    <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-50 text-blue-700">
+                      <i className="ri-time-line mr-2"></i>
+                      Oczekiwanie na zgłoszenia
+                    </span>
+                  </div>
+                </div>
               )}
             </div>
           )}

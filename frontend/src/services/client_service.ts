@@ -25,13 +25,11 @@ interface Order {
 
 interface Applicant {
   id: number;
+  email: string;
   name: string;
-  rating: number;
-  completedJobs: number;
-  description: string;
-  equipment: string[];
-  price?: number;
-  estimatedDuration?: string;
+  phone_number: string;
+  localisation: string;
+  area: number;
 }
 
 interface RatingData {
@@ -170,10 +168,10 @@ async function fetch_order_applicants(orderId?: number): Promise<Applicant[]> {
     }) => ({
       id: apiApplicant.user_id,
       name: apiApplicant.user_name,
-      rating: 0,
-      completedJobs: 0,
-      description: apiApplicant.localisation,
-      equipment: [],
+      email: apiApplicant.email,
+      phone_number: apiApplicant.phone_number,
+      localisation: apiApplicant.localisation,
+      area: apiApplicant.area,
     }),
   );
 
