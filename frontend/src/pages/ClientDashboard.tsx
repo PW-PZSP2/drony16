@@ -1,15 +1,9 @@
-import { useState } from "react";
-
 import CreateOrderTab from "@/components/feature/client_dashboard/tabs/CreateOrderTab";
 import SelectOperatorTab from "@/components/feature/client_dashboard/tabs/SelectedOperatorTab";
 import CompletedOrdersTab from "@/components/feature/client_dashboard/tabs/CompletedOrdersTab";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function ClientDashboard() {
-  const [activeTab, setActiveTab] = useState<"create" | "select" | "completed">(
-    "create",
-  );
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">

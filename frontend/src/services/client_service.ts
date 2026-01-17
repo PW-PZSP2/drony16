@@ -1,5 +1,3 @@
-import { backendClient } from "@/utils/backend_client";
-
 // Types for the service
 interface OrderData {
   title: string;
