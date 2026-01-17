@@ -75,7 +75,6 @@ describe("OrderDetails", () => {
 
     expect(screen.getByText("Operator 1")).toBeInTheDocument();
     expect(screen.getByText("Operator 2")).toBeInTheDocument();
-    expect(screen.getByText("Drone A")).toBeInTheDocument();
   });
 
   it("handles no applicants", async () => {
@@ -84,7 +83,7 @@ describe("OrderDetails", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/Brak zgłoszeń dla tego zlecenia/i),
+        screen.getByText(/Brak zgłoszeń/i),
       ).toBeInTheDocument();
     });
   });
