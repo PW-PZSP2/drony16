@@ -19,7 +19,7 @@ describe("ServiceParameters", () => {
     const mockOnParametersChange = jest.fn();
     render(
       <ServiceParameters
-        service="ortofoto"
+        service="Ortofotomapa"
         parameters={{}}
         onParametersChange={mockOnParametersChange}
       />,
@@ -32,7 +32,7 @@ describe("ServiceParameters", () => {
     const mockOnParametersChange = jest.fn();
     render(
       <ServiceParameters
-        service="terrain"
+        service="Numeryczne Modele Terenu"
         parameters={{}}
         onParametersChange={mockOnParametersChange}
       />,
@@ -45,7 +45,7 @@ describe("ServiceParameters", () => {
     const mockOnParametersChange = jest.fn();
     render(
       <ServiceParameters
-        service="pointcloud"
+        service="Chmura Punktów"
         parameters={{}}
         onParametersChange={mockOnParametersChange}
       />,
@@ -58,7 +58,7 @@ describe("ServiceParameters", () => {
     const mockOnParametersChange = jest.fn();
     render(
       <ServiceParameters
-        service="3d"
+        service="Modele 3D"
         parameters={{}}
         onParametersChange={mockOnParametersChange}
       />,
@@ -71,7 +71,7 @@ describe("ServiceParameters", () => {
     const mockOnParametersChange = jest.fn();
     render(
       <ServiceParameters
-        service="laser"
+        service="Scanning Laserowy"
         parameters={{}}
         onParametersChange={mockOnParametersChange}
       />,
