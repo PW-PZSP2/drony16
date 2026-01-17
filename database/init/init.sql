@@ -122,12 +122,40 @@ ALTER TABLE service_parameter
     ADD CONSTRAINT service_parameter_service_fk FOREIGN KEY (service_id)
         REFERENCES service(service_id);
 
-ALTER TABLE "user"   
+ALTER TABLE "user"
     ADD COLUMN latitude FLOAT;
-ALTER TABLE "user" 
+ALTER TABLE "user"
     ADD COLUMN longitude FLOAT;
 
-ALTER TABLE "order" 
+ALTER TABLE "order"
     ADD COLUMN latitude FLOAT;
-ALTER TABLE "order" 
+ALTER TABLE "order"
     ADD COLUMN longitude FLOAT;
+
+CREATE TABLE homepage_content (
+    id            INTEGER DEFAULT 1 NOT NULL,
+    content       JSONB NOT NULL,
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by    INTEGER,
+    PRIMARY KEY (id),
+    CONSTRAINT homepage_content_single_row CHECK (id = 1),
+    CONSTRAINT homepage_content_updated_by_fk FOREIGN KEY (updated_by)
+        REFERENCES "user"(user_id)
+);
+
+-- GIN index for efficient JSONB querying
+CREATE INDEX idx_homepage_content_jsonb ON homepage_content USING GIN (content);
+
+-- trigger to update 'updated_at' on content change
+CREATE OR REPLACE FUNCTION update_homepage_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_homepage_timestamp
+    BEFORE UPDATE ON homepage_content
+    FOR EACH ROW
+    EXECUTE FUNCTION update_homepage_timestamp();
