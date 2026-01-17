@@ -3,6 +3,13 @@ import "@testing-library/jest-dom";
 import RatingModal from "./RatingModal";
 import userEvent from "@testing-library/user-event";
 
+// Mock the service
+jest.mock("@/services/client_service", () => ({
+  rate_order: jest.fn(),
+}));
+
+import { rate_order } from "@/services/client_service";
+
 describe("RatingModal", () => {
   // Mock window.alert
   beforeAll(() => {
@@ -11,6 +18,7 @@ describe("RatingModal", () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    (rate_order as jest.Mock).mockResolvedValue({ success: true });
   });
 
   it("renders correctly", () => {
@@ -67,13 +75,9 @@ describe("RatingModal", () => {
     // The code maps 1..5 to buttons.
     // Let's find buttons inside the rating container (tricky without test id).
     // Or find by index.
-    const stars = screen
-      .getAllByRole("button")
-      .filter((b) => b.innerHTML.includes("ri-star-fill"));
-    // 5 stars + submit + cancel + close X.
-    // Actually, stars have class text-2xl.
-    // Let's try clicking the last star.
-    await user.click(stars[4]); // 5th star
+    // Click 5th star
+    const star5 = screen.getByLabelText("Ocena 5");
+    await user.click(star5);
 
     expect(submitBtn).not.toBeDisabled();
 

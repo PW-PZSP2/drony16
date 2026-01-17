@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import RatingModal from "@/components/feature/client_dashboard/elements/RatingModal";
 import { useLoadData } from "@/hooks/useLoadData";
 import { fetch_completed_orders } from "@/services/client_service";
-import { Star, X } from "lucide-react";
+import { Star } from "lucide-react";
 
 export default function CompletedOrdersTab() {
   const [showRatingModal, setShowRatingModal] = useState<number | null>(null);

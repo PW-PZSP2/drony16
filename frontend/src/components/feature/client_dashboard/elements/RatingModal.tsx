@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { rate_order } from "@/services/client_service";
 
 export default function RatingModal({
-  // orderId,
+  orderId,
   onClose,
 }: {
   orderId: number;
@@ -115,6 +115,7 @@ export default function RatingModal({
                       className={`${
                         star <= rating ? "text-yellow-400" : "text-gray-300"
                       } hover:text-yellow-400 transition-colors`}
+                      aria-label={`Ocena ${star}`}
                     >
                       <Star
                         size={24}
