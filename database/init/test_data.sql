@@ -167,3 +167,113 @@ VALUES
 ('2025-01-05', 3, 4),
 ('2025-01-05', 3, 5),
 ('2025-01-05', 5, 5);
+
+
+INSERT INTO homepage_content (id, content, updated_by)
+VALUES (1, '{
+  "hero": {
+    "title": "Połącz się z profesjonalnymi operatorami dronów",
+    "subtitle": "Platforma łącząca zleceniodawców potrzebujących usług dronowych z doświadczonymi operatorami. Ortofotomapy, modele 3D, inspekcje i wiele więcej.",
+    "cta_primary": {
+      "text": "Znajdź Operatora",
+      "link": "/login?action=register&role=client"
+    },
+    "cta_secondary": {
+      "text": "Zostań Operatorem",
+      "link": "/login?action=register&role=operator"
+    },
+    "background_image": "../public/images/home_page1.jpg",
+    "hero_image": "../public/images/home_page2.jpg"
+  },
+  "services": {
+    "title": "Dostępne Usługi",
+    "subtitle": "Szeroka gama profesjonalnych usług dronowych wykonywanych przez certyfikowanych operatorów",
+    "items": [
+      {
+        "icon": "map",
+        "title": "Ortofotomapa",
+        "description": "Wysokiej jakości mapy ortofotograficzne z precyzyjnym pozycjonowaniem i szczegółowością GSD",
+        "color": "blue"
+      },
+      {
+        "icon": "mountain",
+        "title": "Numeryczne Modele Terenu",
+        "description": "Tworzenie dokładnych modeli wysokościowych terenu (NMPT, NMT) z wykorzystaniem najnowszych technologii",
+        "color": "green"
+      },
+      {
+        "icon": "box",
+        "title": "Chmura Punktów",
+        "description": "Generowanie gęstych chmur punktów z możliwością klasyfikacji i kolorowania",
+        "color": "gray"
+      },
+      {
+        "icon": "cuboid",
+        "title": "Modele 3D",
+        "description": "Fotorealistyczne modele 3D obiektów i terenów z wysoką dokładnością geometryczną",
+        "color": "blue"
+      },
+      {
+        "icon": "scan-line",
+        "title": "Scanning Laserowy",
+        "description": "Precyzyjne pomiary laserowe z generowaniem chmur punktów i modeli 3D",
+        "color": "green"
+      },
+      {
+        "icon": "camera",
+        "title": "Filmy",
+        "description": "Profesjonalne filmy przestrzeni, infrastruktury i budynków",
+        "color": "gray"
+      }
+    ]
+  },
+  "how_it_works": {
+    "title": "Jak to działa?",
+    "subtitle": "Prosty proces od zlecenia do realizacji",
+    "steps": [
+      {
+        "number": 1,
+        "title": "Utwórz Zlecenie",
+        "description": "Opisz swoje potrzeby, wybierz usługę i parametry, wskaż lokalizację i termin",
+        "color": "blue"
+      },
+      {
+        "number": 2,
+        "title": "Wybierz Operatora",
+        "description": "Operatorzy z Twojej okolicy zgłoszą się do zlecenia. Sprawdź ich profile i wybierz najlepszego",
+        "color": "green"
+      },
+      {
+        "number": 3,
+        "title": "Odbierz Wyniki",
+        "description": "Operator wykona usługę i dostarczy wyniki zgodnie z Twoimi wymaganiami",
+        "color": "gray"
+      }
+    ]
+  },
+  "cta_section": {
+    "title": "Gotowy na start?",
+    "subtitle": "Dołącz do naszej platformy już dziś i skorzystaj z profesjonalnych usług dronowych",
+    "cta_primary": {
+      "text": "Utwórz Zlecenie",
+      "link": "/login?action=register&role=client"
+    },
+    "cta_secondary": {
+      "text": "Zostań Operatorem",
+      "link": "/login?action=register&role=operator"
+    }
+  },
+  "footer": {
+    "logo": {
+      "text": "logo",
+      "description": "Platforma łącząca zleceniodawców z profesjonalnymi operatorami dronów"
+    },
+    "contact": {
+      "email": "kontakt@droneplatform.pl",
+      "phone": "+48 600 123 456",
+      "address": "Warszawa, Polska"
+    },
+    "copyright": "© 2026 Droneo. Wszystkie prawa zastrzeżone."
+  }
+}', 1);
+
