@@ -66,9 +66,15 @@ export default function CreateOrderTab() {
 
   return (
     <>
-      {isSubmitting && <div>Wysyłanie...</div>}
+      {isSubmitting && (
+        <div className="flex justify-center p-8">
+          <div className="text-emerald-700">Wysyłanie...</div>
+        </div>
+      )}
       {!isSubmitting && (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="overflow-hidden rounded-3xl border-gray-100 shadow-lg bg-white mt-6">
+          <div className="p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -80,7 +86,7 @@ export default function CreateOrderTab() {
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                 placeholder="np. Ortofotomapa działki budowlanej"
                 required
               />
@@ -90,8 +96,8 @@ export default function CreateOrderTab() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Typ terminu
               </label>
-              <div className="flex space-x-4">
-                <label className="flex items-center">
+              <div className="flex space-x-6">
+                <label className="flex items-center cursor-pointer">
                   <input
                     type="radio"
                     name="deadlineType"
@@ -100,11 +106,11 @@ export default function CreateOrderTab() {
                     onChange={(e) =>
                       setFormData({ ...formData, deadlineType: e.target.value })
                     }
-                    className="mr-2"
+                    className="mr-3 h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500"
                   />
-                  <span className="text-sm">Termin nalotu</span>
+                  <span className="text-sm font-medium text-gray-700">Termin nalotu</span>
                 </label>
-                <label className="flex items-center">
+                <label className="flex items-center cursor-pointer">
                   <input
                     type="radio"
                     name="deadlineType"
@@ -113,9 +119,9 @@ export default function CreateOrderTab() {
                     onChange={(e) =>
                       setFormData({ ...formData, deadlineType: e.target.value })
                     }
-                    className="mr-2"
+                    className="mr-3 h-4 w-4 text-emerald-600 border-gray-300 focus:ring-emerald-500"
                   />
-                  <span className="text-sm">Termin zakończenia</span>
+                  <span className="text-sm font-medium text-gray-700">Termin zakończenia</span>
                 </label>
               </div>
             </div>
@@ -129,9 +135,9 @@ export default function CreateOrderTab() {
               {services.map((service) => (
                 <label
                   key={service.id}
-                  className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-colors ${
+                  className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all hover:shadow-sm ${
                     formData.service === service.id
-                      ? "border-blue-500 bg-blue-50"
+                      ? "border-emerald-500 bg-emerald-50 shadow-sm"
                       : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
@@ -147,7 +153,7 @@ export default function CreateOrderTab() {
                     <i
                       className={`${service.icon} text-lg ${
                         formData.service === service.id
-                          ? "text-blue-600"
+                          ? "text-emerald-600"
                           : "text-gray-400"
                       }`}
                     ></i>
@@ -155,7 +161,7 @@ export default function CreateOrderTab() {
                   <span
                     className={`text-sm font-medium ${
                       formData.service === service.id
-                        ? "text-blue-600"
+                        ? "text-emerald-600"
                         : "text-gray-700"
                     }`}
                   >
@@ -177,7 +183,7 @@ export default function CreateOrderTab() {
                 onChange={(e) =>
                   setFormData({ ...formData, location: e.target.value })
                 }
-                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 pr-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                 placeholder="Wpisz adres lub współrzędne"
                 required
               />
@@ -205,7 +211,7 @@ export default function CreateOrderTab() {
               onChange={(e) =>
                 setFormData({ ...formData, deadline: e.target.value })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
               required
             />
           </div>
@@ -220,7 +226,7 @@ export default function CreateOrderTab() {
                 setFormData({ ...formData, description: e.target.value })
               }
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors resize-none"
               placeholder="Opisz szczegóły zlecenia, wymagania techniczne, oczekiwania..."
               required
             />
@@ -235,13 +241,24 @@ export default function CreateOrderTab() {
             />
           }
 
-          <div className="flex justify-end space-x-4">
-            <Button variant="outline" type="button">
-              Zapisz jako szkic
-            </Button>
-            <Button type="submit">Opublikuj zlecenie</Button>
+              <div className="flex justify-end space-x-4 pt-4 border-t bg-gray-50/50 -mx-8 px-8 py-6 mt-8">
+                <Button 
+                  variant="outline" 
+                  type="button"
+                  className="rounded-full px-6 font-medium"
+                >
+                  Zapisz jako szkic
+                </Button>
+                <Button 
+                  type="submit"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6 font-medium"
+                >
+                  Opublikuj zlecenie
+                </Button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       )}
     </>
   );
