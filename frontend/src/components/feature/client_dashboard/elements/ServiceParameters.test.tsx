@@ -4,36 +4,78 @@ import ServiceParameters from "./ServiceParameters";
 
 describe("ServiceParameters", () => {
   it("renders empty when no service matches", () => {
-    const { container } = render(<ServiceParameters service="unknown" />);
+    const mockOnParametersChange = jest.fn();
+    const { container } = render(
+      <ServiceParameters
+        service="unknown"
+        parameters={{}}
+        onParametersChange={mockOnParametersChange}
+      />,
+    );
     expect(container).toBeEmptyDOMElement();
   });
 
   it("renders Ortofoto parameters", () => {
-    render(<ServiceParameters service="ortofoto" />);
+    const mockOnParametersChange = jest.fn();
+    render(
+      <ServiceParameters
+        service="Ortofotomapa"
+        parameters={{}}
+        onParametersChange={mockOnParametersChange}
+      />,
+    );
     expect(screen.getByText(/Parametry ortofotomapy/i)).toBeInTheDocument();
     expect(screen.getByText(/GSD/i)).toBeInTheDocument();
   });
 
   it("renders Terrain parameters", () => {
-    render(<ServiceParameters service="terrain" />);
+    const mockOnParametersChange = jest.fn();
+    render(
+      <ServiceParameters
+        service="Numeryczne Modele Terenu"
+        parameters={{}}
+        onParametersChange={mockOnParametersChange}
+      />,
+    );
     expect(screen.getByText(/Parametry modelu terenu/i)).toBeInTheDocument();
     expect(screen.getByText(/Format wyjściowy/i)).toBeInTheDocument();
   });
 
   it("renders Pointcloud parameters", () => {
-    render(<ServiceParameters service="pointcloud" />);
+    const mockOnParametersChange = jest.fn();
+    render(
+      <ServiceParameters
+        service="Chmura Punktów"
+        parameters={{}}
+        onParametersChange={mockOnParametersChange}
+      />,
+    );
     expect(screen.getByText(/Parametry chmury punktów/i)).toBeInTheDocument();
     expect(screen.getByText(/Gęstość punktów/i)).toBeInTheDocument();
   });
 
   it("renders 3D parameters", () => {
-    render(<ServiceParameters service="3d" />);
+    const mockOnParametersChange = jest.fn();
+    render(
+      <ServiceParameters
+        service="Modele 3D"
+        parameters={{}}
+        onParametersChange={mockOnParametersChange}
+      />,
+    );
     expect(screen.getByText(/Parametry modelu 3D/i)).toBeInTheDocument();
     expect(screen.getByText(/Jakość tekstur/i)).toBeInTheDocument();
   });
 
   it("renders Laser parameters", () => {
-    render(<ServiceParameters service="laser" />);
+    const mockOnParametersChange = jest.fn();
+    render(
+      <ServiceParameters
+        service="Scanning Laserowy"
+        parameters={{}}
+        onParametersChange={mockOnParametersChange}
+      />,
+    );
     expect(
       screen.getByText(/Parametry skaningu laserowego/i),
     ).toBeInTheDocument();
