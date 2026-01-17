@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, Text, Date, ForeignKey, CHAR, Enum, Float
-from datetime import date
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
+from datetime import date, datetime
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from database import Base
 
@@ -149,3 +150,14 @@ class ReportedOperator(Base):
 
     order = relationship("Order", back_populates="reported_entries")
     operator = relationship("User", back_populates="reports")
+
+
+class HomepageContent(Base):
+    __tablename__ = "homepage_content"
+
+    id = mapped_column(Integer, primary_key=True, default=1)
+    content = mapped_column(JSONB, nullable=False)
+    updated_at = mapped_column(TIMESTAMP, default=datetime.utcnow, nullable=False)
+    updated_by = mapped_column(Integer, ForeignKey("user.user_id"), nullable=True)
+
+    admin = relationship("User")

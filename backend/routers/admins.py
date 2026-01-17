@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, cast, Text, delete
 from database import get_db
-from models import Order, User
+from models import Order, User, HomepageContent
 from auth import get_current_user
 from datetime import date
 from schemas import AdminCreate
@@ -10,6 +10,7 @@ from datetime import datetime
 from auth import get_password_hash
 from fastapi.concurrency import run_in_threadpool
 from utils import get_coordinates
+from typing import Dict, Any
 
 router = APIRouter(
     prefix="/admins",
@@ -384,3 +385,61 @@ async def list_operators(
         )
 
     return out
+
+
+@router.get("/homepage")
+async def get_homepage_content(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(HomepageContent).where(HomepageContent.id == 1))
+    content = result.scalars().first()
+
+    if not content:
+        return {
+            "content": {},
+            "updated_at": None,
+        }
+
+    return {
+        "content": content.content,
+        "updated_at": content.updated_at.isoformat() if content.updated_at else None,
+    }
+
+
+@router.put("/homepage")
+async def update_homepage_content(
+    content_data: Dict[str, Any] = Body(...),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role != "adm":
+        raise HTTPException(status_code=403, detail="Forbidden: Admin access required")
+
+    result = await db.execute(select(HomepageContent).where(HomepageContent.id == 1))
+    existing_content = result.scalars().first()
+
+    if existing_content:
+        existing_content.content = content_data
+        existing_content.updated_by = current_user.user_id
+        existing_content.updated_at = datetime.utcnow()
+        await db.commit()
+        await db.refresh(existing_content)
+
+        return {
+            "message": "Homepage content updated successfully",
+            "content": existing_content.content,
+            "updated_at": existing_content.updated_at.isoformat(),
+        }
+    else:
+        new_content = HomepageContent(
+            id=1,
+            content=content_data,
+            updated_by=current_user.user_id,
+        )
+        db.add(new_content)
+        await db.commit()
+        await db.refresh(new_content)
+
+        return {
+            "message": "Homepage content created successfully",
+            "content": new_content.content,
+            "updated_at": new_content.updated_at.isoformat(),
+        }
