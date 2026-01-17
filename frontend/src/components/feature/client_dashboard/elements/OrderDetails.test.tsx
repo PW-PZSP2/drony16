@@ -82,9 +82,7 @@ describe("OrderDetails", () => {
     render(<OrderDetails order={mockOrder} onBack={() => {}} />);
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/Brak zgłoszeń/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Brak zgłoszeń/i)).toBeInTheDocument();
     });
   });
 
