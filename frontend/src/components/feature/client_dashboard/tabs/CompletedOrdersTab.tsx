@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import RatingModal from "@/components/feature/client_dashboard/elements/RatingModal";
 import { useLoadData } from "@/hooks/useLoadData";
 import { fetch_completed_orders } from "@/services/client_service";
+import { Star, X } from "lucide-react";
 
 export default function CompletedOrdersTab() {
   const [showRatingModal, setShowRatingModal] = useState<number | null>(null);
@@ -37,14 +38,12 @@ export default function CompletedOrdersTab() {
                 </div>
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    order.status === "in-progress" ||
                     order.status === "W trakcie"
                       ? "bg-blue-100 text-blue-800"
                       : "bg-green-100 text-green-800"
                   }`}
                 >
-                  {order.status === "in-progress" ||
-                  order.status === "W trakcie"
+                  {order.status === "W trakcie"
                     ? "W trakcie"
                     : "Zakończone"}
                 </span>
@@ -57,7 +56,7 @@ export default function CompletedOrdersTab() {
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <i className="ri-calendar-check-line mr-2"></i>
-                  {order.status === "in-progress"
+                  {order.status === "W trakcie"
                     ? `Deadline: ${order.deadline}`
                     : order.completedDate}
                 </div>
@@ -72,10 +71,12 @@ export default function CompletedOrdersTab() {
                       </span>
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((star) => (
-                          <i
+                          <Star
                             key={star}
-                            className={`ri-star-${star <= order.rating ? "fill" : "line"} text-yellow-400`}
-                          ></i>
+                            size={16}
+                            className="text-yellow-400"
+                            fill={order.rating && star <= order.rating ? "currentColor" : "none"}
+                          />
                         ))}
                       </div>
                     </div>
@@ -86,14 +87,14 @@ export default function CompletedOrdersTab() {
                   )}
                 </div>
                 <div className="space-x-2">
-                  {order.rating === 0 && (
                     <Button
                       size="sm"
                       onClick={() => setShowRatingModal(order.id)}
+                      disabled={Boolean(order.rating && order.rating > 0)}
                     >
                       Oceń pracę
                     </Button>
-                  )}
+                  
                 </div>
               </div>
             </div>

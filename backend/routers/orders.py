@@ -289,6 +289,7 @@ async def get_client_history(
                 ),
                 services=services_data,
                 status=order.state,
+                score=order.score,
             )
         )
 

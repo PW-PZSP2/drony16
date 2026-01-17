@@ -19,7 +19,7 @@ interface Order {
   deadline: string;
   deadlineType: "flight" | "completion";
   applicants: number;
-  status?: "pending" | "in-progress" | "completed" | "cancelled";
+  status?: "Zakończone" | "W trakcie" | "Zrealizowane" | "Złożone";
   selectedOperator?: string;
   rating?: number;
   completedDate?: string;
@@ -42,11 +42,9 @@ interface RatingData {
   comment?: string;
 }
 
-const API_DELAY = 1000;
 const API_URL = "http://localhost:8080";
 
-const mockDelay = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+
 
 async function create_order(
   orderData: OrderData,
@@ -70,7 +68,6 @@ async function create_order(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      credentials: "include",
     },
     credentials: "include",
     body: JSON.stringify(mapped_request),
@@ -88,7 +85,6 @@ async function create_order(
 }
 
 async function fetch_current_orders(): Promise<Order[]> {
-  await mockDelay(API_DELAY);
 
   const response = await fetch(`${API_URL}/orders/client/pending`, {
     method: "GET",
@@ -148,7 +144,6 @@ async function fetch_current_orders(): Promise<Order[]> {
 }
 
 async function fetch_order_applicants(orderId?: number): Promise<Applicant[]> {
-  await mockDelay(API_DELAY);
 
   const response = await fetch(`${API_URL}/orders/${orderId}/candidates`, {
     method: "GET",
@@ -192,7 +187,6 @@ async function fetch_order_applicants(orderId?: number): Promise<Applicant[]> {
 }
 
 async function fetch_completed_orders(): Promise<Order[]> {
-  await mockDelay(API_DELAY);
 
   const response = await fetch(`${API_URL}/orders/client/history`, {
     method: "GET",
@@ -230,6 +224,7 @@ async function fetch_completed_orders(): Promise<Order[]> {
       interested_operators: unknown[];
       status: string;
       has_applied: boolean;
+      score: number;
     }) => ({
       id: apiOrder.order_id,
       title: apiOrder.name,
@@ -239,6 +234,7 @@ async function fetch_completed_orders(): Promise<Order[]> {
       deadline: apiOrder.deadline,
       deadlineType: apiOrder.completion_date ? "completion" : "flight",
       applicants: apiOrder.interested_operators.length,
+      rating: apiOrder.score,
       status:
         apiOrder.status === "W trakcie"
           ? "in-progress"
@@ -254,17 +250,25 @@ async function fetch_completed_orders(): Promise<Order[]> {
 async function rate_order(
   ratingData: RatingData,
 ): Promise<{ success: boolean; message?: string }> {
-  await mockDelay(API_DELAY);
+  const mapped_request = {
+    score: ratingData.rating,
+    opinion: ratingData.comment || "",
+  };
 
-  if (
-    !ratingData.orderId ||
-    !ratingData.rating ||
-    ratingData.rating < 1 ||
-    ratingData.rating > 5
-  ) {
+  const response = await fetch(`${API_URL}/orders/${ratingData.orderId}/opinion`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      credentials: "include",
+    },
+    credentials: "include",
+    body: JSON.stringify(mapped_request),
+  });
+
+  if (!response.ok) {
     return {
       success: false,
-      message: "Invalid rating data",
+      message: "Failed to submit rating",
     };
   }
 
