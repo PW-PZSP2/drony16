@@ -43,9 +43,7 @@ export default function CompletedOrdersTab() {
                       : "bg-green-100 text-green-800"
                   }`}
                 >
-                  {order.status === "W trakcie"
-                    ? "W trakcie"
-                    : "Zakończone"}
+                  {order.status === "W trakcie" ? "W trakcie" : "Zakończone"}
                 </span>
               </div>
 
@@ -75,7 +73,11 @@ export default function CompletedOrdersTab() {
                             key={star}
                             size={16}
                             className="text-yellow-400"
-                            fill={order.rating && star <= order.rating ? "currentColor" : "none"}
+                            fill={
+                              order.rating && star <= order.rating
+                                ? "currentColor"
+                                : "none"
+                            }
                           />
                         ))}
                       </div>
@@ -87,14 +89,13 @@ export default function CompletedOrdersTab() {
                   )}
                 </div>
                 <div className="space-x-2">
-                    <Button
-                      size="sm"
-                      onClick={() => setShowRatingModal(order.id)}
-                      disabled={Boolean(order.rating && order.rating > 0)}
-                    >
-                      Oceń pracę
-                    </Button>
-                  
+                  <Button
+                    size="sm"
+                    onClick={() => setShowRatingModal(order.id)}
+                    disabled={Boolean(order.rating && order.rating > 0)}
+                  >
+                    Oceń pracę
+                  </Button>
                 </div>
               </div>
             </div>

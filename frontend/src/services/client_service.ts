@@ -44,8 +44,6 @@ interface RatingData {
 
 const API_URL = "http://localhost:8080";
 
-
-
 async function create_order(
   orderData: OrderData,
 ): Promise<{ success: boolean; orderId?: number; message?: string }> {
@@ -85,7 +83,6 @@ async function create_order(
 }
 
 async function fetch_current_orders(): Promise<Order[]> {
-
   const response = await fetch(`${API_URL}/orders/client/pending`, {
     method: "GET",
     headers: {
@@ -144,7 +141,6 @@ async function fetch_current_orders(): Promise<Order[]> {
 }
 
 async function fetch_order_applicants(orderId?: number): Promise<Applicant[]> {
-
   const response = await fetch(`${API_URL}/orders/${orderId}/candidates`, {
     method: "GET",
     headers: {
@@ -187,7 +183,6 @@ async function fetch_order_applicants(orderId?: number): Promise<Applicant[]> {
 }
 
 async function fetch_completed_orders(): Promise<Order[]> {
-
   const response = await fetch(`${API_URL}/orders/client/history`, {
     method: "GET",
     headers: {
@@ -255,15 +250,18 @@ async function rate_order(
     opinion: ratingData.comment || "",
   };
 
-  const response = await fetch(`${API_URL}/orders/${ratingData.orderId}/opinion`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    `${API_URL}/orders/${ratingData.orderId}/opinion`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        credentials: "include",
+      },
       credentials: "include",
+      body: JSON.stringify(mapped_request),
     },
-    credentials: "include",
-    body: JSON.stringify(mapped_request),
-  });
+  );
 
   if (!response.ok) {
     return {

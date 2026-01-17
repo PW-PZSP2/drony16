@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Star, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {rate_order} from "@/services/client_service";
+import { rate_order } from "@/services/client_service";
 
 export default function RatingModal({
   orderId,
@@ -18,7 +18,7 @@ export default function RatingModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (completed === null) {
       alert("Proszę wybrać czy zlecenie zostało wykonane");
       return;
@@ -32,18 +32,24 @@ export default function RatingModal({
     setIsLoading(true);
 
     try {
-
       // Always submit rating/opinion, regardless of completion status
-      const ratingResult = await rate_order({ orderId, rating: completed ? rating : 1, comment });
+      const ratingResult = await rate_order({
+        orderId,
+        rating: completed ? rating : 1,
+        comment,
+      });
       if (!ratingResult.success) {
-        alert("Błąd podczas zapisywania oceny: " + (ratingResult.message || "Nieznany błąd"));
+        alert(
+          "Błąd podczas zapisywania oceny: " +
+            (ratingResult.message || "Nieznany błąd"),
+        );
         return;
       }
 
       alert("Ocena została zapisana!");
       onClose();
     } catch (error) {
-      console.error('Error submitting rating:', error);
+      console.error("Error submitting rating:", error);
       alert("Wystąpił nieoczekiwany błąd");
     } finally {
       setIsLoading(false);
@@ -110,7 +116,10 @@ export default function RatingModal({
                         star <= rating ? "text-yellow-400" : "text-gray-300"
                       } hover:text-yellow-400 transition-colors`}
                     >
-                      <Star size={24} fill={star <= rating ? "currentColor" : "none"} />
+                      <Star
+                        size={24}
+                        fill={star <= rating ? "currentColor" : "none"}
+                      />
                     </button>
                   ))}
                 </div>
@@ -141,7 +150,9 @@ export default function RatingModal({
             </Button>
             <Button
               type="submit"
-              disabled={completed === null || (completed && rating === 0) || isLoading}
+              disabled={
+                completed === null || (completed && rating === 0) || isLoading
+              }
             >
               {isLoading ? "Zapisywanie..." : "Zapisz ocenę"}
             </Button>
