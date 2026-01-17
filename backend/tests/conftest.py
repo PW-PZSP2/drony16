@@ -38,6 +38,9 @@ async def db_engine():
         bind=new_engine, class_=AsyncSession, expire_on_commit=False
     )
 
+    async with new_engine.begin() as conn:
+        await conn.run_sync(database.Base.metadata.create_all)
+
     yield new_engine
 
     await new_engine.dispose()
