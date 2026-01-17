@@ -80,6 +80,7 @@ class OrderResponse(OrderBase):
     interested_operators: list[int] = []
     status: str = Field(..., validation_alias="state")
     has_applied: Optional[bool] = False
+    score: Optional[int] = None
 
     class Config:
         from_attributes = True
