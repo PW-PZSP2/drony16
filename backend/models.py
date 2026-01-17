@@ -1,13 +1,4 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    Text,
-    Date,
-    ForeignKey,
-    CHAR,
-    Enum,
-    Float
-)
+from sqlalchemy import Column, Integer, Text, Date, ForeignKey, CHAR, Enum, Float
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from datetime import date, datetime
 from sqlalchemy.orm import relationship, Mapped, mapped_column
@@ -166,11 +157,7 @@ class HomepageContent(Base):
 
     id = mapped_column(Integer, primary_key=True, default=1)
     content = mapped_column(JSONB, nullable=False)
-    updated_at = mapped_column(
-        TIMESTAMP, default=datetime.utcnow, nullable=False
-    )
-    updated_by = mapped_column(
-        Integer, ForeignKey("user.user_id"), nullable=True
-    )
+    updated_at = mapped_column(TIMESTAMP, default=datetime.utcnow, nullable=False)
+    updated_by = mapped_column(Integer, ForeignKey("user.user_id"), nullable=True)
 
     admin = relationship("User")
