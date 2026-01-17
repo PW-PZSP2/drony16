@@ -219,7 +219,10 @@ export default function CreateOrderTab() {
             />
           </div>
 
-          {formData.service && <ServiceParameters service={formData.service} />}
+          {
+            formData.service && 
+            <ServiceParameters service={formData.service} />
+          }
 
           <div className="flex justify-end space-x-4">
             <Button variant="outline" type="button">

@@ -215,15 +215,15 @@ function LaserParameters() {
 }
 
 export default function ServiceParameters({ service }: { service: string }) {
-  if (service === "ortofoto") {
+  if (service === "Ortofotomapa") {
     return <OrtofotoParameters />;
-  } else if (service === "terrain") {
+  } else if (service === "Numeryczne modele terenu") {
     return <TerrainParameters />;
-  } else if (service === "pointcloud") {
+  } else if (service === "Chmura Punktów") {
     return <PointcloudParameters />;
-  } else if (service === "3d") {
+  } else if (service === "Modele 3D") {
     return <ThreeDParameters />;
-  } else if (service === "laser") {
+  } else if (service === "Scanning laserowy") {
     return <LaserParameters />;
   }
 
