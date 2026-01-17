@@ -189,7 +189,7 @@ export default function CreateOrderTab() {
               </button>
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              Kliknij ikonę mapy aby wybrać lokalizację na mapie
+              Możesz wpisać adres, nazwę miejsca lub współrzędne GPS. Rekomendujemy użycie pełnych danych(miejscowość, kod pocztowy, ulica..) dla dokładności.
             </p>
           </div>
 

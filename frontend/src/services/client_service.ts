@@ -1,3 +1,5 @@
+import { backendClient } from "../utils/backend_client";
+
 // Types for the service
 interface OrderData {
   title: string;
@@ -58,16 +60,13 @@ async function create_order(
     ],
   };
 
-  const response = await fetch(`${API_URL}/orders`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify(mapped_request),
-  });
-
-  if (!response.ok) {
+  try {
+    const response = await backendClient.post("/orders", mapped_request);
+    
+    return {
+      success: true,
+    };
+  } catch (error) {
     return {
       success: false,
     };
@@ -79,20 +78,9 @@ async function create_order(
 }
 
 async function fetch_current_orders(): Promise<Order[]> {
-  const response = await fetch(`${API_URL}/orders/client/pending`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      credentials: "include",
-    },
-    credentials: "include",
-  });
-
-  if (!response.ok) {
-    return [];
-  }
-
-  const data = await response.json();
+  try {
+    const response = await backendClient.get("/orders/client/pending");
+    const data = response.data;
 
   const pendingOrders: Order[] = data.map(
     (apiOrder: {
@@ -134,23 +122,16 @@ async function fetch_current_orders(): Promise<Order[]> {
   );
 
   return pendingOrders;
+  } catch (error) {
+    console.error("Error fetching current orders:", error);
+    return [];
+  }
 }
 
 async function fetch_order_applicants(orderId?: number): Promise<Applicant[]> {
-  const response = await fetch(`${API_URL}/orders/${orderId}/candidates`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      credentials: "include",
-    },
-    credentials: "include",
-  });
-
-  if (!response.ok) {
-    return [];
-  }
-
-  const data = await response.json();
+  try {
+    const response = await backendClient.get(`/orders/${orderId}/candidates`);
+    const data = response.data;
 
   const applicants: Applicant[] = data.map(
     (apiApplicant: {
@@ -176,23 +157,16 @@ async function fetch_order_applicants(orderId?: number): Promise<Applicant[]> {
   );
 
   return applicants;
+  } catch (error) {
+    console.error("Error fetching order applicants:", error);
+    return [];
+  }
 }
 
 async function fetch_completed_orders(): Promise<Order[]> {
-  const response = await fetch(`${API_URL}/orders/client/history`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      credentials: "include",
-    },
-    credentials: "include",
-  });
-
-  if (!response.ok) {
-    return [];
-  }
-
-  const data = await response.json();
+  try {
+    const response = await backendClient.get("/orders/client/history");
+    const data = response.data;
 
   const completedOrders: Order[] = data.map(
     (apiOrder: {
@@ -236,6 +210,10 @@ async function fetch_completed_orders(): Promise<Order[]> {
   );
 
   return completedOrders;
+  } catch (error) {
+    console.error("Error fetching completed orders:", error);
+    return [];
+  }
 }
 
 async function rate_order(
@@ -246,59 +224,44 @@ async function rate_order(
     opinion: ratingData.comment || "",
   };
 
-  const response = await fetch(
-    `${API_URL}/orders/${ratingData.orderId}/opinion`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        credentials: "include",
-      },
-      credentials: "include",
-      body: JSON.stringify(mapped_request),
-    },
-  );
+  try {
+    const response = await backendClient.post(
+      `/orders/${ratingData.orderId}/opinion`,
+      mapped_request,
+    );
 
-  if (!response.ok) {
+    return {
+      success: true,
+      message: "Rating submitted successfully",
+    };
+  } catch (error) {
     return {
       success: false,
       message: "Failed to submit rating",
     };
   }
 
-  return {
-    success: true,
-    message: "Rating submitted successfully",
-  };
 }
 
 async function select_operator(
   orderId: number,
   operatorId: number,
 ): Promise<{ success: boolean; message?: string }> {
-  const response = await fetch(
-    `${API_URL}/orders/${orderId}/select/${operatorId}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        credentials: "include",
-      },
-      credentials: "include",
-    },
-  );
+  try {
+    const response = await backendClient.post(
+      `/orders/${orderId}/select/${operatorId}`,
+    );
 
-  if (!response.ok) {
+    return {
+      success: true,
+      message: "Operator selected successfully",
+    };
+  } catch (error) {
     return {
       success: false,
       message: "Failed to select operator",
     };
   }
-
-  return {
-    success: true,
-    message: "Operator selected successfully",
-  };
 }
 
 export {
