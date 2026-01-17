@@ -17,24 +17,33 @@ export default function CreateOrderTab() {
     parameters: {} as any,
   });
 
+  const handleParametersChange = (newParameters: any) => {
+    setFormData({ ...formData, parameters: newParameters });
+  };
+
+  // Reset parameters when service changes
+  const handleServiceChange = (serviceId: string) => {
+    setFormData({ ...formData, service: serviceId, parameters: {} });
+  };
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const services = [
     { id: "Ortofotomapa", name: "Ortofotomapa", icon: "ri-map-2-line" },
     {
-      id: "Numeryczne modele terenu",
-      name: "Numeryczne modele terenu",
+      id: "Numeryczne Modele Terenu",
+      name: "Numeryczne Modele Terenu",
       icon: "ri-landscape-line",
     },
     {
       id: "Chmura Punktów",
-      name: "Chmura punktów",
+      name: "Chmura Punktów",
       icon: "ri-bubble-chart-line",
     },
     { id: "Modele 3D", name: "Modele 3D", icon: "ri-3d-view-line" },
     {
-      id: "Scanning laserowy",
-      name: "Scanning laserowy",
+      id: "Scanning Laserowy",
+      name: "Scanning Laserowy",
       icon: "ri-scanner-line",
     },
     { id: "Film", name: "Film", icon: "ri-search-eye-line" },
@@ -131,9 +140,7 @@ export default function CreateOrderTab() {
                     name="service"
                     value={service.id}
                     checked={formData.service === service.id}
-                    onChange={(e) =>
-                      setFormData({ ...formData, service: e.target.value })
-                    }
+                    onChange={(e) => handleServiceChange(e.target.value)}
                     className="sr-only"
                   />
                   <div className="w-8 h-8 flex items-center justify-center mr-3">
@@ -221,7 +228,11 @@ export default function CreateOrderTab() {
 
           {
             formData.service && 
-            <ServiceParameters service={formData.service} />
+            <ServiceParameters 
+              service={formData.service} 
+              parameters={formData.parameters}
+              onParametersChange={handleParametersChange}
+            />
           }
 
           <div className="flex justify-end space-x-4">
