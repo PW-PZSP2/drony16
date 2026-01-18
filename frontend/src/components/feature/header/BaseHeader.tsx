@@ -23,36 +23,6 @@ export default function Header(): JSX.Element {
     checkAuth();
   }, [actions]);
 
-  const getDashboardLink = () => {
-    if (!user) return "/";
-
-    if (user.roles.includes(Roles.ADMIN)) {
-      return "/admin/dashboard";
-    }
-    if (user.roles.includes(Roles.OPERATOR)) {
-      return "/operator/dashboard";
-    }
-    if (user.roles.includes(Roles.CLIENT)) {
-      return "/client/dashboard";
-    }
-    return "/";
-  };
-
-  const getDashboardLabel = () => {
-    if (!user) return "";
-
-    if (user.roles.includes(Roles.ADMIN)) {
-      return "Panel Admina";
-    }
-    if (user.roles.includes(Roles.OPERATOR)) {
-      return "Panel Operatora";
-    }
-    if (user.roles.includes(Roles.CLIENT)) {
-      return "Panel Zleceniodawcy";
-    }
-    return "";
-  };
-
   const getProfileLink = () => {
     if (!user) return "/";
     if (user.roles.includes(Roles.OPERATOR)) return "/operator/profile";
