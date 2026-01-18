@@ -729,38 +729,101 @@ function UsersTab() {
 
 function ContentTab() {
   const [isEditing, setIsEditing] = useState(false);
-  const [contentData, setContentData] = useState({
-    heroTitle: "Połącz się z profesjonalnymi operatorami dronów",
-    heroSubtitle:
-      "Platforma łącząca zleceniodawców potrzebujących usług dronowych z doświadczonymi operatorami. Ortofotomapy, modele 3D, inspekcje i wiele więcej.",
-    servicesTitle: "Dostępne Usługi",
-    servicesSubtitle:
-      "Szeroka gama profesjonalnych usług dronowych wykonywanych przez certyfikowanych operatorów",
-    howItWorksTitle: "Jak to działa?",
-    howItWorksSubtitle: "Prosty proces od zlecenia do realizacji",
-    ctaTitle: "Gotowy na start?",
-    ctaSubtitle:
-      "Dołącz do naszej platformy już dziś i skorzystaj z profesjonalnych usług dronowych",
-    contactEmail: "kontakt@droneplatform.pl",
-    contactPhone: "+48 600 123 456",
-    contactAddress: "Warszawa, Polska",
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [contentData, setContentData] = useState<any>({
+    hero: {
+      title: "",
+      subtitle: "",
+      cta_primary: { text: "", link: "" },
+      cta_secondary: { text: "", link: "" },
+    },
+    services: {
+      title: "",
+      subtitle: "",
+    },
+    how_it_works: {
+      title: "",
+      subtitle: "",
+    },
+    cta_section: {
+      title: "",
+      subtitle: "",
+      cta_primary: { text: "", link: "" },
+      cta_secondary: { text: "", link: "" },
+    },
+    footer: {
+      logo: { description: "" },
+      contact: { email: "", phone: "", address: "" },
+      copyright: "",
+    },
   });
 
-  const handleSave = () => {
-    setIsEditing(false);
-    alert("Treści zostały zaktualizowane!");
+  useEffect(() => {
+    const fetchHomepageContent = async () => {
+      try {
+        setLoading(true);
+        const response = await backendClient.get("/admins/homepage");
+        const data = response?.data || response || {};
+
+        if (data.content && Object.keys(data.content).length > 0) {
+          setContentData(data.content);
+        }
+        if (data.updated_at) {
+          setLastUpdated(data.updated_at);
+        }
+      } catch (error) {
+        console.error("Błąd podczas pobierania treści strony głównej:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHomepageContent();
+  }, []);
+
+  const handleSave = async () => {
+    try {
+      setSaving(true);
+      const response = await backendClient.put("/admins/homepage", contentData);
+      const data = response?.data || response || {};
+
+      if (data.updated_at) {
+        setLastUpdated(data.updated_at);
+      }
+      setIsEditing(false);
+      alert("Treści zostały pomyślnie zaktualizowane!");
+      window.location.reload();
+    } catch (error) {
+      console.error("Błąd podczas zapisywania treści:", error);
+      alert("Wystąpił błąd podczas zapisywania treści. Spróbuj ponownie.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-semibold text-gray-800">
-            Edycja treści strony głównej
-          </h3>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800">
+              Edycja treści strony głównej
+            </h3>
+            {lastUpdated && (
+              <p className="text-sm text-gray-500 mt-1">
+                Ostatnia aktualizacja:{" "}
+                {new Date(lastUpdated).toLocaleString("pl-PL")}
+              </p>
+            )}
+          </div>
           {!isEditing ? (
-            <Button onClick={() => setIsEditing(true)}>
-              <i className="ri-edit-line mr-2"></i>
+            <Button
+              onClick={() => setIsEditing(true)}
+              className="bg-green-600 hover:bg-green-700 flex items-center justify-center gap-2"
+            >
+              <i className="ri-edit-line"></i>
               Edytuj
             </Button>
           ) : (
@@ -768,9 +831,22 @@ function ContentTab() {
               <Button variant="outline" onClick={() => setIsEditing(false)}>
                 Anuluj
               </Button>
-              <Button onClick={handleSave}>
-                <i className="ri-save-line mr-2"></i>
-                Zapisz
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                className="bg-green-600 hover:bg-green-700 flex items-center justify-center gap-2"
+              >
+                {saving ? (
+                  <>
+                    <i className="ri-loader-4-line animate-spin"></i>
+                    Zapisywanie...
+                  </>
+                ) : (
+                  <>
+                    <i className="ri-save-line"></i>
+                    Zapisz
+                  </>
+                )}
               </Button>
             </div>
           )}
@@ -790,17 +866,17 @@ function ContentTab() {
                 {isEditing ? (
                   <input
                     type="text"
-                    value={contentData.heroTitle}
+                    value={contentData.hero?.title || ""}
                     onChange={(e) =>
                       setContentData({
                         ...contentData,
-                        heroTitle: e.target.value,
+                        hero: { ...contentData.hero, title: e.target.value },
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{contentData.heroTitle}</p>
+                  <p className="text-gray-800">{contentData.hero?.title}</p>
                 )}
               </div>
               <div>
@@ -809,18 +885,18 @@ function ContentTab() {
                 </label>
                 {isEditing ? (
                   <textarea
-                    value={contentData.heroSubtitle}
+                    value={contentData.hero?.subtitle || ""}
                     onChange={(e) =>
                       setContentData({
                         ...contentData,
-                        heroSubtitle: e.target.value,
+                        hero: { ...contentData.hero, subtitle: e.target.value },
                       })
                     }
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{contentData.heroSubtitle}</p>
+                  <p className="text-gray-800">{contentData.hero?.subtitle}</p>
                 )}
               </div>
             </div>
@@ -839,17 +915,20 @@ function ContentTab() {
                 {isEditing ? (
                   <input
                     type="text"
-                    value={contentData.servicesTitle}
+                    value={contentData.services?.title || ""}
                     onChange={(e) =>
                       setContentData({
                         ...contentData,
-                        servicesTitle: e.target.value,
+                        services: {
+                          ...contentData.services,
+                          title: e.target.value,
+                        },
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{contentData.servicesTitle}</p>
+                  <p className="text-gray-800">{contentData.services?.title}</p>
                 )}
               </div>
               <div>
@@ -858,11 +937,14 @@ function ContentTab() {
                 </label>
                 {isEditing ? (
                   <textarea
-                    value={contentData.servicesSubtitle}
+                    value={contentData.services?.subtitle || ""}
                     onChange={(e) =>
                       setContentData({
                         ...contentData,
-                        servicesSubtitle: e.target.value,
+                        services: {
+                          ...contentData.services,
+                          subtitle: e.target.value,
+                        },
                       })
                     }
                     rows={2}
@@ -870,7 +952,7 @@ function ContentTab() {
                   />
                 ) : (
                   <p className="text-gray-800">
-                    {contentData.servicesSubtitle}
+                    {contentData.services?.subtitle}
                   </p>
                 )}
               </div>
@@ -890,17 +972,22 @@ function ContentTab() {
                 {isEditing ? (
                   <input
                     type="text"
-                    value={contentData.howItWorksTitle}
+                    value={contentData.how_it_works?.title || ""}
                     onChange={(e) =>
                       setContentData({
                         ...contentData,
-                        howItWorksTitle: e.target.value,
+                        how_it_works: {
+                          ...contentData.how_it_works,
+                          title: e.target.value,
+                        },
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{contentData.howItWorksTitle}</p>
+                  <p className="text-gray-800">
+                    {contentData.how_it_works?.title}
+                  </p>
                 )}
               </div>
               <div>
@@ -910,18 +997,21 @@ function ContentTab() {
                 {isEditing ? (
                   <input
                     type="text"
-                    value={contentData.howItWorksSubtitle}
+                    value={contentData.how_it_works?.subtitle || ""}
                     onChange={(e) =>
                       setContentData({
                         ...contentData,
-                        howItWorksSubtitle: e.target.value,
+                        how_it_works: {
+                          ...contentData.how_it_works,
+                          subtitle: e.target.value,
+                        },
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   />
                 ) : (
                   <p className="text-gray-800">
-                    {contentData.howItWorksSubtitle}
+                    {contentData.how_it_works?.subtitle}
                   </p>
                 )}
               </div>
@@ -941,17 +1031,22 @@ function ContentTab() {
                 {isEditing ? (
                   <input
                     type="text"
-                    value={contentData.ctaTitle}
+                    value={contentData.cta_section?.title || ""}
                     onChange={(e) =>
                       setContentData({
                         ...contentData,
-                        ctaTitle: e.target.value,
+                        cta_section: {
+                          ...contentData.cta_section,
+                          title: e.target.value,
+                        },
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{contentData.ctaTitle}</p>
+                  <p className="text-gray-800">
+                    {contentData.cta_section?.title}
+                  </p>
                 )}
               </div>
               <div>
@@ -960,18 +1055,23 @@ function ContentTab() {
                 </label>
                 {isEditing ? (
                   <textarea
-                    value={contentData.ctaSubtitle}
+                    value={contentData.cta_section?.subtitle || ""}
                     onChange={(e) =>
                       setContentData({
                         ...contentData,
-                        ctaSubtitle: e.target.value,
+                        cta_section: {
+                          ...contentData.cta_section,
+                          subtitle: e.target.value,
+                        },
                       })
                     }
                     rows={2}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{contentData.ctaSubtitle}</p>
+                  <p className="text-gray-800">
+                    {contentData.cta_section?.subtitle}
+                  </p>
                 )}
               </div>
             </div>
@@ -990,17 +1090,25 @@ function ContentTab() {
                 {isEditing ? (
                   <input
                     type="email"
-                    value={contentData.contactEmail}
+                    value={contentData.footer?.contact?.email || ""}
                     onChange={(e) =>
                       setContentData({
                         ...contentData,
-                        contactEmail: e.target.value,
+                        footer: {
+                          ...contentData.footer,
+                          contact: {
+                            ...contentData.footer?.contact,
+                            email: e.target.value,
+                          },
+                        },
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{contentData.contactEmail}</p>
+                  <p className="text-gray-800">
+                    {contentData.footer?.contact?.email}
+                  </p>
                 )}
               </div>
               <div>
@@ -1010,17 +1118,25 @@ function ContentTab() {
                 {isEditing ? (
                   <input
                     type="tel"
-                    value={contentData.contactPhone}
+                    value={contentData.footer?.contact?.phone || ""}
                     onChange={(e) =>
                       setContentData({
                         ...contentData,
-                        contactPhone: e.target.value,
+                        footer: {
+                          ...contentData.footer,
+                          contact: {
+                            ...contentData.footer?.contact,
+                            phone: e.target.value,
+                          },
+                        },
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{contentData.contactPhone}</p>
+                  <p className="text-gray-800">
+                    {contentData.footer?.contact?.phone}
+                  </p>
                 )}
               </div>
               <div>
@@ -1030,17 +1146,25 @@ function ContentTab() {
                 {isEditing ? (
                   <input
                     type="text"
-                    value={contentData.contactAddress}
+                    value={contentData.footer?.contact?.address || ""}
                     onChange={(e) =>
                       setContentData({
                         ...contentData,
-                        contactAddress: e.target.value,
+                        footer: {
+                          ...contentData.footer,
+                          contact: {
+                            ...contentData.footer?.contact,
+                            address: e.target.value,
+                          },
+                        },
                       })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   />
                 ) : (
-                  <p className="text-gray-800">{contentData.contactAddress}</p>
+                  <p className="text-gray-800">
+                    {contentData.footer?.contact?.address}
+                  </p>
                 )}
               </div>
             </div>
