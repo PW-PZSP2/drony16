@@ -66,11 +66,13 @@ export default function Header(): JSX.Element {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <img
-              src="/images/logo.png"
-              alt="Droneo"
-              className="h-50 object-contain object-center translate-y-3 -translate-x-1"
-            />
+            <Link to="/">
+              <img
+                src="/images/logo.png"
+                alt="Droneo"
+                className="h-50 object-contain object-center translate-y-3 -translate-x-1 cursor-pointer"
+              />
+            </Link>
           </div>
 
           <nav className="hidden md:flex space-x-8">
