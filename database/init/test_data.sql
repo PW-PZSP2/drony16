@@ -173,7 +173,7 @@ INSERT INTO homepage_content (id, content, updated_by)
 VALUES (1, '{
   "hero": {
     "title": "Połącz się z profesjonalnymi operatorami dronów",
-    "subtitle": "Platforma łącząca zleceniodawców potrzebujących usług dronowych z doświadczonymi operatorami. Ortofotomapy, modele 3D, inspekcje i wiele więcej.",
+    "subtitle": "Platforma łącząca zleceniodawców potrzebujących usług dronowych z doświadczonymi operatorami. Ortofotomapy, modele 3D, filmy i wiele więcej.",
     "cta_primary": {
       "text": "Znajdź Operatora",
       "link": "/login?action=register&role=client"
@@ -265,7 +265,6 @@ VALUES (1, '{
   },
   "footer": {
     "logo": {
-      "text": "logo",
       "description": "Platforma łącząca zleceniodawców z profesjonalnymi operatorami dronów"
     },
     "contact": {
