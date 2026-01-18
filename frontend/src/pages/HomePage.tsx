@@ -66,10 +66,12 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="w-full">
               <h1 className="text-5xl font-bold mb-6 leading-tight">
-                {content?.hero?.title || "Połącz się z profesjonalnymi operatorami dronów"}
+                {content?.hero?.title ||
+                  "Połącz się z profesjonalnymi operatorami dronów"}
               </h1>
               <p className="text-xl mb-8 text-blue-100">
-                {content?.hero?.subtitle || "Platforma łącząca zleceniodawców potrzebujących usług dronowych z doświadczonymi operatorami. Ortofotomapy, modele 3D, filmy i wiele więcej."}
+                {content?.hero?.subtitle ||
+                  "Platforma łącząca zleceniodawców potrzebujących usług dronowych z doświadczonymi operatorami. Ortofotomapy, modele 3D, filmy i wiele więcej."}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
@@ -106,27 +108,35 @@ export default function Home() {
               {content?.services?.title || "Dostępne Usługi"}
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              {content?.services?.subtitle || "Szeroka gama profesjonalnych usług dronowych wykonywanych przez certyfikowanych operatorów"}
+              {content?.services?.subtitle ||
+                "Szeroka gama profesjonalnych usług dronowych wykonywanych przez certyfikowanych operatorów"}
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(content?.services?.items || []).map((service: any, index: number) => {
-              const IconComponent = getIconComponent(service.icon);
-              return (
-                <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                  <div className={`w-12 h-12 ${getColorClass(service.color, "bg")} rounded-lg flex items-center justify-center mb-4`}>
-                    <IconComponent className={`w-6 h-6 ${getColorClass(service.color, "text")}`} />
+            {(content?.services?.items || []).map(
+              (service: any, index: number) => {
+                const IconComponent = getIconComponent(service.icon);
+                return (
+                  <div
+                    key={index}
+                    className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                  >
+                    <div
+                      className={`w-12 h-12 ${getColorClass(service.color, "bg")} rounded-lg flex items-center justify-center mb-4`}
+                    >
+                      <IconComponent
+                        className={`w-6 h-6 ${getColorClass(service.color, "text")}`}
+                      />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                      {service.title}
+                    </h3>
+                    <p className="text-gray-600">{service.description}</p>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-600">
-                    {service.description}
-                  </p>
-                </div>
-              );
-            })}
+                );
+              },
+            )}
           </div>
         </div>
       </section>
@@ -139,24 +149,31 @@ export default function Home() {
               {content?.how_it_works?.title || "Jak to działa?"}
             </h2>
             <p className="text-lg text-gray-600">
-              {content?.how_it_works?.subtitle || "Prosty proces od zlecenia do realizacji"}
+              {content?.how_it_works?.subtitle ||
+                "Prosty proces od zlecenia do realizacji"}
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {(content?.how_it_works?.steps || []).map((step: any, index: number) => (
-              <div key={index} className="text-center">
-                <div className={`w-16 h-16 ${getColorClass(step.color, "bg")} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                  <span className={`text-2xl font-bold ${getColorClass(step.color, "text")}`}>{step.number}</span>
+            {(content?.how_it_works?.steps || []).map(
+              (step: any, index: number) => (
+                <div key={index} className="text-center">
+                  <div
+                    className={`w-16 h-16 ${getColorClass(step.color, "bg")} rounded-full flex items-center justify-center mx-auto mb-4`}
+                  >
+                    <span
+                      className={`text-2xl font-bold ${getColorClass(step.color, "text")}`}
+                    >
+                      {step.number}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-3">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-600">{step.description}</p>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                  {step.title}
-                </h3>
-                <p className="text-gray-600">
-                  {step.description}
-                </p>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         </div>
       </section>
@@ -164,9 +181,12 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-16 px-4 bg-gradient-to-r from-green-600 to-blue-600 text-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">{content?.cta_section?.title || "Gotowy na start?"}</h2>
+          <h2 className="text-3xl font-bold mb-4">
+            {content?.cta_section?.title || "Gotowy na start?"}
+          </h2>
           <p className="text-xl mb-8 text-green-100">
-            {content?.cta_section?.subtitle || "Dołącz do naszej platformy już dziś i skorzystaj z profesjonalnych usług dronowych"}
+            {content?.cta_section?.subtitle ||
+              "Dołącz do naszej platformy już dziś i skorzystaj z profesjonalnych usług dronowych"}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button

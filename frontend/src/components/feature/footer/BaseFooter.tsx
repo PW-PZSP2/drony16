@@ -33,20 +33,26 @@ export default function Footer(): JSX.Element {
           </div>
           <div className="flex items-start justify-center pt-10">
             <p className="text-gray-300 text-left max-w-xs">
-              {content?.footer?.logo?.description || "Platforma łącząca zleceniodawców z profesjonalnymi operatorami dronów"}
+              {content?.footer?.logo?.description ||
+                "Platforma łącząca zleceniodawców z profesjonalnymi operatorami dronów"}
             </p>
           </div>
           <div>
             <h4 className="font-semibold mb-4">Kontakt</h4>
             <ul className="space-y-2 text-gray-300">
-              <li>{content?.footer?.contact?.email || "kontakt@droneplatform.pl"}</li>
+              <li>
+                {content?.footer?.contact?.email || "kontakt@droneplatform.pl"}
+              </li>
               <li>{content?.footer?.contact?.phone || "+48 600 123 456"}</li>
               <li>{content?.footer?.contact?.address || "Warszawa, Polska"}</li>
             </ul>
           </div>
         </div>
         <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
-          <p>{content?.footer?.copyright || "© 2026 Droneo. Wszystkie prawa zastrzeżone."}</p>
+          <p>
+            {content?.footer?.copyright ||
+              "© 2026 Droneo. Wszystkie prawa zastrzeżone."}
+          </p>
         </div>
       </div>
     </footer>
