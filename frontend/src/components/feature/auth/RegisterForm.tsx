@@ -17,6 +17,7 @@ import HorizontalRadio from "../../base/HorizontalRadio/HorizontalRadio";
 import OperationStatus from "../../base/OperationStatus/OperationStatus";
 import { Roles } from "@/types/auth/user_role";
 import MapPreview from "@/components/base/MapPreview/MapPreview";
+import { MapPin } from "lucide-react";
 
 const registerSchema = z
   .object({
@@ -287,22 +288,7 @@ export function RegisterForm({
                           onClick={() => setShowMap(!showMap)}
                           title={showMap ? "Ukryj mapę" : "Pokaż na mapie"}
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="h-4 w-4"
-                          >
-                            <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
-                            <line x1="9" x2="9" y1="3" y2="18" />
-                            <line x1="15" x2="15" y1="6" y2="21" />
-                          </svg>
+                          <MapPin className="h-4 w-4" />
                         </Button>
                       </div>
                       {fieldState.invalid && (

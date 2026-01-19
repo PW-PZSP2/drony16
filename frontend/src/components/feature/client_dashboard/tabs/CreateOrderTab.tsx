@@ -5,6 +5,8 @@ import { create_order } from "@/services/client_service";
 import type { OrderData } from "@/services/client_service";
 
 import { Button } from "@/components/ui/button";
+import MapPreview from "@/components/base/MapPreview/MapPreview";
+import { MapPin } from "lucide-react";
 
 export default function CreateOrderTab() {
   const [formData, setFormData] = useState({
@@ -27,6 +29,7 @@ export default function CreateOrderTab() {
   };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showMap, setShowMap] = useState(false);
 
   const services = [
     { id: "Ortofotomapa", name: "Ortofotomapa", icon: "ri-map-2-line" },
@@ -186,24 +189,33 @@ export default function CreateOrderTab() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Lokalizacja
                 </label>
-                <div className="relative">
+                <div className="relative flex gap-2">
                   <input
                     type="text"
                     value={formData.location}
                     onChange={(e) =>
                       setFormData({ ...formData, location: e.target.value })
                     }
-                    className="w-full px-4 py-3 pr-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                     placeholder="Wpisz adres lub współrzędne"
                     required
                   />
-                  <button
+                  <Button
                     type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setShowMap(!showMap)}
+                    title={showMap ? "Ukryj mapę" : "Pokaż na mapie"}
+                    className="h-[50px] w-[50px]"
                   >
-                    <i className="ri-map-pin-line"></i>
-                  </button>
+                    <MapPin className="h-4 w-4" />
+                  </Button>
                 </div>
+                {showMap && (
+                  <div className="mb-4 mt-2">
+                    <MapPreview address={formData.location} />
+                  </div>
+                )}
                 <p className="text-xs text-gray-500 mt-1">
                   Możesz wpisać adres, nazwę miejsca lub współrzędne GPS.
                   Rekomendujemy użycie pełnych danych(miejscowość, kod pocztowy,
