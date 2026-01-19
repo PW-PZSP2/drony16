@@ -21,6 +21,8 @@ export interface Order {
   creation_date: string;
   has_applied?: boolean; // Added field
   state: string;
+  client_email?: string;
+  client_phone?: string;
 }
 
 export interface Service {

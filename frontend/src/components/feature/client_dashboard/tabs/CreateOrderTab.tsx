@@ -14,7 +14,7 @@ export default function CreateOrderTab() {
     service: "",
     description: "",
     location: "",
-    deadlineType: "flight", // 'flight' lub 'completion'
+    deadlineType: "flight",
     deadline: "",
     parameters: {} as any,
   });

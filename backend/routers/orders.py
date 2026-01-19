@@ -338,6 +338,7 @@ async def get_assigned_orders(
             selectinload(Order.order_services).selectinload(OrderService.service),
             selectinload(Order.order_parameters).selectinload(OrderParameter.parameter),
             selectinload(Order.reported_entries),
+            selectinload(Order.client),
         )
     )
     result = await db.execute(query)
@@ -377,6 +378,8 @@ async def get_assigned_orders(
                 services=services_data,
                 interested_operators=interested_ops,
                 status=order.state,
+                client_email=order.client.email,
+                client_phone=order.client.phone_number,
             )
         )
 

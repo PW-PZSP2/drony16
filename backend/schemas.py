@@ -81,6 +81,8 @@ class OrderResponse(OrderBase):
     status: str = Field(..., validation_alias="state")
     has_applied: Optional[bool] = False
     score: Optional[int] = None
+    client_email: Optional[str] = None
+    client_phone: Optional[str] = None
 
     class Config:
         from_attributes = True
