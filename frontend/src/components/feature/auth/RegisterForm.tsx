@@ -16,6 +16,7 @@ import { AuthService } from "@/services/authorization_service";
 import HorizontalRadio from "../../base/HorizontalRadio/HorizontalRadio";
 import OperationStatus from "../../base/OperationStatus/OperationStatus";
 import { Roles } from "@/types/auth/user_role";
+import MapPreview from "@/components/base/MapPreview/MapPreview";
 
 const registerSchema = z
   .object({
@@ -106,6 +107,7 @@ export function RegisterForm({
     "inProgress" | "success" | "error" | "loading"
   >("inProgress");
   const [errorMessage, setErrorMessage] = useState("");
+  const [showMap, setShowMap] = useState(false);
 
   async function onSubmit(data: z.infer<typeof registerSchema>) {
     setFormState("loading");
@@ -268,20 +270,54 @@ export function RegisterForm({
                       <FieldLabel htmlFor="register-localisation">
                         Lokalizacja
                       </FieldLabel>
-                      <Input
-                        {...field}
-                        id="register-localisation"
-                        type="text"
-                        placeholder="Warszawa, Polska"
-                        aria-invalid={fieldState.invalid}
-                        autoComplete="address-level2"
-                      />
+                      <div className="flex gap-2">
+                        <Input
+                          {...field}
+                          id="register-localisation"
+                          type="text"
+                          placeholder="Warszawa, Polska"
+                          aria-invalid={fieldState.invalid}
+                          autoComplete="address-level2"
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setShowMap(!showMap)}
+                          title={showMap ? "Ukryj mapę" : "Pokaż na mapie"}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="h-4 w-4"
+                          >
+                            <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+                            <line x1="9" x2="9" y1="3" y2="18" />
+                            <line x1="15" x2="15" y1="6" y2="21" />
+                          </svg>
+                        </Button>
+                      </div>
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
                       )}
                     </Field>
                   )}
                 />
+
+                {showMap && (
+                  <div className="mb-4">
+                    <MapPreview address={form.watch("localisation") || ""} />
+                  </div>
+                )}
+
                 <Controller
                   name="area"
                   control={form.control}
