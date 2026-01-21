@@ -468,6 +468,23 @@ function ConfirmedOrderCard({ order }: { order: Order }) {
                 </Button>
               </div>
             )}
+            <div className="flex justify-end pt-4">
+               <Button
+                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6"
+                onClick={async () => {
+                  try {
+                    await OperatorService.completeOrder(order.order_id);
+                    window.location.reload(); // Simple reload to refresh state
+                  } catch (error) {
+                    console.error("Failed to complete order", error);
+                    alert("Nie udało się zakończyć zlecenia");
+                  }
+                }}
+              >
+                <Check className="h-4 w-4 mr-2" />
+                Zakończ zlecenie
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>

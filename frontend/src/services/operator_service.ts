@@ -206,6 +206,21 @@ async function getOrderHistory(): Promise<Order[]> {
   return response.json();
 }
 
+async function completeOrder(orderId: number): Promise<void> {
+  const response = await fetch(`${API_URL}/orders/${orderId}/complete`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || "Failed to complete order");
+  }
+}
+
 export const OperatorService = {
   getOperatorAverage,
   updateLocation,
@@ -220,4 +235,5 @@ export const OperatorService = {
   applyForOrder,
   getAssignedOrders,
   getOrderHistory,
+  completeOrder,
 };
