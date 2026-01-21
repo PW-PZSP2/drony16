@@ -21,6 +21,7 @@ import {
 import { AuthService } from "../services/authorization_service";
 import { OperatorService } from "../services/operator_service";
 import type { Service, Attachment } from "../services/operator_service";
+import MapPreview from "@/components/base/MapPreview/MapPreview";
 
 import { useNavigate } from "react-router-dom";
 
@@ -34,7 +35,9 @@ export default function ProfessionalProfilePage() {
   // Location
   const [location, setLocation] = useState("");
   const [area, setArea] = useState(0);
+
   const [savingLocation, setSavingLocation] = useState(false);
+  const [showMap, setShowMap] = useState(false);
 
   // Services
   const [myServices, setMyServices] = useState<Service[]>([]);
@@ -196,13 +199,24 @@ export default function ProfessionalProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="location">Lokalizacja (Miasto)</Label>
-                <Input
-                  id="location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="np. Warszawa"
-                  className="rounded-lg"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    id="location"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="np. Warszawa"
+                    className="rounded-lg flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setShowMap(!showMap)}
+                    title={showMap ? "Ukryj mapę" : "Pokaż na mapie"}
+                  >
+                    <MapPin className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="area">Zasięg (km)</Label>
@@ -215,6 +229,11 @@ export default function ProfessionalProfilePage() {
                 />
               </div>
             </div>
+            {showMap && (
+              <div className="mb-4">
+                <MapPreview address={location} />
+              </div>
+            )}
             <div className="flex justify-end">
               <Button
                 onClick={handleSaveLocation}

@@ -19,6 +19,8 @@ import {
   Bell,
   Check,
   History,
+  Mail,
+  Phone,
 } from "lucide-react";
 import { OperatorService, type Order } from "@/services/operator_service";
 
@@ -372,52 +374,116 @@ function ConfirmedOrdersTab() {
 
   return (
     <div className="space-y-4">
-      {orders.map((order) => {
-        const deadlineLabel = order.raid_date
-          ? "Termin nalotu"
-          : "Termin zakończenia";
-        return (
-          <Card
-            key={order.order_id}
-            className="overflow-hidden rounded-3xl border-gray-100 shadow-md hover:shadow-lg transition-shadow"
-          >
-            <CardContent className="p-6">
-              <div className="flex flex-col gap-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">
-                      {order.name}
-                    </h3>
-                    <p className="text-gray-600 font-medium mt-1">
-                      {order.services.map((s) => s.service_name).join(", ")}
-                    </p>
-                  </div>
-                  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-                    W trakcie
-                  </span>
-                </div>
-
-                <div className="flex flex-wrap gap-x-8 gap-y-2 text-gray-600 text-sm">
-                  <div className="flex items-center">
-                    <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-                    {order.location}
-                  </div>
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                    {deadlineLabel}:{" "}
-                    {new Date(order.deadline).toLocaleDateString()}
-                  </div>
-                </div>
-
-                <p className="text-gray-700 text-sm line-clamp-2">
-                  {order.description}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+      {orders.map((order) => (
+        <ConfirmedOrderCard key={order.order_id} order={order} />
+      ))}
     </div>
+  );
+}
+
+function ConfirmedOrderCard({ order }: { order: Order }) {
+  const [showContact, setShowContact] = useState(false);
+  const deadlineLabel = order.raid_date
+    ? "Termin nalotu"
+    : "Termin zakończenia";
+
+  return (
+    <Card className="overflow-hidden rounded-3xl border-gray-100 shadow-md hover:shadow-lg transition-shadow">
+      <CardContent className="p-6">
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">{order.name}</h3>
+              <p className="text-gray-600 font-medium mt-1">
+                {order.services.map((s) => s.service_name).join(", ")}
+              </p>
+            </div>
+            <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+              W trakcie
+            </span>
+          </div>
+
+          <div className="flex flex-wrap gap-x-8 gap-y-2 text-gray-600 text-sm">
+            <div className="flex items-center">
+              <MapPin className="h-4 w-4 mr-2 text-gray-500" />
+              {order.location}
+            </div>
+            <div className="flex items-center">
+              <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+              {deadlineLabel}: {new Date(order.deadline).toLocaleDateString()}
+            </div>
+          </div>
+
+          <p className="text-gray-700 text-sm line-clamp-2">
+            {order.description}
+          </p>
+
+          <div className="pt-2 border-t border-gray-100 mt-2">
+            {!showContact ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowContact(true)}
+                className="gap-2 rounded-full border-gray-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              >
+                <Mail className="h-4 w-4" />
+                Skontaktuj się z klientem
+              </Button>
+            ) : (
+              <div className="flex flex-wrap gap-4 animate-in fade-in slide-in-from-top-2 duration-300 items-center">
+                {order.client_phone && (
+                  <div className="flex items-center">
+                    <Phone className="h-4 w-4 mr-2 text-gray-400" />
+                    <a
+                      href={`tel:${order.client_phone}`}
+                      className="font-medium text-gray-900 hover:underline"
+                    >
+                      {order.client_phone}
+                    </a>
+                  </div>
+                )}
+                {order.client_email && (
+                  <div className="flex items-center">
+                    <Mail className="h-4 w-4 mr-2 text-gray-400" />
+                    <a
+                      href={`mailto:${order.client_email}`}
+                      className="font-medium text-gray-900 hover:underline"
+                    >
+                      {order.client_email}
+                    </a>
+                  </div>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowContact(false)}
+                  className="ml-auto text-xs text-gray-400 hover:text-gray-600"
+                >
+                  Ukryj
+                </Button>
+              </div>
+            )}
+            <div className="flex justify-end pt-4">
+              <Button
+                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6"
+                onClick={async () => {
+                  try {
+                    await OperatorService.completeOrder(order.order_id);
+                    window.location.reload(); // Simple reload to refresh state
+                  } catch (error) {
+                    console.error("Failed to complete order", error);
+                    alert("Nie udało się zakończyć zlecenia");
+                  }
+                }}
+              >
+                <Check className="h-4 w-4 mr-2" />
+                Zakończ zlecenie
+              </Button>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

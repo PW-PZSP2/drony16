@@ -16,6 +16,8 @@ import { AuthService } from "@/services/authorization_service";
 import HorizontalRadio from "../../base/HorizontalRadio/HorizontalRadio";
 import OperationStatus from "../../base/OperationStatus/OperationStatus";
 import { Roles } from "@/types/auth/user_role";
+import MapPreview from "@/components/base/MapPreview/MapPreview";
+import { MapPin } from "lucide-react";
 
 const registerSchema = z
   .object({
@@ -106,6 +108,7 @@ export function RegisterForm({
     "inProgress" | "success" | "error" | "loading"
   >("inProgress");
   const [errorMessage, setErrorMessage] = useState("");
+  const [showMap, setShowMap] = useState(false);
 
   async function onSubmit(data: z.infer<typeof registerSchema>) {
     setFormState("loading");
@@ -268,20 +271,39 @@ export function RegisterForm({
                       <FieldLabel htmlFor="register-localisation">
                         Lokalizacja
                       </FieldLabel>
-                      <Input
-                        {...field}
-                        id="register-localisation"
-                        type="text"
-                        placeholder="Warszawa, Polska"
-                        aria-invalid={fieldState.invalid}
-                        autoComplete="address-level2"
-                      />
+                      <div className="flex gap-2">
+                        <Input
+                          {...field}
+                          id="register-localisation"
+                          type="text"
+                          placeholder="Warszawa, Polska"
+                          aria-invalid={fieldState.invalid}
+                          autoComplete="address-level2"
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setShowMap(!showMap)}
+                          title={showMap ? "Ukryj mapę" : "Pokaż na mapie"}
+                        >
+                          <MapPin className="h-4 w-4" />
+                        </Button>
+                      </div>
                       {fieldState.invalid && (
                         <FieldError errors={[fieldState.error]} />
                       )}
                     </Field>
                   )}
                 />
+
+                {showMap && (
+                  <div className="mb-4">
+                    <MapPreview address={form.watch("localisation") || ""} />
+                  </div>
+                )}
+
                 <Controller
                   name="area"
                   control={form.control}
