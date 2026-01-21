@@ -530,9 +530,13 @@ async def complete_order(
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
 
-    if order.client_id != current_user.user_id and order.operator_id != current_user.user_id:
+    if (
+        order.client_id != current_user.user_id
+        and order.operator_id != current_user.user_id
+    ):
         raise HTTPException(
-            status_code=403, detail="Only the client or assigned operator can complete the order"
+            status_code=403,
+            detail="Only the client or assigned operator can complete the order",
         )
 
     if order.state != "W trakcie":
