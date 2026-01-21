@@ -89,13 +89,15 @@ export default function CompletedOrdersTab() {
                   )}
                 </div>
                 <div className="space-x-2">
-                  <Button
-                    size="sm"
-                    onClick={() => setShowRatingModal(order.id)}
-                    disabled={Boolean(order.rating && order.rating > 0)}
-                  >
-                    Oceń pracę
-                  </Button>
+                  {order.status === "Zakończone" && (
+                    <Button
+                      size="sm"
+                      onClick={() => setShowRatingModal(order.id)}
+                      disabled={Boolean(order.rating && order.rating > 0)}
+                    >
+                      Oceń pracę
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
