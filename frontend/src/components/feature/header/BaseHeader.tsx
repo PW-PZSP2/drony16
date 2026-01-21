@@ -23,36 +23,6 @@ export default function Header(): JSX.Element {
     checkAuth();
   }, [actions]);
 
-  const getDashboardLink = () => {
-    if (!user) return "/";
-
-    if (user.roles.includes(Roles.ADMIN)) {
-      return "/admin/dashboard";
-    }
-    if (user.roles.includes(Roles.OPERATOR)) {
-      return "/operator/dashboard";
-    }
-    if (user.roles.includes(Roles.CLIENT)) {
-      return "/client/dashboard";
-    }
-    return "/";
-  };
-
-  const getDashboardLabel = () => {
-    if (!user) return "";
-
-    if (user.roles.includes(Roles.ADMIN)) {
-      return "Panel Admina";
-    }
-    if (user.roles.includes(Roles.OPERATOR)) {
-      return "Panel Operatora";
-    }
-    if (user.roles.includes(Roles.CLIENT)) {
-      return "Panel Zleceniodawcy";
-    }
-    return "";
-  };
-
   const getProfileLink = () => {
     if (!user) return "/";
     if (user.roles.includes(Roles.OPERATOR)) return "/operator/profile";
@@ -66,11 +36,13 @@ export default function Header(): JSX.Element {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <img
-              src="/images/logo.png"
-              alt="Droneo"
-              className="h-50 object-contain object-center translate-y-3 -translate-x-1"
-            />
+            <Link to="/">
+              <img
+                src="/images/logo.png"
+                alt="Droneo"
+                className="h-50 object-contain object-center translate-y-3 -translate-x-1 cursor-pointer"
+              />
+            </Link>
           </div>
 
           <nav className="hidden md:flex space-x-8">
