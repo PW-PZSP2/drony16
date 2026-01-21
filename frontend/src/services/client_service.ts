@@ -200,12 +200,7 @@ async function fetch_completed_orders(): Promise<Order[]> {
         deadlineType: apiOrder.completion_date ? "completion" : "flight",
         applicants: apiOrder.interested_operators.length,
         rating: apiOrder.score,
-        status:
-          apiOrder.status === "W trakcie"
-            ? "in-progress"
-            : apiOrder.status === "Zakończone"
-              ? "completed"
-              : "pending",
+        status: apiOrder.status
       }),
     );
 
