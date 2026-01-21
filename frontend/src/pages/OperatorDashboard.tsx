@@ -388,16 +388,12 @@ function ConfirmedOrderCard({ order }: { order: Order }) {
     : "Termin zakończenia";
 
   return (
-    <Card
-      className="overflow-hidden rounded-3xl border-gray-100 shadow-md hover:shadow-lg transition-shadow"
-    >
+    <Card className="overflow-hidden rounded-3xl border-gray-100 shadow-md hover:shadow-lg transition-shadow">
       <CardContent className="p-6">
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="text-xl font-bold text-gray-900">
-                {order.name}
-              </h3>
+              <h3 className="text-xl font-bold text-gray-900">{order.name}</h3>
               <p className="text-gray-600 font-medium mt-1">
                 {order.services.map((s) => s.service_name).join(", ")}
               </p>
@@ -414,8 +410,7 @@ function ConfirmedOrderCard({ order }: { order: Order }) {
             </div>
             <div className="flex items-center">
               <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-              {deadlineLabel}:{" "}
-              {new Date(order.deadline).toLocaleDateString()}
+              {deadlineLabel}: {new Date(order.deadline).toLocaleDateString()}
             </div>
           </div>
 
@@ -469,7 +464,7 @@ function ConfirmedOrderCard({ order }: { order: Order }) {
               </div>
             )}
             <div className="flex justify-end pt-4">
-               <Button
+              <Button
                 className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6"
                 onClick={async () => {
                   try {

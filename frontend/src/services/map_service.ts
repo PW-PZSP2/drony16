@@ -1,8 +1,6 @@
 import axios from "axios";
 
-
 export const MapService = {
-
   geocodeAddress: async (address: string) => {
     try {
       const response = await axios.get(
@@ -16,7 +14,7 @@ export const MapService = {
           headers: {
             "User-Agent": "Droneo/1.0",
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {

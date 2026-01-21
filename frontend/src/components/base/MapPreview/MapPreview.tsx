@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 
 import { MapService } from "@/services/map_service";
 
-
-
 interface MapPreviewProps {
   address: string;
 }
